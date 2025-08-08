@@ -99,3 +99,25 @@
     display: block;
   }
 }
+
+/* Estilos por defecto para la versión web (desktop) */
+.servicios-container {
+  display: flex;
+  flex-direction: column; /* o como lo tengas actualmente */
+  gap: 2rem;
+}
+
+/* Para versión móvil: los bloques en la misma línea horizontal */
+@media (max-width: 768px) {
+  .servicios-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+  }
+  .servicio-bloque {
+    flex: 1 1 40%;
+    min-width: 120px;
+    max-width: 180px;
+  }
+}
