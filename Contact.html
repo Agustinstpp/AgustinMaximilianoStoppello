@@ -138,9 +138,22 @@
         const mobileMenu = document.getElementById('mobile-menu');
         const navList = document.querySelector('.nav-list');
 
-        mobileMenu.addEventListener('click', () => {
-            navList.classList.toggle('active');
-        });
+        if (mobileMenu && navList) {
+            mobileMenu.addEventListener('click', () => {
+                navList.classList.toggle('active');
+            });
+
+            document.addEventListener('click', function(event) {
+                if (
+                    window.innerWidth <= 767.98 &&
+                    navList.classList.contains('active') &&
+                    !navList.contains(event.target) &&
+                    event.target !== mobileMenu
+                ) {
+                    navList.classList.remove('active');
+                }
+            });
+        }
     </script>
     <script>
         window.onerror = function() {
