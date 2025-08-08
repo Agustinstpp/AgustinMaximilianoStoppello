@@ -64,8 +64,22 @@
   z-index: 1000;
 }
 
-/* Responsive behavior */
+/* Oculta el nav en móvil por defecto */
 @media (max-width: 767.98px) {
+  .nav-list {
+    position: fixed;
+    top: 0;
+    right: -100vw; /* Oculto fuera de pantalla */
+    width: 80vw;
+    height: 100vh;
+    z-index: 1050;
+    background: #f8f9fa;
+    transition: right 0.3s;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  }
+  .nav-list.active {
+    right: 0; /* Muestra el nav */
+  }
   .container-flex {
     flex-direction: column;
   }
