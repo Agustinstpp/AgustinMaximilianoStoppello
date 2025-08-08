@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taquitos - Agustín Stoppello</title>
+    <link rel="icon" href="../imag/Logo sin fondo.PNG" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../styles.css">
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCEKKBBLHF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MCEKKBBLHF');
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu" class="d-md-none btn btn-primary position-fixed" style="top: 20px; right: 20px; z-index: 1000;">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="row min-vh-100">
+            <!-- Sidebar Column - Navigation Bar -->
+            <div class="col-md-4 col-lg-3 bg-light p-4 nav-list">
+                <div class="profile-section text-center mb-4">
+                    <img class="profile-pic img-fluid rounded-circle mb-3" src="../imag/IMG_0259.PNG" width="120" height="120" alt="Profile Picture">
+                    <h2 class="profile-name mb-1">Agustín Stoppello</h2>
+                    <p class="profile-title text-muted">UX/UI Designer & Developer</p>
+                </div>
+                
+                <div class="buttons-container bg-white rounded-3 p-3 shadow-sm">
+                    <div class="d-flex flex-column gap-2">
+                        <!-- Navigation Buttons -->
+                        <a href="../Index.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/homeicon.svg" alt="Home" width="20" height="20">
+                            <span>Home</span>
+                        </a>
+                        <a href="../About.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/personicon.svg" alt="Sobre Mi" width="20" height="20">
+                            <span>Sobre Mi</span>
+                        </a>
+                        <a href="../proyect.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/workicon.svg" alt="Proyecto" width="20" height="20">
+                            <span>Proyectos</span>
+                        </a>
+                        <a href="../Contact.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/mailico.svg" alt="Contacto" width="20" height="20">
+                            <span>Contacto</span>
+                        </a>
+
+                        <!-- Separator -->
+                        <hr class="my-3">
+
+                        <!-- Social Media -->
+                        <a href="https://www.linkedin.com/agustinmaximilianostoppello" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/linkedin.svg" alt="LinkedIn" width="20" height="20">
+                            <span>LinkedIn</span>
+                        </a>
+                        <a href="https://wa.me/543794141551" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/whastapp.svg" alt="WhatsApp" width="20" height="20">
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="https://www.instagram.com/_agustin_st/" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/instagram.svg" alt="Instagram" width="20" height="20">
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Column -->
+            <div class="col-md-8 col-lg-9 p-4">
+                <!-- Existing content of Taquitos.html should be placed here -->
+                <div class="blog-post">
+                    <h1 class="mb-4">Taquitos Project</h1>
+                    <img src="../imag/PortadaLlegarapido.jpg" alt="Taquitos Project Image" class="img-fluid rounded mb-4">
+                    <p>
+                        Taquitos is a creative project that brings together culinary arts and technology. It aims to provide an engaging platform for food lovers and tech enthusiasts alike.
+                    </p>
+                    <p>
+                        The project features interactive elements, rich media content, and a user-friendly interface designed to enhance the overall experience.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    </script>
+    <script>
+        window.onerror = function() {
+            window.location.href = "../404.html";
+        };
+    </script>
+</body>
+</html>

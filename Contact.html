@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agustín Stoppello - Contacto</title>
+    <link rel="icon" href="imag/Logo sin fondo.PNG" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCEKKBBLHF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MCEKKBBLHF');
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu" class="d-md-none btn btn-primary position-fixed" style="top: 20px; right: 20px; z-index: 1000;">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="row min-vh-100">
+            <!-- Sidebar Column - Copiado de Index.html -->
+            <div class="col-md-4 col-lg-3 bg-light p-4 nav-list">
+                <div class="profile-section text-center mb-4">
+                    <img class="profile-pic img-fluid rounded-circle mb-3" src="imag/IMG_0259.PNG" width="120" height="120" alt="Profile Picture">
+                    <h2 class="profile-name mb-1">Agustín Stoppello</h2>
+                    <p class="profile-title text-muted">UX/UI Designer & Developer</p>
+                </div>
+                
+                <div class="buttons-container bg-white rounded-3 p-3 shadow-sm">
+                    <div class="d-flex flex-column gap-2">
+                        <!-- Navigation Buttons -->
+                        <a href="Index.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/homeicon.svg" alt="Home" width="20" height="20">
+                            <span>Home</span>
+                        </a>
+                        <a href="About.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/personicon.svg" alt="Sobre Mi" width="20" height="20">
+                            <span>Sobre Mi</span>
+                        </a>
+                        <a href="proyect.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/workicon.svg" alt="Proyecto" width="20" height="20">
+                            <span>Proyectos</span>
+                        </a>
+                        <a href="Contact.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/mailico.svg" alt="Contacto" width="20" height="20">
+                            <span>Contacto</span>
+                        </a>
+
+                        <!-- Separator -->
+                        <hr class="my-3">
+
+                        <!-- Social Media -->
+                        <a href="https://www.linkedin.com/agustinmaximilianostoppello" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/linkedin.svg" alt="LinkedIn" width="20" height="20">
+                            <span>LinkedIn</span>
+                        </a>
+                        <a href="https://wa.me/543794141551" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/whastapp.svg" alt="WhatsApp" width="20" height="20">
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="https://www.instagram.com/_agustin_st/" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="imag/instagram.svg" alt="Instagram" width="20" height="20">
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Column -->
+            <div class="col-md-8 col-lg-9 p-4">
+                <div class="contact-container bg-white rounded-3 p-4 shadow-sm">
+                    <h1 class="mb-4">Contacto</h1>
+                    <p>Si deseas ponerte en contacto conmigo, puedes hacerlo a través de los siguientes medios:</p>
+                    <ul>
+                        <li>Email: agustinmaximilianostoppello@outlook.com.ar</li>
+                        <li>Teléfono: +54 379 414 1551</li>
+                    </ul>
+                    <!-- Automate this part with Zapier. Goal: Email or WhatsApp Message -->
+<form class="mt-4" method="post" data-netlify="true" name="contact" netlify-honeypot="bot-field">
+                        <!-- Hidden input for Netlify form name -->
+                        <input type="hidden" name="form-name" value="contact" />
+                        <!-- Honeypot field for spam bots -->
+                        <p class="d-none">
+                            <label>Don’t fill this out if you're human: <input name="bot-field" /></label>
+                        </p>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Tu nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Correo electrónico</label>
+                            <input type="email" class="form-control" id="email" name="email" placeholder="Tu correo electrónico" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Mensaje</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" placeholder="Escribe tu mensaje aquí" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enviar</button>
+                    </form>
+                    <!-- Map Embed -->
+                    <div class="mt-5">
+                        <h2>Ubicación</h2>
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3537.927927927927!2d-58.833333!3d-27.480556!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9441b0a1a1a1a1a1%3A0x123456789abcdef!2sCorrientes%2C%20Argentina!5e0!3m2!1ses!2sus!4v1695830400000!5m2!1ses!2sus" 
+                            width="100%" 
+                            height="400" 
+                            style="border:0;" 
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade"
+                            title="Mapa de ubicación">
+                        </iframe>
+                    </div>
+                </div>
+
+                <footer class="mt-5 pt-4 border-top">
+                    <p class="text-muted text-center">&copy; 2025 by Agustin Stoppello | <a href="privacy-policy.html" class="text-decoration-none">Política de Privacidad</a> | <a href="cookie-policy.html" class="text-decoration-none">Política de cookies</a></p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    </script>
+    <script>
+        window.onerror = function() {
+            window.location.href = "404.html";
+        };
+    </script>
+</body>
+</html>

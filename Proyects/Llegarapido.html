@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llegarapido - Agustín Stoppello</title>
+    <link rel="icon" href="../imag/Logo sin fondo.PNG" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../styles.css">
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="./llegarapido-carousel.js"></script>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-MCEKKBBLHF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-MCEKKBBLHF');
+    </script>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Mobile Menu Button -->
+        <button id="mobile-menu" class="d-md-none btn btn-primary position-fixed" style="top: 20px; right: 20px; z-index: 1000;">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="row min-vh-100">
+            <!-- Sidebar Column - Navigation Bar -->
+            <div class="col-md-4 col-lg-3 bg-light p-4 nav-list">
+                <div class="profile-section text-center mb-4">
+                    <img class="profile-pic img-fluid rounded-circle mb-3" src="../imag/IMG_0259.PNG" width="120" height="120" alt="Profile Picture">
+                    <h2 class="profile-name mb-1">Agustín Stoppello</h2>
+                    <p class="profile-title text-muted">UX/UI Designer & Developer</p>
+                </div>
+                
+                <div class="buttons-container bg-white rounded-3 p-3 shadow-sm">
+                    <div class="d-flex flex-column gap-2">
+                        <!-- Navigation Buttons -->
+                        <a href="../Index.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/homeicon.svg" alt="Home" width="20" height="20">
+                            <span>Home</span>
+                        </a>
+                        <a href="../About.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/personicon.svg" alt="Sobre Mi" width="20" height="20">
+                            <span>Sobre Mi</span>
+                        </a>
+                        <a href="../proyect.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/workicon.svg" alt="Proyecto" width="20" height="20">
+                            <span>Proyectos</span>
+                        </a>
+                        <a href="../Contact.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/mailico.svg" alt="Contacto" width="20" height="20">
+                            <span>Contacto</span>
+                        </a>
+
+                        <!-- Separator -->
+                        <hr class="my-3">
+
+                        <!-- Social Media -->
+                        <a href="https://www.linkedin.com/agustinmaximilianostoppello" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/linkedin.svg" alt="LinkedIn" width="20" height="20">
+                            <span>LinkedIn</span>
+                        </a>
+                        <a href="https://wa.me/543794141551" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/whastapp.svg" alt="WhatsApp" width="20" height="20">
+                            <span>WhatsApp</span>
+                        </a>
+                        <a href="https://www.instagram.com/_agustin_st/" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+                            <img class="me-2" src="../imag/instagram.svg" alt="Instagram" width="20" height="20">
+                            <span>Instagram</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Column -->
+            <div class="col-md-8 col-lg-9 p-4">
+                <!-- Existing content of Llegarapido.html should be placed here -->
+                <div class="blog-post">
+                    <h1 class="mb-4">LlegaRapido: Rediseño de plataforma y pagina web</h1>
+                    <!-- Bootstrap Carousel Start -->
+                    <div id="llegarapidoCarousel" class="carousel slide mb-4" data-bs-ride="carousel" data-bs-interval="3000" data-bs-pause="hover" data-bs-wrap="true">
+                        <div class="carousel-inner rounded">
+                            <div class="carousel-item active">
+                                <img src="../imag/PortadaLlegarapido.jpg" class="d-block w-100" alt="Llegarapido Image 1">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="../imag/Portada LlegaRapido Iphone.jpg" class="d-block w-100" alt="Llegarapido Image 2">
+                            </div>
+                            <div class="carousel-item">
+                                <img src="../imag/Portada LlegaRapido PC.jpg" class="d-block w-100" alt="Llegarapido Image 3">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#llegarapidoCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#llegarapidoCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </button>
+                        <!-- Thumbnails as indicators -->
+                        <div class="d-flex justify-content-center gap-2 mt-3">
+                            <button type="button" data-bs-target="#llegarapidoCarousel" data-bs-slide-to="0" class="active border-0 p-0" aria-current="true" aria-label="Slide 1">
+                                <img src="../imag/PortadaLlegarapido.jpg" class="img-thumbnail" style="width: 80px; height: 50px; object-fit: cover;" alt="Thumbnail 1">
+                            </button>
+                            <button type="button" data-bs-target="#llegarapidoCarousel" data-bs-slide-to="1" class="border-0 p-0" aria-label="Slide 2">
+                                <img src="../imag/Portada LlegaRapido Iphone.jpg" class="img-thumbnail" style="width: 80px; height: 50px; object-fit: cover;" alt="Thumbnail 2">
+                            </button>
+                            <button type="button" data-bs-target="#llegarapidoCarousel" data-bs-slide-to="2" class="border-0 p-0" aria-label="Slide 3">
+                                <img src="../imag/Portada LlegaRapido PC.jpg" class="img-thumbnail" style="width: 80px; height: 50px; object-fit: cover;" alt="Thumbnail 3">
+                            </button>
+                        </div>
+                        <p></p>
+                        <h2>Rediseño de experiencia para la app <strong>LlegaRapido</strong></h2>
+                        <p><strong>Rol:</strong> UX/UI Designer & Developer<br>
+                           <strong>Modalidad:</strong> Proyecto individual</p>
+                      
+                        <p><strong>LlegaRapido</strong> es una app de entregas a domicilio con miles de productos esenciales como alimentos, bebidas, perfumería, electrónica y mucho más. Con entregas rápidas (incluso en una hora) y una cobertura en expansión, su misión es hacer la vida cotidiana más simple.</p>
+                      
+                        <p>Mi trabajo consistió en mejorar la interfaz y experiencia del usuario (UX/UI) con el objetivo de hacerla más intuitiva, confiable y funcional. El enfoque estuvo centrado en reducir fricciones, optimizar la navegación y generar mayor claridad visual.</p>
+                      
+                        <h3>Principales mejoras realizadas:</h3>
+                      
+                        <ul>
+                          <li>
+                            <strong>Inicio de sesión y registro simplificados:</strong> Integración con cuentas de Google y Apple para agilizar el ingreso, disminuyendo la fricción y mejorando la accesibilidad.
+                          </li>
+                          <li>
+                            <strong>Pantalla de inicio reorganizada:</strong> Se mejoró la jerarquía visual y se priorizaron accesos rápidos a categorías esenciales, facilitando el uso y reduciendo el esfuerzo cognitivo.
+                          </li>
+                          <li>
+                            <strong>Perfiles de locales más completos:</strong> Se añadieron detalles como valoraciones, horarios y condiciones de entrega para generar más confianza y facilitar la toma de decisiones.
+                          </li>
+                          <li>
+                            <strong>Mapa interactivo en tiempo real:</strong> Incorporación de un mapa actualizado que muestra la ubicación del pedido y el comercio en todo momento, reforzando el control y la transparencia.
+                          </li>
+                        </ul>
+                        <img src="../imag/Iphone LlegaRapido.png" class="img-thumbnail"  alt="Thumbnail 3">
+
+                        <h3>Herramientas utilizadas:</h3>
+                        <p>Figma para diseño UX/UI, lenguajes de desarrollo para implementación. Se utilizaron sistemas de diseño adaptativos.</p>
+                      
+                        <h3>Resultados esperados:</h3>
+                        <ul>
+                          <li>Mayor conversión de nuevos registros</li>
+                          <li>Mejor experiencia de navegación</li>
+                          <li>Reducción de fricción en puntos clave del flujo</li>
+                          <li>Mayor percepción de seguridad y control por parte del usuario</li>
+                        </ul>
+                      
+                        <p>Este rediseño fue desarrollado de forma individual, desde la propuesta hasta la implementación, utilizando principios de diseño centrado en el usuario y técnicas de UX/UI modernas.</p>
+                      
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navList = document.querySelector('.nav-list');
+
+        mobileMenu.addEventListener('click', () => {
+            navList.classList.toggle('active');
+        });
+    </script>
+    <script>
+        window.onerror = function() {
+            window.location.href = "../404.html";
+        };
+    </script>
+</body>
+</html>
