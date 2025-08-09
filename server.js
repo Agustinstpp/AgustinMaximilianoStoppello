@@ -64,7 +64,7 @@ const requestHandler = async (req, res) => {
   }
 };
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 const HOST = process.env.HOST || 'localhost';
 
 http.createServer(requestHandler).listen(PORT, HOST, () => {
