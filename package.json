@@ -7,12 +7,17 @@
     "dev": "netlify dev",
     "build": "echo 'Static site - no build needed'",
     "deploy": "netlify deploy --prod",
-    "server": "node server.js"
+    "server": "node server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.5",
     "@netlify/functions": "^2.4.1",
-    "dotenv": "^16.3.1"
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "helmet": "^7.1.0",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "netlify-cli": "^17.10.1"
