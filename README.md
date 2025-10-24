@@ -1,30 +1,40 @@
-# Portafolio Personal – Agustín Stoppello
+# Portafolio Personal v1.0 – Agustín Stoppello
 
-Bienvenido al portafolio personal de **Agustín Stoppello**, diseñador UX/UI y desarrollador frontend. Este sitio fue creado con el objetivo de presentar de manera clara y visual mi experiencia profesional, habilidades técnicas y proyectos destacados.
+Este repositorio contiene el código de mi portafolio personal como Diseñador UX/UI y Desarrollador Frontend.
 
-## 🎯 Propósito
+El proyecto fue desarrollado como parte del curso de **Diseño Web** de **Folcademy**, en colaboración con **MuniJoven Corrientes**.
 
-Este proyecto funciona como una carta de presentación digital. Está pensado para:
+🔗 **Sitio en vivo:** [**https://agustinstoppello.netlify.app/**](https://agustinstoppello.netlify.app/)
 
-* Mostrar quién soy y cuál es mi enfoque profesional.
-* Compartir mis trabajos más relevantes en diseño y desarrollo.
-* Brindar una forma directa de contacto.
-* Ofrecer transparencia a través de políticas de privacidad y cookies.
+## 🚀 Vista Previa
 
-## 🧩 Secciones del sitio
+¡Aquí puedes insertar una captura de pantalla o un GIF de tu sitio!
+![Vista previa del portafolio de Agustín Stoppello]([URL_DE_TU_IMAGEN_O_GIF_AQUI])
 
-* **Sobre mí:** Una introducción personal y profesional que incluye experiencia, enfoque de trabajo y herramientas que utilizo.
-* **Proyectos:** Galería de trabajos recientes y destacados, con descripciones breves y tecnologías aplicadas.
-* **Políticas:** Documentos sobre política de privacidad y uso de cookies.
-* **Contacto:** Formulario directo para consultas y enlaces a redes sociales profesionales.
+---
 
-## 💻 Tecnologías utilizadas
+## ✨ Características Principales
 
-* **HTML5 & CSS3** – Estructura y estilos base del sitio.
-* **Bootstrap 5** – Para un diseño responsivo y adaptable a diferentes dispositivos.
-* **Google Analytics** – Integrado para seguimiento de tráfico y análisis del comportamiento del usuario.
+Este proyecto funciona como una carta de presentación digital y fue construido con un enfoque *mobile-first*. Las secciones clave incluyen:
 
-## 🌐 Enlace al sitio
+* **Sobre mí:** Introducción a mi perfil profesional, mi enfoque de trabajo y las herramientas que domino.
+* **Proyectos:** Una galería visual de mis trabajos más relevantes, detallando las tecnologías aplicadas en cada uno.
+* **Contacto:** Formulario de contacto funcional y enlaces directos a mis redes profesionales (LinkedIn, GitHub, etc.).
+* **Políticas:** Secciones de Política de Privacidad y Uso de Cookies para asegurar la transparencia con el usuario.
 
-Puedes visitar el sitio en:
-🔗 [https://agustinstoppello.netlify.app/](https://agustinstoppello.netlify.app/)
+---
+
+## 💻 Stack Tecnológico
+
+El sitio es estático y fue construido utilizando tecnologías frontend fundamentales:
+
+* 🏛️ **HTML5:** Para la estructura semántica y el contenido.
+* 🎨 **CSS3:** Para los estilos personalizados, animaciones y diseño visual.
+* 📱 **Bootstrap 5:** Utilizado para el layout responsivo (Grid, Flexbox) y componentes de UI.
+* 📊 **Google Analytics:** Integrado para el seguimiento de métricas de tráfico y comportamiento del usuario.
+
+---
+
+## 📄 Licencia
+
+Este proyecto se distribuye bajo la Licencia MIT. Consulta el archivo `LICENSE` para más detalles.
