@@ -6,13 +6,6 @@ El proyecto fue desarrollado como parte del curso de **Diseño Web** de **Folcad
 
 🔗 **Sitio en vivo:** [**https://agustinstoppello.netlify.app/**](https://agustinstoppello.netlify.app/)
 
-## 🚀 Vista Previa
-
-¡Aquí puedes insertar una captura de pantalla o un GIF de tu sitio!
-![Vista previa del portafolio de Agustín Stoppello]([URL_DE_TU_IMAGEN_O_GIF_AQUI])
-
----
-
 ## ✨ Características Principales
 
 Este proyecto funciona como una carta de presentación digital y fue construido con un enfoque *mobile-first*. Las secciones clave incluyen:
