@@ -28,58 +28,13 @@
 <body>
     <div class="container-fluid">
         <!-- Mobile Menu Button -->
-        <button id="mobile-menu" class="d-md-none btn btn-primary position-fixed" style="top: 20px; right: 20px; z-index: 1000;">
+        <button id="mobile-menu" class="d-md-none btn btn-primary position-fixed">
             <i class="fas fa-bars"></i>
         </button>
         
         <div class="row min-vh-100">
             <!-- Sidebar Column - Navigation Bar -->
-            <div class="col-md-4 col-lg-3 bg-light p-4 nav-list">
-                <div class="profile-section text-center mb-4">
-                    <img class="profile-pic img-fluid rounded-circle mb-3" src="../imag/IMG_0259.PNG" width="120" height="120" alt="Profile Picture">
-                    <h2 class="profile-name mb-1">Agustín Stoppello</h2>
-                    <p class="profile-title text-muted">UX/UI Designer & Developer</p>
-                </div>
-                
-                <div class="buttons-container bg-white rounded-3 p-3 shadow-sm">
-                    <div class="d-flex flex-column gap-2">
-                        <!-- Navigation Buttons -->
-                        <a href="../Index.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/homeicon.svg" alt="Home" width="20" height="20">
-                            <span>Home</span>
-                        </a>
-                        <a href="../About.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/personicon.svg" alt="Sobre Mi" width="20" height="20">
-                            <span>Sobre Mi</span>
-                        </a>
-                        <a href="../proyect.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/workicon.svg" alt="Proyecto" width="20" height="20">
-                            <span>Proyectos</span>
-                        </a>
-                        <a href="../Contact.html" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/mailico.svg" alt="Contacto" width="20" height="20">
-                            <span>Contacto</span>
-                        </a>
-
-                        <!-- Separator -->
-                        <hr class="my-3">
-
-                        <!-- Social Media -->
-                        <a href="https://www.linkedin.com/agustinmaximilianostoppello" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/linkedin.svg" alt="LinkedIn" width="20" height="20">
-                            <span>LinkedIn</span>
-                        </a>
-                        <a href="https://wa.me/543794141551" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/whastapp.svg" alt="WhatsApp" width="20" height="20">
-                            <span>WhatsApp</span>
-                        </a>
-                        <a href="https://www.instagram.com/agustinst.code/" target="_blank" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-                            <img class="me-2" src="../imag/instagram.svg" alt="Instagram" width="20" height="20">
-                            <span>Instagram</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <div class="col-md-4 col-lg-3 bg-light p-4 nav-list"></div>
             
             <!-- Main Content Column -->
             <div class="col-md-8 col-lg-9 p-4">
@@ -160,35 +115,15 @@
                         <p>Este rediseño fue desarrollado de forma individual, desde la propuesta hasta la implementación, utilizando principios de diseño centrado en el usuario y técnicas de UX/UI modernas.</p>
                       
                 </div>
+
+                <footer class="mt-5 pt-4 border-top">
+                    <p class="text-muted text-center">&copy; 2025 by Agustin Stoppello | <a href="../privacy-policy.html" class="text-decoration-none">Política de Privacidad</a> | <a href="../cookie-policy.html" class="text-decoration-none">Política de cookies</a></p>
+                </footer>
             </div>
         </div>
     </div>
 
-    <script>
-        const mobileMenu = document.getElementById('mobile-menu');
-        const navList = document.querySelector('.nav-list');
-
-        if (mobileMenu && navList) {
-            mobileMenu.addEventListener('click', () => {
-                navList.classList.toggle('active');
-            });
-
-            document.addEventListener('click', function(event) {
-                if (
-                    window.innerWidth <= 767.98 &&
-                    navList.classList.contains('active') &&
-                    !navList.contains(event.target) &&
-                    event.target !== mobileMenu
-                ) {
-                    navList.classList.remove('active');
-                }
-            });
-        }
-    </script>
-    <script>
-        window.onerror = function() {
-            window.location.href = "../404.html";
-        };
-    </script>
+    <script src="../js/sidebar.js"></script>
+    <script>renderSidebar('../');</script>
 </body>
 </html>
