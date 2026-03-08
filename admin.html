@@ -44,9 +44,9 @@
         </div>
     </div>
 
-    <div class="container-fluid py-4 px-4" id="admin-content" style="display:none;">
+    <div class="container-fluid py-4 px-3 px-md-4" id="admin-content" style="display:none;">
         <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
             <div>
                 <h1 class="h3 mb-0">
                     <i class="fas fa-cogs me-2 text-primary"></i>Panel de Administración
@@ -163,7 +163,7 @@
 
     <!-- ═══════════ PROJECT MODAL ═══════════ -->
     <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="projectModalLabel">Proyecto</h5>
@@ -226,7 +226,7 @@
 
     <!-- ═══════════ POST MODAL ═══════════ -->
     <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-dialog modal-lg modal-fullscreen-sm-down modal-dialog-scrollable">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="postModalLabel">Artículo</h5>
@@ -321,6 +321,8 @@
         if (sessionStorage.getItem(ADMIN_KEY) === '1') {
             document.getElementById('login-overlay').style.display = 'none';
             document.getElementById('admin-content').style.display = '';
+            loadProjects();
+            loadPosts();
         }
 
         // ─── Helpers ──────────────────────────────────────────────────────────────
@@ -358,6 +360,7 @@
                 renderProjectsTable(projectsData);
             } catch (err) {
                 showAlert('projects-alert', 'Error al cargar los proyectos: ' + err.message, 'danger');
+                document.getElementById('projects-empty').classList.remove('d-none');
             } finally {
                 document.getElementById('projects-loading').classList.add('d-none');
             }
@@ -528,6 +531,7 @@
                 renderPostsTable(postsData);
             } catch (err) {
                 showAlert('posts-alert', 'Error al cargar los artículos: ' + err.message, 'danger');
+                document.getElementById('posts-empty').classList.remove('d-none');
             } finally {
                 document.getElementById('posts-loading').classList.add('d-none');
             }
@@ -661,13 +665,6 @@
             }
         }
 
-        // Load data when auth is already valid on page load
-        if (sessionStorage.getItem(ADMIN_KEY) === '1') {
-            document.addEventListener('DOMContentLoaded', () => {
-                loadProjects();
-                loadPosts();
-            });
-        }
     </script>
 </body>
 </html>
