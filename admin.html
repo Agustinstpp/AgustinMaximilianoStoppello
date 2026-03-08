@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Agustín Stoppello</title>
+    <link rel="icon" href="imag/Logo sin fondo.PNG" type="image/x-icon">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .admin-badge { font-size: 0.7rem; }
+        .table td { vertical-align: middle; }
+        .tech-badge { font-size: 0.75rem; }
+        #login-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,.6);
+            z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Login overlay -->
+    <div id="login-overlay">
+        <div class="card shadow-lg" style="width: 340px;">
+            <div class="card-body p-4">
+                <h4 class="card-title mb-1 text-center">
+                    <i class="fas fa-lock me-2 text-primary"></i>Panel Admin
+                </h4>
+                <p class="text-muted text-center small mb-3">Ingresá la contraseña para continuar.</p>
+                <div id="login-error" class="alert alert-danger d-none py-2 small">Contraseña incorrecta.</div>
+                <input type="password" id="admin-password" class="form-control mb-3" placeholder="Contraseña" autocomplete="current-password">
+                <button class="btn btn-primary w-100" onclick="adminLogin()">
+                    <i class="fas fa-sign-in-alt me-1"></i>Ingresar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid py-4 px-4" id="admin-content" style="display:none;">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-0">
+                    <i class="fas fa-cogs me-2 text-primary"></i>Panel de Administración
+                </h1>
+                <small class="text-muted">Gestión de proyectos y blog</small>
+            </div>
+            <div class="d-flex gap-2 align-items-center">
+                <a href="Index.html" class="btn btn-outline-secondary btn-sm">
+                    <i class="fas fa-external-link-alt me-1"></i>Ver sitio
+                </a>
+                <button class="btn btn-outline-danger btn-sm" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt me-1"></i>Salir
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs mb-4" id="adminTabs">
+            <li class="nav-item">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-projects">
+                    <i class="fas fa-folder me-1"></i>Proyectos
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-posts">
+                    <i class="fas fa-newspaper me-1"></i>Blog
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            <!-- ═══════════ PROJECTS TAB ═══════════ -->
+            <div class="tab-pane fade show active" id="tab-projects">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Proyectos</h5>
+                    <button class="btn btn-primary btn-sm" onclick="openProjectModal()">
+                        <i class="fas fa-plus me-1"></i>Nuevo proyecto
+                    </button>
+                </div>
+
+                <div id="projects-alert"></div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <div id="projects-loading" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive d-none" id="projects-table-wrap">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:40px">#</th>
+                                        <th>Título</th>
+                                        <th>Categoría</th>
+                                        <th>Tecnologías</th>
+                                        <th style="width:80px" class="text-center">Destacado</th>
+                                        <th style="width:120px" class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projects-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div id="projects-empty" class="text-center text-muted py-5 d-none">
+                            <i class="fas fa-folder-open fa-3x mb-2 opacity-50"></i>
+                            <p>No hay proyectos cargados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════ POSTS TAB ═══════════ -->
+            <div class="tab-pane fade" id="tab-posts">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0">Artículos del Blog</h5>
+                    <button class="btn btn-primary btn-sm" onclick="openPostModal()">
+                        <i class="fas fa-plus me-1"></i>Nuevo artículo
+                    </button>
+                </div>
+
+                <div id="posts-alert"></div>
+
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-0">
+                        <div id="posts-loading" class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Cargando...</span>
+                            </div>
+                        </div>
+                        <div class="table-responsive d-none" id="posts-table-wrap">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="width:40px">#</th>
+                                        <th>Título</th>
+                                        <th>Autor</th>
+                                        <th>Fecha</th>
+                                        <th style="width:120px" class="text-end">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="posts-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div id="posts-empty" class="text-center text-muted py-5 d-none">
+                            <i class="fas fa-newspaper fa-3x mb-2 opacity-50"></i>
+                            <p>No hay artículos publicados.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ PROJECT MODAL ═══════════ -->
+    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectModalLabel">Proyecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="project-form-alert"></div>
+                    <form id="project-form" novalidate>
+                        <input type="hidden" id="project-id">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
+                                <input type="text" id="project-title" class="form-control" placeholder="Ej: LlegaRapido" required>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-semibold">Categoría</label>
+                                <input type="text" id="project-category" class="form-control" placeholder="Ej: UX/UI">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Descripción <span class="text-danger">*</span></label>
+                                <textarea id="project-description" class="form-control" rows="3" placeholder="Descripción del proyecto..." required></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Tecnologías</label>
+                                <input type="text" id="project-technologies" class="form-control" placeholder="Figma, HTML, CSS, Bootstrap (separadas por coma)">
+                                <div class="form-text">Separalas con coma.</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">URL de imagen</label>
+                                <input type="text" id="project-image-url" class="form-control" placeholder="/imag/mi-imagen.jpg">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">URL del proyecto</label>
+                                <input type="text" id="project-url" class="form-control" placeholder="/Proyects/MiProyecto.html">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">URL de GitHub</label>
+                                <input type="text" id="project-github-url" class="form-control" placeholder="https://github.com/usuario/repo">
+                            </div>
+                            <div class="col-md-6 d-flex align-items-end">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="project-featured">
+                                    <label class="form-check-label fw-semibold" for="project-featured">
+                                        Proyecto destacado
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="project-save-btn" onclick="saveProject()">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ POST MODAL ═══════════ -->
+    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="postModalLabel">Artículo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="post-form-alert"></div>
+                    <form id="post-form" novalidate>
+                        <input type="hidden" id="post-id">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
+                                <input type="text" id="post-title" class="form-control" placeholder="Título del artículo" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Autor</label>
+                                <input type="text" id="post-author" class="form-control" placeholder="Agustín Stoppello" value="Agustín Stoppello">
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Contenido <span class="text-danger">*</span></label>
+                                <textarea id="post-content" class="form-control" rows="8" placeholder="Contenido del artículo..." required></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="post-save-btn" onclick="savePost()">
+                        <i class="fas fa-save me-1"></i>Guardar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ CONFIRM DELETE MODAL ═══════════ -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title text-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmar eliminación
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="confirm-message">
+                    ¿Estás seguro de que querés eliminar este elemento? Esta acción no se puede deshacer.
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">
+                        <i class="fas fa-trash me-1"></i>Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── Auth ─────────────────────────────────────────────────────────────────
+        const ADMIN_KEY = 'admin_authenticated';
+        // NOTE: This is a client-side convenience check only.
+        // For production, protect this page using Netlify's built-in
+        // "Password protection" feature (Site settings → Access control → Password protection).
+        // That enforces auth at the CDN level before the page is served.
+        const ADMIN_PASSWORD = 'admin2025';
+
+        function adminLogin() {
+            const pw = document.getElementById('admin-password').value;
+            if (pw === ADMIN_PASSWORD) {
+                sessionStorage.setItem(ADMIN_KEY, '1');
+                document.getElementById('login-overlay').style.display = 'none';
+                document.getElementById('admin-content').style.display = '';
+                loadProjects();
+                loadPosts();
+            } else {
+                document.getElementById('login-error').classList.remove('d-none');
+                document.getElementById('admin-password').focus();
+            }
+        }
+
+        function adminLogout() {
+            sessionStorage.removeItem(ADMIN_KEY);
+            location.reload();
+        }
+
+        document.getElementById('admin-password').addEventListener('keydown', e => {
+            if (e.key === 'Enter') adminLogin();
+        });
+
+        // Auto-unlock if already authenticated this session
+        if (sessionStorage.getItem(ADMIN_KEY) === '1') {
+            document.getElementById('login-overlay').style.display = 'none';
+            document.getElementById('admin-content').style.display = '';
+        }
+
+        // ─── Helpers ──────────────────────────────────────────────────────────────
+        function escapeHtml(text) {
+            const d = document.createElement('div');
+            d.textContent = text || '';
+            return d.innerHTML;
+        }
+
+        function showAlert(containerId, message, type = 'success') {
+            const el = document.getElementById(containerId);
+            el.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show py-2" role="alert">
+                ${escapeHtml(message)}
+                <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+            </div>`;
+        }
+
+        function clearAlert(containerId) {
+            document.getElementById(containerId).innerHTML = '';
+        }
+
+        // ─── Projects ─────────────────────────────────────────────────────────────
+        let projectModalInstance = null;
+        let projectsData = [];
+
+        async function loadProjects() {
+            document.getElementById('projects-loading').classList.remove('d-none');
+            document.getElementById('projects-table-wrap').classList.add('d-none');
+            document.getElementById('projects-empty').classList.add('d-none');
+
+            try {
+                const res = await fetch('/api/get-projects');
+                const data = await res.json();
+                projectsData = data.projects || [];
+                renderProjectsTable(projectsData);
+            } catch (err) {
+                showAlert('projects-alert', 'Error al cargar los proyectos: ' + err.message, 'danger');
+            } finally {
+                document.getElementById('projects-loading').classList.add('d-none');
+            }
+        }
+
+        function renderProjectsTable(projects) {
+            if (!projects.length) {
+                document.getElementById('projects-empty').classList.remove('d-none');
+                return;
+            }
+            document.getElementById('projects-table-wrap').classList.remove('d-none');
+            document.getElementById('projects-tbody').innerHTML = projects.map(p => `
+                <tr>
+                    <td class="text-muted small">${p.id}</td>
+                    <td>
+                        <div class="fw-semibold">${escapeHtml(p.title)}</div>
+                        <div class="text-muted small text-truncate" style="max-width:300px">${escapeHtml(p.description)}</div>
+                    </td>
+                    <td><span class="badge bg-secondary admin-badge">${escapeHtml(p.category || '—')}</span></td>
+                    <td>
+                        ${(p.technologies || []).map(t => `<span class="badge bg-light text-dark border tech-badge me-1">${escapeHtml(t)}</span>`).join('')}
+                    </td>
+                    <td class="text-center">
+                        ${p.featured
+                            ? '<i class="fas fa-star text-warning" title="Destacado"></i>'
+                            : '<i class="far fa-star text-muted" title="No destacado"></i>'}
+                    </td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-primary btn-sm me-1" onclick="openProjectModal(${p.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="confirmDeleteProject(${p.id})" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openProjectModal(id) {
+            clearAlert('project-form-alert');
+            document.getElementById('project-form').reset();
+            document.getElementById('project-id').value = '';
+
+            if (id) {
+                const p = projectsData.find(x => x.id === id);
+                if (!p) return;
+                document.getElementById('projectModalLabel').textContent = 'Editar proyecto';
+                document.getElementById('project-id').value = p.id;
+                document.getElementById('project-title').value = p.title || '';
+                document.getElementById('project-category').value = p.category || '';
+                document.getElementById('project-description').value = p.description || '';
+                document.getElementById('project-technologies').value = (p.technologies || []).join(', ');
+                document.getElementById('project-image-url').value = p.image_url || '';
+                document.getElementById('project-url').value = p.project_url || '';
+                document.getElementById('project-github-url').value = p.github_url || '';
+                document.getElementById('project-featured').checked = !!p.featured;
+            } else {
+                document.getElementById('projectModalLabel').textContent = 'Nuevo proyecto';
+            }
+
+            projectModalInstance = projectModalInstance || new bootstrap.Modal(document.getElementById('projectModal'));
+            projectModalInstance.show();
+        }
+
+        async function saveProject() {
+            clearAlert('project-form-alert');
+            const id = document.getElementById('project-id').value;
+            const title = document.getElementById('project-title').value.trim();
+            const description = document.getElementById('project-description').value.trim();
+
+            if (!title || !description) {
+                showAlert('project-form-alert', 'El título y la descripción son obligatorios.', 'danger');
+                return;
+            }
+
+            const payload = {
+                title,
+                description,
+                technologies: document.getElementById('project-technologies').value,
+                image_url: document.getElementById('project-image-url').value.trim(),
+                project_url: document.getElementById('project-url').value.trim(),
+                github_url: document.getElementById('project-github-url').value.trim(),
+                category: document.getElementById('project-category').value.trim(),
+                featured: document.getElementById('project-featured').checked
+            };
+
+            const btn = document.getElementById('project-save-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
+
+            try {
+                let res;
+                if (id) {
+                    payload.id = parseInt(id, 10);
+                    res = await fetch('/api/update-project', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    res = await fetch('/api/create-project', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error desconocido');
+
+                projectModalInstance.hide();
+                showAlert('projects-alert', id ? 'Proyecto actualizado correctamente.' : 'Proyecto creado correctamente.');
+                loadProjects();
+            } catch (err) {
+                showAlert('project-form-alert', 'Error: ' + err.message, 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-1"></i>Guardar';
+            }
+        }
+
+        function confirmDeleteProject(id) {
+            const p = projectsData.find(x => x.id === id);
+            const title = p ? p.title : String(id);
+            document.getElementById('confirm-message').textContent =
+                `¿Eliminar el proyecto "${title}"? Esta acción no se puede deshacer.`;
+            const btn = document.getElementById('confirm-delete-btn');
+            // Remove previous listener before adding new one
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', async () => {
+                await deleteProject(id);
+                bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+            });
+            new bootstrap.Modal(document.getElementById('confirmModal')).show();
+        }
+
+        async function deleteProject(id) {
+            try {
+                const res = await fetch('/api/delete-project', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error desconocido');
+                showAlert('projects-alert', 'Proyecto eliminado correctamente.');
+                loadProjects();
+            } catch (err) {
+                showAlert('projects-alert', 'Error al eliminar: ' + err.message, 'danger');
+            }
+        }
+
+        // ─── Posts ────────────────────────────────────────────────────────────────
+        let postModalInstance = null;
+        let postsData = [];
+
+        async function loadPosts() {
+            document.getElementById('posts-loading').classList.remove('d-none');
+            document.getElementById('posts-table-wrap').classList.add('d-none');
+            document.getElementById('posts-empty').classList.add('d-none');
+
+            try {
+                const res = await fetch('/api/get-posts');
+                const data = await res.json();
+                postsData = data.posts || [];
+                renderPostsTable(postsData);
+            } catch (err) {
+                showAlert('posts-alert', 'Error al cargar los artículos: ' + err.message, 'danger');
+            } finally {
+                document.getElementById('posts-loading').classList.add('d-none');
+            }
+        }
+
+        function renderPostsTable(posts) {
+            if (!posts.length) {
+                document.getElementById('posts-empty').classList.remove('d-none');
+                return;
+            }
+            document.getElementById('posts-table-wrap').classList.remove('d-none');
+            document.getElementById('posts-tbody').innerHTML = posts.map(p => `
+                <tr>
+                    <td class="text-muted small">${p.id}</td>
+                    <td>
+                        <div class="fw-semibold">${escapeHtml(p.title)}</div>
+                        <div class="text-muted small text-truncate" style="max-width:320px">${escapeHtml(p.content)}</div>
+                    </td>
+                    <td>${escapeHtml(p.author)}</td>
+                    <td class="text-muted small">${new Date(p.created_at).toLocaleDateString('es-AR')}</td>
+                    <td class="text-end">
+                        <button class="btn btn-outline-primary btn-sm me-1" onclick="openPostModal(${p.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm" onclick="confirmDeletePost(${p.id})" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openPostModal(id) {
+            clearAlert('post-form-alert');
+            document.getElementById('post-form').reset();
+            document.getElementById('post-id').value = '';
+            document.getElementById('post-author').value = 'Agustín Stoppello';
+
+            if (id) {
+                const p = postsData.find(x => x.id === id);
+                if (!p) return;
+                document.getElementById('postModalLabel').textContent = 'Editar artículo';
+                document.getElementById('post-id').value = p.id;
+                document.getElementById('post-title').value = p.title || '';
+                document.getElementById('post-author').value = p.author || 'Agustín Stoppello';
+                document.getElementById('post-content').value = p.content || '';
+            } else {
+                document.getElementById('postModalLabel').textContent = 'Nuevo artículo';
+            }
+
+            postModalInstance = postModalInstance || new bootstrap.Modal(document.getElementById('postModal'));
+            postModalInstance.show();
+        }
+
+        async function savePost() {
+            clearAlert('post-form-alert');
+            const id = document.getElementById('post-id').value;
+            const title = document.getElementById('post-title').value.trim();
+            const content = document.getElementById('post-content').value.trim();
+            const author = document.getElementById('post-author').value.trim() || 'Agustín Stoppello';
+
+            if (!title || !content) {
+                showAlert('post-form-alert', 'El título y el contenido son obligatorios.', 'danger');
+                return;
+            }
+
+            const payload = { title, content, author };
+            const btn = document.getElementById('post-save-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
+
+            try {
+                let res;
+                if (id) {
+                    payload.id = parseInt(id, 10);
+                    res = await fetch('/api/update-post', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                } else {
+                    res = await fetch('/api/create-post', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                }
+
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error desconocido');
+
+                postModalInstance.hide();
+                showAlert('posts-alert', id ? 'Artículo actualizado correctamente.' : 'Artículo creado correctamente.');
+                loadPosts();
+            } catch (err) {
+                showAlert('post-form-alert', 'Error: ' + err.message, 'danger');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save me-1"></i>Guardar';
+            }
+        }
+
+        function confirmDeletePost(id) {
+            const p = postsData.find(x => x.id === id);
+            const title = p ? p.title : String(id);
+            document.getElementById('confirm-message').textContent =
+                `¿Eliminar el artículo "${title}"? Esta acción no se puede deshacer.`;
+            const btn = document.getElementById('confirm-delete-btn');
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            newBtn.addEventListener('click', async () => {
+                await deletePost(id);
+                bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
+            });
+            new bootstrap.Modal(document.getElementById('confirmModal')).show();
+        }
+
+        async function deletePost(id) {
+            try {
+                const res = await fetch('/api/delete-post', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Error desconocido');
+                showAlert('posts-alert', 'Artículo eliminado correctamente.');
+                loadPosts();
+            } catch (err) {
+                showAlert('posts-alert', 'Error al eliminar: ' + err.message, 'danger');
+            }
+        }
+
+        // Load data when auth is already valid on page load
+        if (sessionStorage.getItem(ADMIN_KEY) === '1') {
+            document.addEventListener('DOMContentLoaded', () => {
+                loadProjects();
+                loadPosts();
+            });
+        }
+    </script>
+</body>
+</html>
