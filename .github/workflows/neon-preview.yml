@@ -29,11 +29,11 @@ jobs:
       db_url: ${{ steps.create_neon_branch.outputs.db_url }}
       db_url_with_pooler: ${{ steps.create_neon_branch.outputs.db_url_with_pooler }}
     needs: setup
-    # Corregido: Quitamos 'synchronize' para que no intente crear una rama que ya existe
     if: |
       github.event_name == 'pull_request' && (
       github.event.action == 'opened'
-      || github.event.action == 'reopened')
+      || github.event.action == 'reopened'
+      || github.event.action == 'synchronize')
     runs-on: ubuntu-latest
     steps:
       - name: Create Neon Branch
@@ -44,6 +44,7 @@ jobs:
           branch_name: preview/pr-${{ github.event.number }}-${{ needs.setup.outputs.branch }}
           api_key: ${{ secrets.NEON_API_KEY }}
           username: postgres
+          reset: true
 
   delete_neon_branch:
     name: Delete Neon Branch
