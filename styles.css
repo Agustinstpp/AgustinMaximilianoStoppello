@@ -121,3 +121,28 @@
     max-width: 180px;
   }
 }
+
+/* Mobile menu button positioning */
+#mobile-menu {
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Project card image consistent height */
+.project-card-img {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Active nav link */
+.buttons-container .btn.active {
+  background-color: #0d6efd;
+  color: #fff !important;
+}
+
+/* Blog post content spacing */
+.blog-post h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
