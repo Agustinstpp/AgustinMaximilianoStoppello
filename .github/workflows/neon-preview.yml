@@ -24,10 +24,6 @@ jobs:
 
   create_neon_branch:
     name: Create Neon Branch
-    outputs:
-      # Corregido: el ID ahora coincide con el paso real
-      db_url: ${{ steps.create_neon_branch.outputs.db_url }}
-      db_url_with_pooler: ${{ steps.create_neon_branch.outputs.db_url_with_pooler }}
     needs: setup
     if: |
       github.event_name == 'pull_request' && (
@@ -36,15 +32,94 @@ jobs:
       || github.event.action == 'synchronize')
     runs-on: ubuntu-latest
     steps:
-      - name: Create Neon Branch
-        id: create_neon_branch
-        uses: neondatabase/create-branch-action@v5
-        with:
-          project_id: ${{ vars.NEON_PROJECT_ID }}
-          branch_name: preview/pr-${{ github.event.number }}-${{ needs.setup.outputs.branch }}
-          api_key: ${{ secrets.NEON_API_KEY }}
-          username: postgres
-          reset: true
+      - name: Ensure Neon branch exists
+        id: ensure_branch
+        shell: bash
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          BRANCH_NAME: preview/pr-${{ github.event.number }}-${{ needs.setup.outputs.branch }}
+        run: |
+          set -euo pipefail
+
+          create_status=$(curl -sS -o /tmp/neon_create_branch.json -w "%{http_code}" \
+            -X POST "https://console.neon.tech/api/v2/projects/${NEON_PROJECT_ID}/branches" \
+            -H "Authorization: Bearer ${NEON_API_KEY}" \
+            -H "Content-Type: application/json" \
+            -d "{\"branch\":{\"name\":\"${BRANCH_NAME}\"}}")
+
+          if [ "${create_status}" != "200" ] && [ "${create_status}" != "201" ] && [ "${create_status}" != "409" ]; then
+            echo "Error al crear rama Neon. HTTP ${create_status}"
+            cat /tmp/neon_create_branch.json
+            exit 1
+          fi
+
+          if [ "${create_status}" = "409" ]; then
+            echo "La rama ya existe en Neon, se reutiliza: ${BRANCH_NAME}"
+          else
+            echo "Rama creada/actualizada en Neon: ${BRANCH_NAME}"
+          fi
+
+          curl -sS "https://console.neon.tech/api/v2/projects/${NEON_PROJECT_ID}/branches" \
+            -H "Authorization: Bearer ${NEON_API_KEY}" > /tmp/neon_branches.json
+
+          branch_id=$(jq -r --arg name "${BRANCH_NAME}" '.branches[] | select(.name == $name) | .id' /tmp/neon_branches.json | head -n1)
+
+          if [ -z "${branch_id}" ] || [ "${branch_id}" = "null" ]; then
+            echo "No se pudo resolver branch_id para: ${BRANCH_NAME}"
+            cat /tmp/neon_branches.json
+            exit 1
+          fi
+
+          echo "branch_id=${branch_id}" >> "$GITHUB_OUTPUT"
+
+      - name: Ensure postgres role exists in Neon branch
+        id: ensure_postgres_role
+        shell: bash
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          BRANCH_ID: ${{ steps.ensure_branch.outputs.branch_id }}
+        run: |
+          set -euo pipefail
+
+          curl -sS "https://console.neon.tech/api/v2/projects/${NEON_PROJECT_ID}/branches/${BRANCH_ID}/roles" \
+            -H "Authorization: Bearer ${NEON_API_KEY}" > /tmp/neon_roles.json
+
+          role_exists=$(jq -r '.roles[]?.name' /tmp/neon_roles.json | grep -x "postgres" || true)
+
+          if [ -z "${role_exists}" ]; then
+            echo "El rol postgres no existe en la rama ${BRANCH_ID}, creando..."
+            create_role_status=$(curl -sS -o /tmp/neon_create_role.json -w "%{http_code}" \
+              -X POST "https://console.neon.tech/api/v2/projects/${NEON_PROJECT_ID}/branches/${BRANCH_ID}/roles" \
+              -H "Authorization: Bearer ${NEON_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d '{"role":{"name":"postgres"}}')
+
+            if [ "${create_role_status}" != "200" ] && [ "${create_role_status}" != "201" ] && [ "${create_role_status}" != "409" ]; then
+              echo "No se pudo crear el rol postgres. HTTP ${create_role_status}"
+              cat /tmp/neon_create_role.json
+              exit 1
+            fi
+
+            echo "Rol postgres creado (o ya existente por condición de carrera)."
+            echo "role_status=created" >> "$GITHUB_OUTPUT"
+          else
+            echo "El rol postgres ya existe en la rama ${BRANCH_ID}."
+            echo "role_status=already_exists" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Neon branch summary
+        shell: bash
+        env:
+          BRANCH_NAME: preview/pr-${{ github.event.number }}-${{ needs.setup.outputs.branch }}
+          BRANCH_ID: ${{ steps.ensure_branch.outputs.branch_id }}
+          ROLE_STATUS: ${{ steps.ensure_postgres_role.outputs.role_status }}
+        run: |
+          echo "Neon preview summary:"
+          echo "- branch_name: ${BRANCH_NAME}"
+          echo "- branch_id: ${BRANCH_ID}"
+          echo "- postgres_role: ${ROLE_STATUS}"
 
   delete_neon_branch:
     name: Delete Neon Branch
