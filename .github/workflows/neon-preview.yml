@@ -48,13 +48,15 @@ jobs:
             -H "Content-Type: application/json" \
             -d "{\"branch\":{\"name\":\"${BRANCH_NAME}\"}}")
 
-          if [ "${create_status}" != "200" ] && [ "${create_status}" != "201" ] && [ "${create_status}" != "409" ]; then
+          branch_already_exists=$(jq -r '.. | .message? // empty' /tmp/neon_create_branch.json | grep -i "already exists" || true)
+
+          if [ "${create_status}" != "200" ] && [ "${create_status}" != "201" ] && [ "${create_status}" != "409" ] && [ -z "${branch_already_exists}" ]; then
             echo "Error al crear rama Neon. HTTP ${create_status}"
             cat /tmp/neon_create_branch.json
             exit 1
           fi
 
-          if [ "${create_status}" = "409" ]; then
+          if [ "${create_status}" = "409" ] || [ -n "${branch_already_exists}" ]; then
             echo "La rama ya existe en Neon, se reutiliza: ${BRANCH_NAME}"
           else
             echo "Rama creada/actualizada en Neon: ${BRANCH_NAME}"
@@ -96,7 +98,9 @@ jobs:
               -H "Content-Type: application/json" \
               -d '{"role":{"name":"postgres"}}')
 
-            if [ "${create_role_status}" != "200" ] && [ "${create_role_status}" != "201" ] && [ "${create_role_status}" != "409" ]; then
+            role_already_exists=$(jq -r '.. | .message? // empty' /tmp/neon_create_role.json | grep -i "already exists" || true)
+
+            if [ "${create_role_status}" != "200" ] && [ "${create_role_status}" != "201" ] && [ "${create_role_status}" != "409" ] && [ -z "${role_already_exists}" ]; then
               echo "No se pudo crear el rol postgres. HTTP ${create_role_status}"
               cat /tmp/neon_create_role.json
               exit 1
