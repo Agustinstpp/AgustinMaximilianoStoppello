@@ -146,3 +146,47 @@
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
 }
+
+/* Blog card responsive styles */
+#blog-posts-container .card-title {
+  font-size: 1rem;
+}
+
+@media (max-width: 575.98px) {
+  /* On very small screens, reduce content padding */
+  .col-md-8.col-lg-9 .bg-white {
+    padding: 1rem !important;
+  }
+  .col-md-8.col-lg-9 .bg-white h1 {
+    font-size: 1.5rem;
+  }
+  /* Ensure modal is full-width on mobile */
+  .modal-dialog.modal-lg {
+    margin: 0.5rem;
+  }
+  /* Blog cards: reduce gap on xs */
+  .row.g-4 {
+    --bs-gutter-y: 1rem;
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767.98px) {
+  #blog-posts-container .card-title {
+    font-size: 1.05rem;
+  }
+}
+
+/* Admin panel responsive improvements */
+@media (max-width: 767.98px) {
+  /* Make admin action buttons smaller */
+  #admin-content .table .btn-sm {
+    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+  }
+  /* Wrap admin tab nav so it scrolls on small screens */
+  #adminTabs {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
