@@ -4,15 +4,15 @@
   "description": "Portfolio website with database integration",
   "main": "index.html",
   "scripts": {
-    "dev": "netlify dev",
+    "dev": "vercel dev",
     "build": "echo 'Static site - no build needed'",
-    "deploy": "netlify deploy --prod",
+    "deploy": "vercel --prod",
     "server": "node server.js",
     "start": "node server.js"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.9.5",
-    "@netlify/functions": "^2.4.1",
+    "@supabase/supabase-js": "^2.45.4",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
@@ -20,6 +20,6 @@
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "netlify-cli": "^17.10.1"
+    "vercel": "^37.4.0"
   }
 }

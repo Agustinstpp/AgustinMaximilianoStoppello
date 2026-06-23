@@ -6,7 +6,19 @@ const morgan = require('morgan');
 const { neon } = require('@neondatabase/serverless');
 
 const app = express();
-const sql = neon(process.env.DATABASE_URL);
+let sqlClient;
+
+function getSql() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error('DATABASE_URL environment variable is not configured');
+  }
+
+  if (!sqlClient) {
+    sqlClient = neon(process.env.DATABASE_URL);
+  }
+
+  return sqlClient;
+}
 
 // Middleware
 app.use(helmet());
@@ -18,6 +30,7 @@ app.use(express.urlencoded({ extended: true }));
 // Health check endpoint
 app.get('/health', async (req, res) => {
   try {
+    const sql = getSql();
     await sql`SELECT 1`;
     res.json({ 
       status: 'ok', 
@@ -36,6 +49,7 @@ app.get('/health', async (req, res) => {
 // Database version endpoint
 app.get('/', async (req, res) => {
   try {
+    const sql = getSql();
     const result = await sql`SELECT version()`;
     const { version } = result[0];
     res.json({ 
@@ -55,6 +69,7 @@ app.get('/', async (req, res) => {
 // Projects API routes
 app.get('/api/projects', async (req, res) => {
   try {
+    const sql = getSql();
     const { category, featured, limit = 10, offset = 0 } = req.query;
     let query = sql`SELECT * FROM projects`;
     
@@ -77,6 +92,7 @@ app.get('/api/projects', async (req, res) => {
 
 app.get('/api/projects/:id', async (req, res) => {
   try {
+    const sql = getSql();
     const { id } = req.params;
     const result = await sql`SELECT * FROM projects WHERE id = ${id}`;
     
@@ -92,6 +108,7 @@ app.get('/api/projects/:id', async (req, res) => {
 
 app.post('/api/projects', async (req, res) => {
   try {
+    const sql = getSql();
     const { title, description, technologies, image_url, project_url, github_url, category, featured } = req.body;
     
     if (!title || !description) {
@@ -112,6 +129,7 @@ app.post('/api/projects', async (req, res) => {
 
 app.put('/api/projects/:id', async (req, res) => {
   try {
+    const sql = getSql();
     const { id } = req.params;
     const { title, description, technologies, image_url, project_url, github_url, category, featured } = req.body;
     
@@ -143,6 +161,7 @@ app.put('/api/projects/:id', async (req, res) => {
 
 app.delete('/api/projects/:id', async (req, res) => {
   try {
+    const sql = getSql();
     const { id } = req.params;
     const result = await sql`DELETE FROM projects WHERE id = ${id} RETURNING *`;
     
@@ -159,6 +178,7 @@ app.delete('/api/projects/:id', async (req, res) => {
 // Todos API routes
 app.get('/api/todos', async (req, res) => {
   try {
+    const sql = getSql();
     const { completed, limit = 10, offset = 0 } = req.query;
     let query = sql`SELECT * FROM todos`;
     
@@ -177,6 +197,7 @@ app.get('/api/todos', async (req, res) => {
 
 app.get('/api/todos/:id', async (req, res) => {
   try {
+    const sql = getSql();
     const { id } = req.params;
     const result = await sql`SELECT * FROM todos WHERE id = ${id}`;
     
@@ -192,6 +213,7 @@ app.get('/api/todos/:id', async (req, res) => {
 
 app.post('/api/todos', async (req, res) => {
   try {
+    const sql = getSql();
     const { task, is_completed } = req.body;
     
     if (!task) {
@@ -212,6 +234,7 @@ app.post('/api/todos', async (req, res) => {
 
 app.put('/api/todos/:id', async (req, res) => {
   try {
+    const sql = getSql();
     const { id } = req.params;
     const { task, is_completed } = req.body;
     
@@ -237,6 +260,7 @@ app.put('/api/todos/:id', async (req, res) => {
 
 app.delete('/api/todos/:id', async (req, res) => {
   try {
+    const sql = getSql();
     const { id } = req.params;
     const result = await sql`DELETE FROM todos WHERE id = ${id} RETURNING *`;
     
@@ -264,19 +288,23 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 4000;
 const HOST = process.env.HOST || 'localhost';
 
-app.listen(PORT, HOST, () => {
-  console.log(`Server running at http://${HOST}:${PORT}`);
-  console.log('Available endpoints:');
-  console.log('  GET / - PostgreSQL version and API info');
-  console.log('  GET /health - Health check with database status');
-  console.log('  GET /api/projects - List projects (with filtering)');
-  console.log('  POST /api/projects - Create new project');
-  console.log('  GET /api/projects/:id - Get single project');
-  console.log('  PUT /api/projects/:id - Update project');
-  console.log('  DELETE /api/projects/:id - Delete project');
-  console.log('  GET /api/todos - List todos (with filtering)');
-  console.log('  POST /api/todos - Create new todo');
-  console.log('  GET /api/todos/:id - Get single todo');
-  console.log('  PUT /api/todos/:id - Update todo');
-  console.log('  DELETE /api/todos/:id - Delete todo');
-});
+if (require.main === module) {
+  app.listen(PORT, HOST, () => {
+    console.log(`Server running at http://${HOST}:${PORT}`);
+    console.log('Available endpoints:');
+    console.log('  GET / - PostgreSQL version and API info');
+    console.log('  GET /health - Health check with database status');
+    console.log('  GET /api/projects - List projects (with filtering)');
+    console.log('  POST /api/projects - Create new project');
+    console.log('  GET /api/projects/:id - Get single project');
+    console.log('  PUT /api/projects/:id - Update project');
+    console.log('  DELETE /api/projects/:id - Delete project');
+    console.log('  GET /api/todos - List todos (with filtering)');
+    console.log('  POST /api/todos - Create new todo');
+    console.log('  GET /api/todos/:id - Get single todo');
+    console.log('  PUT /api/todos/:id - Update todo');
+    console.log('  DELETE /api/todos/:id - Delete todo');
+  });
+}
+
+module.exports = app;

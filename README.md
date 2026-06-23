@@ -4,7 +4,7 @@ Este repositorio contiene el código de mi portafolio personal como Diseñador U
 
 El proyecto fue desarrollado como parte del curso de **Diseño Web** de **Folcademy**, en colaboración con **MuniJoven Corrientes**.
 
-🔗 **Sitio en vivo:** [**https://agustinstoppello.netlify.app/**](https://agustinstoppello.netlify.app/)
+🔗 **Sitio en vivo:** desplegado con Vercel.
 
 ## ✨ Características Principales
 

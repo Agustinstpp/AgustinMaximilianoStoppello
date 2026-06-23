@@ -1,4 +1,4 @@
-// Client-side database utility for interacting with Netlify Functions
+// Client-side database utility for interacting with Vercel Functions
 
 class DatabaseClient {
   constructor(baseUrl = '') {
