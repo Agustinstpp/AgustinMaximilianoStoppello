@@ -1,0 +1,523 @@
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+};
+
+function jsonResponse(data, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: {
+      'Content-Type': 'application/json; charset=utf-8',
+      ...CORS_HEADERS,
+    },
+  });
+}
+
+function methodNotAllowed() {
+  return jsonResponse({ error: 'Method not allowed' }, 405);
+}
+
+async function readJsonBody(request) {
+  try {
+    const text = await request.text();
+    if (!text) return {};
+    return JSON.parse(text);
+  } catch {
+    return {};
+  }
+}
+
+function parseTechnologiesInput(technologies) {
+  if (Array.isArray(technologies)) {
+    return technologies.map((t) => String(t).trim()).filter(Boolean);
+  }
+  if (typeof technologies === 'string') {
+    const trimmed = technologies.trim();
+    if (!trimmed) return [];
+    try {
+      const parsed = JSON.parse(trimmed);
+      if (Array.isArray(parsed)) return parsed.map((t) => String(t).trim()).filter(Boolean);
+    } catch {
+      // Fallback to comma-separated list
+    }
+    return trimmed
+      .split(',')
+      .map((t) => t.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+function formatProject(row) {
+  if (!row) return null;
+  return {
+    ...row,
+    technologies: parseTechnologiesInput(row.technologies),
+    featured: Boolean(row.featured),
+  };
+}
+
+function formatTodo(row) {
+  if (!row) return null;
+  return {
+    ...row,
+    is_completed: Boolean(row.is_completed),
+  };
+}
+
+// ─── Health ───────────────────────────────────────────────────────────────────
+
+async function handleHealth(env) {
+  try {
+    await env.DB.prepare('SELECT 1 AS ok').first();
+    return jsonResponse({
+      status: 'ok',
+      database: 'connected',
+      engine: 'cloudflare-d1',
+      timestamp: new Date().toISOString(),
+    });
+  } catch (error) {
+    return jsonResponse(
+      {
+        status: 'error',
+        database: 'disconnected',
+        error: error.message,
+      },
+      500
+    );
+  }
+}
+
+// ─── Projects Handlers ────────────────────────────────────────────────────────
+
+async function getProjects(url, env, restFormat = false) {
+  const category = url.searchParams.get('category');
+  const featured = url.searchParams.get('featured');
+  const limitParam = url.searchParams.get('limit');
+  const offsetParam = url.searchParams.get('offset');
+
+  const conditions = [];
+  const params = [];
+
+  if (category) {
+    conditions.push('category = ?');
+    params.push(category);
+  }
+  if (featured !== null && featured !== undefined && featured !== '') {
+    conditions.push('featured = ?');
+    params.push(featured === 'true' || featured === '1' ? 1 : 0);
+  }
+
+  let query = 'SELECT * FROM projects';
+  if (conditions.length > 0) {
+    query += ` WHERE ${conditions.join(' AND ')}`;
+  }
+  query += ' ORDER BY created_at DESC, id DESC';
+
+  if (limitParam) {
+    const limit = Math.max(1, Math.min(100, parseInt(limitParam, 10) || 10));
+    const offset = Math.max(0, parseInt(offsetParam, 10) || 0);
+    query += ' LIMIT ? OFFSET ?';
+    params.push(limit, offset);
+  }
+
+  const { results } = await env.DB.prepare(query).bind(...params).all();
+  const projects = results.map(formatProject);
+  return jsonResponse(restFormat ? projects : { projects });
+}
+
+async function getProject(id, env, restFormat = false) {
+  if (!id) return jsonResponse({ error: 'Project ID is required' }, 400);
+  const row = await env.DB.prepare('SELECT * FROM projects WHERE id = ?').bind(id).first();
+  if (!row) return jsonResponse({ error: 'Project not found' }, 404);
+  const project = formatProject(row);
+  return jsonResponse(restFormat ? project : { project });
+}
+
+async function createProject(request, env, restFormat = false) {
+  const body = await readJsonBody(request);
+  const { title, description, technologies, image_url, project_url, github_url, category, featured } = body;
+
+  if (!title || !description) {
+    return jsonResponse({ error: 'Title and description are required' }, 400);
+  }
+
+  const techJson = JSON.stringify(parseTechnologiesInput(technologies));
+  const isFeatured = featured === true || featured === 'true' || featured === 1 ? 1 : 0;
+
+  const row = await env.DB.prepare(
+    `INSERT INTO projects (title, description, technologies, image_url, project_url, github_url, category, featured)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+     RETURNING *`
+  )
+    .bind(
+      title,
+      description,
+      techJson,
+      image_url || null,
+      project_url || null,
+      github_url || null,
+      category || null,
+      isFeatured
+    )
+    .first();
+
+  const project = formatProject(row);
+  return jsonResponse(restFormat ? project : { project }, 201);
+}
+
+async function updateProject(request, env, paramId = null, restFormat = false) {
+  const body = await readJsonBody(request);
+  const id = paramId || body.id;
+  const { title, description, technologies, image_url, project_url, github_url, category, featured } = body;
+
+  if (!id) return jsonResponse({ error: 'Project ID is required' }, 400);
+  if (!title || !description) {
+    return jsonResponse({ error: 'Title and description are required' }, 400);
+  }
+
+  const techJson = JSON.stringify(parseTechnologiesInput(technologies));
+  const isFeatured = featured === true || featured === 'true' || featured === 1 ? 1 : 0;
+
+  const row = await env.DB.prepare(
+    `UPDATE projects
+     SET title = ?,
+         description = ?,
+         technologies = ?,
+         image_url = ?,
+         project_url = ?,
+         github_url = ?,
+         category = ?,
+         featured = ?,
+         updated_at = datetime('now')
+     WHERE id = ?
+     RETURNING *`
+  )
+    .bind(
+      title,
+      description,
+      techJson,
+      image_url || null,
+      project_url || null,
+      github_url || null,
+      category || null,
+      isFeatured,
+      id
+    )
+    .first();
+
+  if (!row) return jsonResponse({ error: 'Project not found' }, 404);
+  const project = formatProject(row);
+  return jsonResponse(restFormat ? project : { project });
+}
+
+async function deleteProject(request, env, paramId = null) {
+  const body = paramId ? {} : await readJsonBody(request);
+  const id = paramId || body.id;
+  if (!id) return jsonResponse({ error: 'Project ID is required' }, 400);
+
+  const deleted = await env.DB.prepare('DELETE FROM projects WHERE id = ? RETURNING id, title')
+    .bind(id)
+    .first();
+
+  if (!deleted) return jsonResponse({ error: 'Project not found' }, 404);
+  return jsonResponse({ message: 'Proyecto eliminado', id: deleted.id });
+}
+
+// ─── Posts Handlers ───────────────────────────────────────────────────────────
+
+async function getPosts(env, restFormat = false) {
+  const { results } = await env.DB.prepare(
+    'SELECT * FROM posts ORDER BY created_at DESC, id DESC'
+  ).all();
+  return jsonResponse(restFormat ? results : { posts: results });
+}
+
+async function getPost(id, env, restFormat = false) {
+  if (!id) return jsonResponse({ error: 'Post ID is required' }, 400);
+  const post = await env.DB.prepare('SELECT * FROM posts WHERE id = ?').bind(id).first();
+  if (!post) return jsonResponse({ error: 'Post not found' }, 404);
+  return jsonResponse(restFormat ? post : { post });
+}
+
+async function createPost(request, env, restFormat = false) {
+  const { title, content, author } = await readJsonBody(request);
+  if (!title || !content) {
+    return jsonResponse({ error: 'Title and content are required' }, 400);
+  }
+
+  const post = await env.DB.prepare(
+    `INSERT INTO posts (title, content, author)
+     VALUES (?, ?, ?)
+     RETURNING *`
+  )
+    .bind(title, content, author || 'Agustín Stoppello')
+    .first();
+
+  return jsonResponse(restFormat ? post : { post }, 201);
+}
+
+async function updatePost(request, env, paramId = null, restFormat = false) {
+  const body = await readJsonBody(request);
+  const id = paramId || body.id;
+  const { title, content, author } = body;
+
+  if (!id) return jsonResponse({ error: 'Post ID is required' }, 400);
+  if (!title || !content) {
+    return jsonResponse({ error: 'Title and content are required' }, 400);
+  }
+
+  const post = await env.DB.prepare(
+    `UPDATE posts
+     SET title = ?,
+         content = ?,
+         author = ?,
+         updated_at = datetime('now')
+     WHERE id = ?
+     RETURNING *`
+  )
+    .bind(title, content, author || 'Agustín Stoppello', id)
+    .first();
+
+  if (!post) return jsonResponse({ error: 'Post not found' }, 404);
+  return jsonResponse(restFormat ? post : { post });
+}
+
+async function deletePost(request, env, paramId = null) {
+  const body = paramId ? {} : await readJsonBody(request);
+  const id = paramId || body.id;
+  if (!id) return jsonResponse({ error: 'Post ID is required' }, 400);
+
+  const deleted = await env.DB.prepare('DELETE FROM posts WHERE id = ? RETURNING id, title')
+    .bind(id)
+    .first();
+
+  if (!deleted) return jsonResponse({ error: 'Post not found' }, 404);
+  return jsonResponse({ message: 'Articulo eliminado', id: deleted.id });
+}
+
+// ─── Todos Handlers ───────────────────────────────────────────────────────────
+
+async function getTodos(url, env, restFormat = false) {
+  const completed = url.searchParams.get('completed');
+  let query = 'SELECT * FROM todos';
+  const params = [];
+
+  if (completed !== null && completed !== undefined && completed !== '') {
+    query += ' WHERE is_completed = ?';
+    params.push(completed === 'true' || completed === '1' ? 1 : 0);
+  }
+
+  query += ' ORDER BY created_at DESC, id DESC';
+  const { results } = await env.DB.prepare(query).bind(...params).all();
+  const todos = results.map(formatTodo);
+  return jsonResponse(restFormat ? todos : { todos });
+}
+
+async function getTodo(id, env) {
+  if (!id) return jsonResponse({ error: 'Todo ID is required' }, 400);
+  const row = await env.DB.prepare('SELECT * FROM todos WHERE id = ?').bind(id).first();
+  if (!row) return jsonResponse({ error: 'Todo not found' }, 404);
+  return jsonResponse(formatTodo(row));
+}
+
+async function createTodo(request, env, restFormat = false) {
+  const { task, is_completed } = await readJsonBody(request);
+  if (!task) return jsonResponse({ error: 'Task is required' }, 400);
+
+  const row = await env.DB.prepare(
+    `INSERT INTO todos (task, is_completed)
+     VALUES (?, ?)
+     RETURNING *`
+  )
+    .bind(task, is_completed ? 1 : 0)
+    .first();
+
+  const todo = formatTodo(row);
+  if (restFormat) return jsonResponse(todo, 201);
+  return jsonResponse({ message: 'Tarea agregada', data: [todo] });
+}
+
+async function updateTodo(request, env, paramId = null, restFormat = false) {
+  const body = await readJsonBody(request);
+  const id = paramId || body.id;
+  if (!id) return jsonResponse({ error: 'Todo ID is required' }, 400);
+
+  const existing = await env.DB.prepare('SELECT * FROM todos WHERE id = ?').bind(id).first();
+  if (!existing) return jsonResponse({ error: 'Todo not found' }, 404);
+
+  const nextTask = body.task !== undefined ? body.task : existing.task;
+  const nextCompleted =
+    body.is_completed !== undefined ? (body.is_completed ? 1 : 0) : existing.is_completed;
+
+  const row = await env.DB.prepare(
+    `UPDATE todos
+     SET task = ?,
+         is_completed = ?,
+         updated_at = datetime('now')
+     WHERE id = ?
+     RETURNING *`
+  )
+    .bind(nextTask, nextCompleted, id)
+    .first();
+
+  const todo = formatTodo(row);
+  if (restFormat) return jsonResponse(todo);
+  return jsonResponse({ message: 'Tarea actualizada', data: [todo] });
+}
+
+async function deleteTodo(request, env, paramId = null, restFormat = false) {
+  const body = paramId ? {} : await readJsonBody(request);
+  const id = paramId || body.id;
+  if (!id) return jsonResponse({ error: 'Todo ID is required' }, 400);
+
+  const deleted = await env.DB.prepare('DELETE FROM todos WHERE id = ? RETURNING *')
+    .bind(id)
+    .first();
+
+  if (!deleted) return jsonResponse({ error: 'Todo not found' }, 404);
+  if (restFormat) return jsonResponse({ message: 'Todo deleted successfully' });
+  return jsonResponse({ message: 'Tarea eliminada', data: [formatTodo(deleted)] });
+}
+
+// ─── API Router ───────────────────────────────────────────────────────────────
+
+async function handleApi(request, url, env) {
+  if (request.method === 'OPTIONS') {
+    return new Response(null, { status: 204, headers: CORS_HEADERS });
+  }
+
+  const route = url.pathname.replace(/^\/api\/?/, '').replace(/\/$/, '');
+  const method = request.method;
+
+  // Legacy RPC-style routes used by admin.html, blog.html, and js/*-client.js
+  switch (route) {
+    case 'get-projects':
+      return method === 'GET' ? getProjects(url, env, false) : methodNotAllowed();
+    case 'get-project':
+      return method === 'GET'
+        ? getProject(url.searchParams.get('id'), env, false)
+        : methodNotAllowed();
+    case 'create-project':
+      return method === 'POST' ? createProject(request, env, false) : methodNotAllowed();
+    case 'update-project':
+      return method === 'PUT' || method === 'PATCH'
+        ? updateProject(request, env, null, false)
+        : methodNotAllowed();
+    case 'delete-project':
+      return method === 'DELETE' ? deleteProject(request, env, null) : methodNotAllowed();
+
+    case 'get-posts':
+      return method === 'GET' ? getPosts(env, false) : methodNotAllowed();
+    case 'get-post':
+      return method === 'GET'
+        ? getPost(url.searchParams.get('id'), env, false)
+        : methodNotAllowed();
+    case 'create-post':
+      return method === 'POST' ? createPost(request, env, false) : methodNotAllowed();
+    case 'update-post':
+      return method === 'PUT' || method === 'PATCH'
+        ? updatePost(request, env, null, false)
+        : methodNotAllowed();
+    case 'delete-post':
+      return method === 'DELETE' ? deletePost(request, env, null) : methodNotAllowed();
+
+    case 'get-todos':
+      return method === 'GET' ? getTodos(url, env, false) : methodNotAllowed();
+    case 'add-todo':
+      return method === 'POST' ? createTodo(request, env, false) : methodNotAllowed();
+    case 'update-todo':
+      return method === 'PUT' || method === 'PATCH'
+        ? updateTodo(request, env, null, false)
+        : methodNotAllowed();
+    case 'delete-todo':
+      return method === 'DELETE' ? deleteTodo(request, env, null, false) : methodNotAllowed();
+
+    // RESTful collection routes
+    case 'projects':
+      if (method === 'GET') return getProjects(url, env, true);
+      if (method === 'POST') return createProject(request, env, true);
+      return methodNotAllowed();
+    case 'posts':
+      if (method === 'GET') return getPosts(env, true);
+      if (method === 'POST') return createPost(request, env, true);
+      return methodNotAllowed();
+    case 'todos':
+      if (method === 'GET') return getTodos(url, env, true);
+      if (method === 'POST') return createTodo(request, env, true);
+      return methodNotAllowed();
+  }
+
+  // RESTful item routes (/api/projects/:id, /api/posts/:id, /api/todos/:id)
+  const segments = route.split('/');
+  if (segments.length === 2) {
+    const [resource, id] = segments;
+    if (resource === 'projects') {
+      if (method === 'GET') return getProject(id, env, true);
+      if (method === 'PUT' || method === 'PATCH') return updateProject(request, env, id, true);
+      if (method === 'DELETE') return deleteProject(request, env, id);
+      return methodNotAllowed();
+    }
+    if (resource === 'posts') {
+      if (method === 'GET') return getPost(id, env, true);
+      if (method === 'PUT' || method === 'PATCH') return updatePost(request, env, id, true);
+      if (method === 'DELETE') return deletePost(request, env, id);
+      return methodNotAllowed();
+    }
+    if (resource === 'todos') {
+      if (method === 'GET') return getTodo(id, env);
+      if (method === 'PUT' || method === 'PATCH') return updateTodo(request, env, id, true);
+      if (method === 'DELETE') return deleteTodo(request, env, id, true);
+      return methodNotAllowed();
+    }
+  }
+
+  return jsonResponse({ error: 'Endpoint not found' }, 404);
+}
+
+// ─── Worker Entrypoint ────────────────────────────────────────────────────────
+
+export default {
+  async fetch(request, env) {
+    try {
+      const url = new URL(request.url);
+
+      if (url.pathname === '/health') {
+        if (request.method === 'OPTIONS') {
+          return new Response(null, { status: 204, headers: CORS_HEADERS });
+        }
+        return handleHealth(env);
+      }
+
+      if (url.pathname.startsWith('/api/')) {
+        return handleApi(request, url, env);
+      }
+
+      // Root route serves Index.html
+      if (url.pathname === '/') {
+        const indexUrl = new URL('/Index.html', url.origin);
+        return env.ASSETS.fetch(new Request(indexUrl, request));
+      }
+
+      // Serve static assets from ./public
+      const assetResponse = await env.ASSETS.fetch(request);
+      if (assetResponse.status === 404) {
+        const accept = request.headers.get('Accept') || '';
+        if (accept.includes('text/html')) {
+          const notFoundUrl = new URL('/404.html', url.origin);
+          const notFoundResponse = await env.ASSETS.fetch(new Request(notFoundUrl, request));
+          return new Response(notFoundResponse.body, {
+            status: 404,
+            headers: notFoundResponse.headers,
+          });
+        }
+      }
+
+      return assetResponse;
+    } catch (error) {
+      console.error('Worker error:', error);
+      return jsonResponse({ error: 'Internal server error' }, 500);
+    }
+  },
+};

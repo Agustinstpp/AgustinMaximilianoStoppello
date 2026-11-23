@@ -1,22 +1,16 @@
 {
   "name": "agustin-portfolio",
-  "version": "1.0.0",
-  "description": "Portfolio website with database integration",
-  "main": "index.html",
+  "version": "2.0.0",
+  "description": "Portfolio website powered by Cloudflare Workers and D1",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "echo 'Static site - no build needed'",
-    "deploy": "vercel --prod",
-    "server": "node server.js",
-    "start": "node server.js"
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:migrate:local": "wrangler d1 migrations apply agustinst-code-db --local",
+    "db:migrate:remote": "wrangler d1 migrations apply agustinst-code-db --remote"
   },
-  "dependencies": {
-    "@neondatabase/serverless": "^0.9.5",
-    "@supabase/supabase-js": "^2.45.4",
-    "cors": "^2.8.5",
-    "dotenv": "^16.3.1",
-    "express": "^4.18.2",
-    "helmet": "^7.1.0",
-    "morgan": "^1.10.0"
+  "devDependencies": {
+    "wrangler": "^4.0.0"
   }
 }

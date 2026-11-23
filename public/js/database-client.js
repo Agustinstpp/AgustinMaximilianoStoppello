@@ -1,4 +1,4 @@
-// Client-side database utility for interacting with Vercel Functions
+// Client-side database utility for interacting with the Cloudflare Worker API
 
 class DatabaseClient {
   constructor(baseUrl = '') {
