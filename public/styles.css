@@ -1048,19 +1048,6 @@ img {
   gap: 12px;
 }
 
-.cert-verified-dot {
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
-  background-color: rgba(200, 243, 29, 0.1);
-  border: 1px solid rgba(200, 243, 29, 0.25);
-  padding: 3px 9px;
-  border-radius: var(--radius-pill);
-  white-space: nowrap;
-}
-
 .cert-toggle {
   width: 26px;
   height: 26px;
@@ -1377,10 +1364,6 @@ img {
   .cert-date {
     grid-column: 1 / -1;
     order: -1;
-  }
-
-  .cert-verified-dot {
-    display: none;
   }
 
   .cert-body {
