@@ -329,16 +329,17 @@ img {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  height: 54px;
-  min-width: 132px;
+  height: 56px;
+  min-width: 140px;
   background-color: var(--surface);
   border: 1px solid var(--border);
-  color: var(--text-secondary);
+  color: rgba(255, 255, 255, 0.84);
   font-family: inherit;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  padding: 10px 24px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 10px 26px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   white-space: nowrap;
@@ -348,14 +349,26 @@ img {
 .brand-chip-logo {
   height: 26px;
   width: auto;
-  max-width: 120px;
+  max-width: 118px;
   object-fit: contain;
   display: block;
-  opacity: 0.88;
+  opacity: 0.82;
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
-.brand-chip:hover .brand-chip-logo {
+.brand-chip-logo--tall {
+  height: 32px;
+}
+
+.brand-chip-logo--mono {
+  height: 34px;
+  max-width: 112px;
+  filter: grayscale(1) brightness(1.45) contrast(1.25);
+  opacity: 0.85;
+}
+
+.brand-chip:hover .brand-chip-logo,
+.brand-chip:hover .brand-chip-logo--mono {
   opacity: 1;
 }
 
@@ -364,14 +377,9 @@ img {
   filter: brightness(0);
 }
 
-.brand-chip-logo--color {
-  height: 36px;
-  max-width: 112px;
-  opacity: 0.96;
-}
-
-.brand-chip.active .brand-chip-logo--color {
-  filter: none;
+.brand-chip.active .brand-chip-logo--mono {
+  opacity: 1;
+  filter: grayscale(1) brightness(0.12) contrast(1.6);
 }
 
 .brand-chip:hover {
