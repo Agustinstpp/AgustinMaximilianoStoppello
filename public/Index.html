@@ -49,7 +49,7 @@
     <section class="hero">
       <div class="container">
         <span class="eyebrow">SOFTWARE DEVELOPER &middot; UX/UI</span>
-        <h1 class="hero-title">
+        <h1 class="hero-title" id="hero-title" aria-label="Hola, soy Agustín.">
           Hola, soy <span class="accent">Agustín</span>.
         </h1>
         <p class="hero-subtitle">
@@ -375,6 +375,84 @@
     if (brandCloseBtn) {
       brandCloseBtn.addEventListener('click', clearActiveBrand);
     }
+
+    // Hacker code-typing + decode animation for Hero title
+    (function initHeroHackerEffect() {
+      const titleEl = document.getElementById('hero-title');
+      if (!titleEl) return;
+
+      const fullText = 'Hola, soy Agustín.';
+      const accentStart = 10; // "Agustín"
+      const accentEnd = 17;
+      const glyphs = '01<>/{}[]#$%&*_+=-;:@^~';
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function renderFinal() {
+        titleEl.innerHTML =
+          'Hola, soy <span class="accent">Agustín</span>.<span class="typing-cursor" aria-hidden="true"></span>';
+      }
+
+      if (prefersReduced) {
+        renderFinal();
+        return;
+      }
+
+      let isRunning = false;
+
+      function runHackerDecode() {
+        if (isRunning) return;
+        isRunning = true;
+
+        let revealed = 0;
+        let frame = 0;
+        const framesPerChar = 3;
+
+        function tick() {
+          frame++;
+          if (frame % framesPerChar === 0 && revealed < fullText.length) {
+            revealed++;
+          }
+
+          const scrambleAhead = Math.min(fullText.length, revealed + 3);
+          let html = '';
+
+          for (let i = 0; i < scrambleAhead; i++) {
+            const ch = fullText[i];
+            if (i < revealed) {
+              const safeCh = ch === ' ' ? ' ' : ch;
+              if (i >= accentStart && i < accentEnd) {
+                html += `<span class="accent">${safeCh}</span>`;
+              } else {
+                html += safeCh;
+              }
+            } else if (ch === ' ') {
+              html += ' ';
+            } else {
+              const randGlyph = glyphs[Math.floor(Math.random() * glyphs.length)];
+              html += `<span class="hacker-glyph">${randGlyph}</span>`;
+            }
+          }
+
+          html += '<span class="typing-cursor" aria-hidden="true"></span>';
+          titleEl.innerHTML = html;
+
+          if (revealed < fullText.length) {
+            setTimeout(() => requestAnimationFrame(tick), 28);
+          } else {
+            renderFinal();
+            isRunning = false;
+          }
+        }
+
+        titleEl.innerHTML = '<span class="typing-cursor" aria-hidden="true"></span>';
+        setTimeout(() => requestAnimationFrame(tick), 180);
+      }
+
+      runHackerDecode();
+      titleEl.style.cursor = 'pointer';
+      titleEl.title = 'Click para repetir animación';
+      titleEl.addEventListener('click', runHackerDecode);
+    })();
   </script>
   <script src="js/projects-client.js"></script>
 </body>

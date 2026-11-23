@@ -274,6 +274,33 @@ img {
   color: var(--accent);
 }
 
+.hacker-glyph {
+  color: var(--accent);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  opacity: 0.9;
+  text-shadow: 0 0 14px rgba(200, 243, 29, 0.55);
+}
+
+.typing-cursor {
+  display: inline-block;
+  width: 0.09em;
+  height: 0.88em;
+  margin-left: 4px;
+  vertical-align: -0.06em;
+  background-color: var(--accent);
+  box-shadow: 0 0 12px rgba(200, 243, 29, 0.65);
+  animation: cursorBlink 0.9s steps(1) infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
 .hero-subtitle {
   font-size: clamp(0.98rem, 1.5vw, 1.1rem);
   color: var(--text-secondary);
