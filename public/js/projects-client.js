@@ -5,8 +5,9 @@ class ProjectsClient {
     this.baseUrl = baseUrl || window.location.origin;
   }
 
-  async getProjects() {
-    const response = await fetch(`${this.baseUrl}/api/get-projects`);
+  async getProjects(featuredOnly = true) {
+    const query = featuredOnly ? '?featured=true' : '';
+    const response = await fetch(`${this.baseUrl}/api/get-projects${query}`);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }

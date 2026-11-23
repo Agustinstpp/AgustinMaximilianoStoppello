@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>agustinst.code — Software Developer · UX/UI · Marketing</title>
-  <meta name="description" content="Soy Agustín Stoppello. Desarrollo software, diseño interfaces y hago marketing para marcas que quieren crecer. Más de 6 años creando desde Corrientes, Argentina.">
+  <meta name="description" content="Hola, soy Agustín Stoppello. Desarrollo software, diseño interfaces y hago marketing para marcas que quieren crecer. Más de 6 años creando desde Corrientes, Argentina.">
   <link rel="icon" href="imag/IMG_0259.PNG" type="image/png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,11 +36,10 @@
       </button>
 
       <nav class="nav-links" id="nav-links" aria-label="Navegación principal">
-        <a href="#servicios" class="nav-link">Servicios</a>
         <a href="#trabajos" class="nav-link">Trabajos</a>
         <a href="#sobre-mi" class="nav-link">Sobre mí</a>
         <a href="#faq" class="nav-link">FAQ</a>
-        <a href="#contacto" class="btn btn-accent btn-sm">Hablemos</a>
+        <a href="#contacto" class="btn btn-accent btn-sm">Contacto</a>
       </nav>
     </div>
   </header>
@@ -51,10 +50,10 @@
       <div class="container">
         <span class="eyebrow">SOFTWARE DEVELOPER &middot; UX/UI &middot; MARKETING</span>
         <h1 class="hero-title">
-          Convierto ideas en productos digitales que <span class="accent">se usan</span>.
+          Hola, soy <span class="accent">Agustín</span>.
         </h1>
         <p class="hero-subtitle">
-          Soy Agustín. Desarrollo software, diseño interfaces y hago marketing para marcas que quieren crecer. Más de 6 años creando desde Corrientes, Argentina.
+          Desarrollo software, diseño interfaces y hago marketing para marcas que quieren crecer. Más de 6 años creando productos digitales desde Corrientes, Argentina.
         </p>
         <div class="hero-actions">
           <a href="#trabajos" class="btn btn-accent">Ver trabajos</a>
@@ -63,41 +62,39 @@
       </div>
     </section>
 
-    <!-- ─── Marcas ────────────────────────────────────────────────────── -->
+    <!-- ─── Carrusel de marcas interactivo ────────────────────────────── -->
     <section class="brands-section" aria-label="Marcas con las que trabajé">
       <div class="container">
-        <span class="eyebrow">MARCAS CON LAS QUE TRABAJÉ</span>
-        <div class="brands-row">
-          <span class="brand-item">Club Don Bosco</span>
-          <span class="brand-item">TCL</span>
-          <span class="brand-item">Wampa</span>
-          <span class="brand-item">ZenFit</span>
-          <span class="brand-item">Puma</span>
-          <span class="brand-item">Patagonia</span>
+        <div class="brands-header">
+          <span class="eyebrow">MARCAS CON LAS QUE TRABAJÉ</span>
+          <span class="brands-hint">Hacé clic en una marca para ver trabajos</span>
         </div>
-      </div>
-    </section>
 
-    <!-- ─── Qué hago ──────────────────────────────────────────────────── -->
-    <section id="servicios" class="section">
-      <div class="container">
-        <h2 class="section-title">Qué hago</h2>
-        <div class="services-grid">
-          <article class="service-card">
-            <span class="service-num">01</span>
-            <h3>Desarrollo de software</h3>
-            <p>Webs, plataformas y apps a medida, listas para producción.</p>
-          </article>
-          <article class="service-card">
-            <span class="service-num">02</span>
-            <h3>Diseño UX/UI</h3>
-            <p>Interfaces claras, identidad de marca y sistemas visuales coherentes.</p>
-          </article>
-          <article class="service-card">
-            <span class="service-num">03</span>
-            <h3>Marketing digital</h3>
-            <p>Contenido y estrategia para redes que acompañan al producto.</p>
-          </article>
+        <div class="brands-marquee" id="brands-marquee">
+          <div class="brands-track" id="brands-track">
+            <!-- Primera tanda -->
+            <button type="button" class="brand-chip" data-brand="Club Don Bosco">Club Don Bosco</button>
+            <button type="button" class="brand-chip" data-brand="TCL">TCL</button>
+            <button type="button" class="brand-chip" data-brand="Wampa">Wampa</button>
+            <button type="button" class="brand-chip" data-brand="ZenFit">ZenFit</button>
+            <button type="button" class="brand-chip" data-brand="Puma">Puma</button>
+            <button type="button" class="brand-chip" data-brand="Patagonia">Patagonia</button>
+            <!-- Segunda tanda para bucle infinito continuo -->
+            <button type="button" class="brand-chip" data-brand="Club Don Bosco" aria-hidden="true" tabindex="-1">Club Don Bosco</button>
+            <button type="button" class="brand-chip" data-brand="TCL" aria-hidden="true" tabindex="-1">TCL</button>
+            <button type="button" class="brand-chip" data-brand="Wampa" aria-hidden="true" tabindex="-1">Wampa</button>
+            <button type="button" class="brand-chip" data-brand="ZenFit" aria-hidden="true" tabindex="-1">ZenFit</button>
+            <button type="button" class="brand-chip" data-brand="Puma" aria-hidden="true" tabindex="-1">Puma</button>
+            <button type="button" class="brand-chip" data-brand="Patagonia" aria-hidden="true" tabindex="-1">Patagonia</button>
+          </div>
+        </div>
+
+        <div class="brand-works-panel" id="brand-works-panel" aria-live="polite">
+          <div class="brand-works-head">
+            <h3 class="brand-works-title">Trabajos con <span id="brand-works-name"></span></h3>
+            <button type="button" class="brand-works-close" id="brand-works-close" aria-label="Cerrar panel">&times;</button>
+          </div>
+          <div class="brand-works-grid" id="brand-works-grid"></div>
         </div>
       </div>
     </section>
@@ -111,14 +108,6 @@
             <div class="project-thumb">
               <span class="project-thumb-placeholder">[CAPTURA DEL PROYECTO]</span>
             </div>
-            <span class="project-category">PLATAFORMA WEB &middot; DISEÑO</span>
-            <h3 class="project-title">Club Don Bosco Corrientes</h3>
-            <p class="project-desc">Plataforma digital integral del club con gestión institucional y experiencia optimizada para socios.</p>
-          </article>
-          <article class="project-card">
-            <div class="project-thumb">
-              <span class="project-thumb-placeholder">[CAPTURA DEL PROYECTO]</span>
-            </div>
             <span class="project-category">MARCA &middot; BRANDING</span>
             <h3 class="project-title">YacaJobs</h3>
             <p class="project-desc">Identidad con yacaré y casco naranja, y manual de marca completo.</p>
@@ -128,17 +117,18 @@
               <span class="project-thumb-placeholder">[CAPTURA DEL PROYECTO]</span>
             </div>
             <span class="project-category">CONTENIDO &middot; STREAMING</span>
-            <h3 class="project-title">Doble y Falta Streaming</h3>
+            <h3 class="project-title">Doble y Falta</h3>
             <p class="project-desc">Identidad y redes del programa de básquet local de Corrientes.</p>
           </article>
-          <article class="project-card">
+          <a class="project-card" href="/Proyects/Smartechs.html">
             <div class="project-thumb">
-              <span class="project-thumb-placeholder">[CAPTURA DEL PROYECTO]</span>
+              <img src="/imag/Portada Smart Techs PC.jpg" alt="Smart Techs" loading="lazy">
             </div>
-            <span class="project-category">MARKETING &middot; MARCAS</span>
-            <h3 class="project-title">Puma, TCL, Wampa y más</h3>
-            <p class="project-desc">Contenido visual, estrategia y campañas digitales para marcas líderes.</p>
-          </article>
+            <span class="project-category">BRANDING &middot; WEB</span>
+            <h3 class="project-title">Smart Techs</h3>
+            <p class="project-desc">Proyecto integral de marketing, identidad visual y desarrollo web para agencia de tecnología.</p>
+            <span class="project-link-hint">Ver proyecto &rarr;</span>
+          </a>
         </div>
       </div>
     </section>
@@ -165,7 +155,7 @@
       <div class="container faq-grid">
         <div>
           <h2 class="section-title">Preguntas Frecuentes</h2>
-          <p class="faq-intro">Respuestas rápidas sobre tiempos, herramientas y cómo trabajamos cada proyecto.</p>
+          <p class="faq-intro">Respuestas rápidas sobre tiempos, herramientas y cómo trabajo cada proyecto.</p>
         </div>
         <div class="faq-list">
           <details class="faq-item" open>
@@ -197,8 +187,8 @@
     <section id="contacto" class="cta-section">
       <div class="container">
         <div class="cta-banner">
-          <h2>¿Tenés un proyecto en mente?</h2>
-          <p>Contame la idea y vemos cómo hacerla realidad.</p>
+          <h2>Charlemos.</h2>
+          <p>Contame tu idea o proyecto y vemos cómo hacerlo realidad.</p>
           <div class="cta-actions">
             <a href="mailto:agustinmaximilianostoppello@outlook.com?subject=Vengo%20de%20la%20web" class="btn btn-dark">
               agustinmaximilianostoppello@outlook.com
@@ -241,6 +231,106 @@
           navToggle.setAttribute('aria-expanded', 'false');
         });
       });
+    }
+
+    // Interactive Brand Marquee Works
+    const BRAND_WORKS = {
+      'Club Don Bosco': [
+        {
+          tag: 'PLATAFORMA WEB · DISEÑO',
+          title: 'Plataforma web Club Don Bosco Corrientes',
+          description: 'Diseño y desarrollo de la plataforma web del club con gestión institucional, información de disciplinas y experiencia optimizada para socios.'
+        }
+      ],
+      'TCL': [
+        {
+          tag: 'MARKETING · CONTENIDO',
+          title: '[TÍTULO DEL TRABAJO CON TCL]',
+          description: '[COMPLETAR: Describí qué hiciste para TCL, piezas, campaña o resultado obtenido.]'
+        }
+      ],
+      'Wampa': [
+        {
+          tag: 'MARKETING · MARCA',
+          title: '[TÍTULO DEL TRABAJO CON WAMPA]',
+          description: '[COMPLETAR: Describí qué hiciste para Wampa y el impacto del trabajo.]'
+        }
+      ],
+      'ZenFit': [
+        {
+          tag: 'DISEÑO · MARKETING',
+          title: '[TÍTULO DEL TRABAJO CON ZENFIT]',
+          description: '[COMPLETAR: Describí qué hiciste para ZenFit.]'
+        }
+      ],
+      'Puma': [
+        {
+          tag: 'MARKETING · CAMPAÑA',
+          title: '[TÍTULO DEL TRABAJO CON PUMA]',
+          description: '[COMPLETAR: Describí las piezas, contenido o campaña realizada para Puma.]'
+        }
+      ],
+      'Patagonia': [
+        {
+          tag: 'CONTENIDO · MARCA',
+          title: '[TÍTULO DEL TRABAJO CON PATAGONIA]',
+          description: '[COMPLETAR: Describí qué hiciste para Patagonia.]'
+        }
+      ]
+    };
+
+    const brandChips = document.querySelectorAll('.brand-chip');
+    const brandPanel = document.getElementById('brand-works-panel');
+    const brandNameEl = document.getElementById('brand-works-name');
+    const brandGridEl = document.getElementById('brand-works-grid');
+    const brandCloseBtn = document.getElementById('brand-works-close');
+    let activeBrand = null;
+
+    function escapeBrandHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+
+    function setActiveBrand(brand) {
+      if (activeBrand === brand) {
+        clearActiveBrand();
+        return;
+      }
+
+      activeBrand = brand;
+      brandChips.forEach((chip) => {
+        chip.classList.toggle('active', chip.dataset.brand === brand);
+      });
+
+      const works = BRAND_WORKS[brand] || [];
+      brandNameEl.textContent = brand;
+      brandGridEl.innerHTML = works
+        .map(
+          (w) => `
+          <article class="brand-work-item">
+            <span class="brand-work-tag">${escapeBrandHtml(w.tag)}</span>
+            <h4>${escapeBrandHtml(w.title)}</h4>
+            <p>${escapeBrandHtml(w.description)}</p>
+          </article>`
+        )
+        .join('');
+
+      brandPanel.classList.add('open');
+    }
+
+    function clearActiveBrand() {
+      activeBrand = null;
+      brandChips.forEach((chip) => chip.classList.remove('active'));
+      brandPanel.classList.remove('open');
+    }
+
+    brandChips.forEach((chip) => {
+      chip.addEventListener('click', () => setActiveBrand(chip.dataset.brand));
+    });
+
+    if (brandCloseBtn) {
+      brandCloseBtn.addEventListener('click', clearActiveBrand);
     }
   </script>
   <script src="js/projects-client.js"></script>
