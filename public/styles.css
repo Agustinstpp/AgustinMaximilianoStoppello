@@ -365,6 +365,16 @@ img {
   filter: brightness(0);
 }
 
+.brand-chip-logo--color {
+  height: 26px;
+  max-width: 96px;
+  opacity: 0.95;
+}
+
+.brand-chip.active .brand-chip-logo--color {
+  filter: none;
+}
+
 .brand-chip:hover {
   border-color: var(--border-hover);
   color: var(--text);
