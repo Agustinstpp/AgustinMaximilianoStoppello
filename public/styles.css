@@ -87,8 +87,8 @@ img {
 }
 
 .brand-avatar {
-  width: 34px;
-  height: 34px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   background-color: #ffffff;
   overflow: hidden;
@@ -96,13 +96,12 @@ img {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  padding: 2px;
 }
 
 .brand-avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 50%;
 }
 

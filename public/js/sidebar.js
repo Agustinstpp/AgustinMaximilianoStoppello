@@ -40,9 +40,9 @@ function renderSidebar(rootPath) {
           <img class="me-2" src="${rootPath}imag/linkedin.svg" alt="LinkedIn" width="20" height="20" loading="lazy">
           <span>LinkedIn</span>
         </a>
-        <a href="https://wa.me/543794141551" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
-          <img class="me-2" src="${rootPath}imag/whastapp.svg" alt="WhatsApp" width="20" height="20" loading="lazy">
-          <span>WhatsApp</span>
+        <a href="mailto:agustinmaximilianostoppello@outlook.com?subject=Vengo%20de%20la%20web" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
+          <img class="me-2" src="${rootPath}imag/mailico.svg" alt="Email" width="20" height="20" loading="lazy">
+          <span>Email</span>
         </a>
         <a href="https://www.instagram.com/agustinst.code/" target="_blank" rel="noopener noreferrer" class="btn btn-outline-primary text-start d-flex align-items-center py-2 px-3 rounded-pill">
           <img class="me-2" src="${rootPath}imag/instagram.svg" alt="Instagram" width="20" height="20" loading="lazy">
