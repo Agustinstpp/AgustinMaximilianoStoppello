@@ -1255,6 +1255,95 @@ img {
   gap: 12px;
 }
 
+/* ─── Rich Prose Typography (Markdown articles & project case studies) ───── */
+.prose {
+  color: var(--text-secondary);
+  font-size: 1rem;
+  line-height: 1.78;
+}
+
+.prose h2 {
+  color: var(--text);
+  font-size: clamp(1.3rem, 2.4vw, 1.65rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin: 28px 0 12px;
+}
+
+.prose h3 {
+  color: var(--text);
+  font-size: 1.12rem;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin: 22px 0 10px;
+}
+
+.prose p {
+  margin-bottom: 14px;
+}
+
+.prose strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--accent);
+  background-color: rgba(200, 243, 29, 0.05);
+  padding: 12px 18px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  margin: 18px 0;
+  color: var(--text);
+}
+
+.prose code {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.86em;
+  background-color: #1a1a1a;
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 6px;
+  color: var(--accent);
+}
+
+.prose pre {
+  background-color: #0e0e0e;
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-sm);
+  padding: 16px 18px;
+  overflow-x: auto;
+  margin: 18px 0;
+}
+
+.prose pre code {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: #e6e6e6;
+  font-size: 0.86rem;
+  line-height: 1.6;
+}
+
+.prose img {
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  margin: 18px 0;
+}
+
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
 .site-footer {
   border-top: 1px solid #181818;

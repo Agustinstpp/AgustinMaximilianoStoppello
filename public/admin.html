@@ -33,11 +33,7 @@
       letter-spacing: -0.025em;
       margin: 14px 0 6px;
     }
-    .login-box p {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 22px;
-    }
+    .login-box p { font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 22px; }
     .admin-bar {
       display: flex;
       align-items: center;
@@ -46,11 +42,7 @@
       gap: 16px;
       margin-bottom: 28px;
     }
-    .admin-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+    .admin-tabs { display: flex; flex-wrap: wrap; gap: 8px; }
     .admin-tab {
       appearance: none;
       background-color: var(--surface);
@@ -80,16 +72,8 @@
       gap: 12px;
       margin-bottom: 18px;
     }
-    .admin-panel-head h2 {
-      font-size: 1.35rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-    }
-    .admin-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .admin-panel-head h2 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.02em; }
+    .admin-list { display: flex; flex-direction: column; gap: 12px; }
     .admin-item {
       background-color: var(--surface);
       border: 1px solid var(--border);
@@ -102,13 +86,7 @@
       flex-wrap: wrap;
     }
     .admin-item:hover { border-color: var(--border-hover); }
-    .admin-item-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      min-width: 0;
-      flex: 1;
-    }
+    .admin-item-left { display: flex; align-items: center; gap: 16px; min-width: 0; flex: 1; }
     .admin-thumb {
       width: 72px;
       height: 50px;
@@ -160,21 +138,13 @@
       padding: 2px 8px;
       border-radius: var(--radius-pill);
     }
-    .admin-item-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+    .admin-item-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .btn-danger-ghost {
       background: transparent;
       border: 1px solid rgba(255, 92, 92, 0.35);
       color: #ff7a7a;
     }
-    .btn-danger-ghost:hover {
-      background: rgba(255, 92, 92, 0.14);
-      border-color: #ff7a7a;
-    }
+    .btn-danger-ghost:hover { background: rgba(255, 92, 92, 0.14); border-color: #ff7a7a; }
     .admin-alert {
       padding: 12px 16px;
       border-radius: var(--radius-sm);
@@ -198,33 +168,35 @@
       position: fixed;
       inset: 0;
       z-index: 200;
-      background: rgba(0, 0, 0, 0.78);
-      backdrop-filter: blur(6px);
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(8px);
       display: none;
       align-items: center;
       justify-content: center;
-      padding: 20px;
+      padding: 18px;
     }
     .modal-backdrop.open { display: flex; }
     .modal-card {
       width: 100%;
-      max-width: 560px;
-      max-height: 90vh;
+      max-width: 600px;
+      max-height: 92vh;
       overflow-y: auto;
       background-color: var(--surface);
       border: 1px solid var(--border-hover);
       border-radius: var(--radius-lg);
       padding: 26px;
     }
+    .modal-card--wide { max-width: 920px; }
     .modal-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
     .modal-head h3 { font-size: 1.2rem; font-weight: 700; }
     .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
     .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field-row-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
     .field label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
     .field input,
     .field textarea,
@@ -241,14 +213,12 @@
     }
     .field input:focus,
     .field textarea:focus,
-    .field select:focus {
-      border-color: var(--accent);
-    }
+    .field select:focus { border-color: var(--accent); }
     .checkbox-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin: 8px 0 18px;
+      margin: 6px 0 16px;
       font-size: 0.9rem;
       color: var(--text);
       cursor: pointer;
@@ -257,7 +227,7 @@
     .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
     .preview-box {
       width: 100%;
-      height: 130px;
+      height: 110px;
       border-radius: 10px;
       background: #0b0b0b;
       border: 1px dashed var(--border-hover);
@@ -270,8 +240,92 @@
       color: var(--text-muted);
     }
     .preview-box img { width: 100%; height: 100%; object-fit: cover; }
-    @media (max-width: 640px) {
-      .field-row { grid-template-columns: 1fr; }
+
+    /* ─── Rich Markdown Editor ──────────────────────────────────────── */
+    .md-editor {
+      border: 1px solid var(--border-hover);
+      border-radius: 12px;
+      overflow: hidden;
+      background-color: #0b0b0b;
+    }
+    .md-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px 10px;
+      background-color: #141414;
+      border-bottom: 1px solid var(--border);
+    }
+    .md-tools { display: flex; flex-wrap: wrap; gap: 4px; }
+    .md-btn {
+      appearance: none;
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 5px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .md-btn:hover {
+      background-color: rgba(255, 255, 255, 0.06);
+      color: var(--text);
+    }
+    .md-btn.active {
+      background-color: var(--accent);
+      color: #0a0a0a;
+    }
+    .md-modes { display: flex; gap: 4px; }
+    .md-body {
+      display: grid;
+      grid-template-columns: 1fr;
+    }
+    .md-body.mode-split {
+      grid-template-columns: 1fr 1fr;
+    }
+    .md-body textarea {
+      border: 0;
+      border-radius: 0;
+      min-height: 240px;
+      resize: vertical;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.86rem;
+      line-height: 1.6;
+      padding: 14px;
+    }
+    .md-preview {
+      display: none;
+      padding: 14px 16px;
+      min-height: 240px;
+      max-height: 420px;
+      overflow-y: auto;
+      background-color: #0f0f0f;
+      border-left: 1px solid var(--border);
+    }
+    .md-body.mode-preview textarea { display: none; }
+    .md-body.mode-preview .md-preview { display: block; border-left: 0; }
+    .md-body.mode-split .md-preview { display: block; }
+    .md-statusbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 12px;
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      background-color: #121212;
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 720px) {
+      .field-row,
+      .field-row-3,
+      .md-body.mode-split { grid-template-columns: 1fr; }
+      .md-body.mode-split .md-preview { border-left: 0; border-top: 1px solid var(--border); }
     }
   </style>
 </head>
@@ -284,7 +338,7 @@
         <span><span class="brand-name">agustinst</span><span class="brand-accent">.code</span></span>
       </a>
       <h1>Panel Admin</h1>
-      <p>Ingresá tu contraseña para administrar proyectos, marcas y artículos en Cloudflare D1.</p>
+      <p>Redactá casos de estudio, gestioná tus marcas y publicá artículos directo en Cloudflare D1.</p>
       <div class="field">
         <label for="admin-password">Contraseña</label>
         <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password">
@@ -302,8 +356,9 @@
           <span class="brand-avatar"><img src="imag/IMG_0259.PNG" alt="agustinst.code"></span>
           <span><span class="brand-name">agustinst</span><span class="brand-accent">.code</span></span>
         </a>
-        <div style="display:flex;align-items:center;gap:12px;">
-          <a href="/" class="nav-link">Ver sitio &nearr;</a>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <a href="/blog.html" target="_blank" class="nav-link">Blog &nearr;</a>
+          <a href="/" target="_blank" class="nav-link">Sitio &nearr;</a>
           <button type="button" class="btn btn-ghost btn-sm" onclick="adminLogout()">Salir</button>
         </div>
       </div>
@@ -317,7 +372,7 @@
             <button type="button" class="admin-tab" data-tab="brands">Trabajos por Marca</button>
             <button type="button" class="admin-tab" data-tab="posts">Blog</button>
           </div>
-          <span style="font-size:0.8rem;color:var(--text-muted);">Cloudflare D1 &middot; en vivo</span>
+          <span style="font-size:0.8rem;color:var(--text-muted);">Cloudflare D1 &middot; Editor Markdown</span>
         </div>
 
         <div id="global-alert" class="admin-alert"></div>
@@ -352,9 +407,9 @@
     </main>
   </div>
 
-  <!-- ─── Project Modal ───────────────────────────────────────────────── -->
+  <!-- ─── Project Modal (Wide Rich Studio) ────────────────────────────── -->
   <div id="project-modal" class="modal-backdrop">
-    <div class="modal-card">
+    <div class="modal-card modal-card--wide">
       <div class="modal-head">
         <h3 id="project-modal-title">Nuevo proyecto</h3>
         <button type="button" class="brand-works-close" onclick="closeModal('project-modal')">&times;</button>
@@ -371,21 +426,27 @@
         </div>
       </div>
       <div class="field">
-        <label for="p-desc">Descripción *</label>
-        <textarea id="p-desc" rows="3" placeholder="Qué problema resolviste y cómo…"></textarea>
+        <label for="p-desc">Resumen corto (aparece en la tarjeta de la home) *</label>
+        <textarea id="p-desc" rows="2" placeholder="Una o dos líneas claras sobre el proyecto…"></textarea>
       </div>
-      <div class="field">
-        <label for="p-tech">Tecnologías (separadas por coma)</label>
-        <input type="text" id="p-tech" placeholder="Figma, Cloudflare, HTML, CSS">
-      </div>
-      <div class="field">
-        <label for="p-image">URL de imagen (ej: /imag/Portada Smart Techs PC.jpg o https://…)</label>
-        <input type="text" id="p-image" placeholder="/imag/..." oninput="updateImagePreview()">
-      </div>
-      <div id="p-preview" class="preview-box">Vista previa de portada</div>
       <div class="field-row">
         <div class="field">
-          <label for="p-url">URL del proyecto (externa)</label>
+          <label for="p-tech">Tecnologías (separadas por coma)</label>
+          <input type="text" id="p-tech" placeholder="Cloudflare Workers, D1, Figma, JS">
+        </div>
+        <div class="field">
+          <label for="p-image">URL de portada (/imag/... o https://...)</label>
+          <input type="text" id="p-image" placeholder="/imag/Portada Smart Techs PC.jpg" oninput="updatePreview('p-image','p-preview')">
+        </div>
+      </div>
+      <div id="p-preview" class="preview-box">Vista previa de portada</div>
+      <div class="field-row-3">
+        <div class="field">
+          <label for="p-demo">URL de Demo en vivo</label>
+          <input type="text" id="p-demo" placeholder="https://mi-demo.workers.dev">
+        </div>
+        <div class="field">
+          <label for="p-url">URL del sitio / proyecto</label>
           <input type="text" id="p-url" placeholder="https://...">
         </div>
         <div class="field">
@@ -393,13 +454,49 @@
           <input type="text" id="p-github" placeholder="https://github.com/...">
         </div>
       </div>
+
+      <div class="field">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <label for="p-content">Caso de estudio completo (Markdown — opcional)</label>
+          <button type="button" class="md-btn" style="color:var(--accent);" onclick="insertCaseStudyTemplate()">+ Insertar plantilla</button>
+        </div>
+        <div class="md-editor" data-md-editor="project">
+          <div class="md-toolbar">
+            <div class="md-tools">
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','## ','')">H2</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','### ','')">H3</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','**','**')">B</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','*','*')">I</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','- ','')">Lista</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','> ','')">Cita</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','```\n','\n```')">Código</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','[texto](https://',')')">Link</button>
+              <button type="button" class="md-btn" onclick="mdInsert('p-content','![captura](/imag/',')')">Img</button>
+            </div>
+            <div class="md-modes">
+              <button type="button" class="md-btn active" onclick="setMdMode('project','edit',this)">Editar</button>
+              <button type="button" class="md-btn" onclick="setMdMode('project','split',this)">Dividido</button>
+              <button type="button" class="md-btn" onclick="setMdMode('project','preview',this)">Vista previa</button>
+            </div>
+          </div>
+          <div class="md-body" id="md-body-project">
+            <textarea id="p-content" placeholder="Contá el problema, el proceso de diseño/arquitectura, la solución y los resultados…" oninput="syncMd('p-content','md-prev-project','md-stat-project')"></textarea>
+            <div id="md-prev-project" class="md-preview prose"></div>
+          </div>
+          <div class="md-statusbar">
+            <span>Markdown soportado</span>
+            <span id="md-stat-project">0 palabras</span>
+          </div>
+        </div>
+      </div>
+
       <label class="checkbox-row">
         <input type="checkbox" id="p-featured">
         <span>Mostrar como <strong>Destacado</strong> en la página principal</span>
       </label>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('project-modal')">Cancelar</button>
-        <button type="button" class="btn btn-accent btn-sm" onclick="saveProject()">Guardar</button>
+        <button type="button" class="btn btn-accent btn-sm" onclick="saveProject()">Guardar proyecto</button>
       </div>
     </div>
   </div>
@@ -448,36 +545,80 @@
     </div>
   </div>
 
-  <!-- ─── Post Modal ──────────────────────────────────────────────────── -->
+  <!-- ─── Post Modal (Wide Rich Studio) ───────────────────────────────── -->
   <div id="post-modal" class="modal-backdrop">
-    <div class="modal-card">
+    <div class="modal-card modal-card--wide">
       <div class="modal-head">
         <h3 id="post-modal-title">Nuevo artículo</h3>
         <button type="button" class="brand-works-close" onclick="closeModal('post-modal')">&times;</button>
       </div>
       <input type="hidden" id="post-id">
+      <div class="field-row">
+        <div class="field">
+          <label for="post-title">Título *</label>
+          <input type="text" id="post-title" placeholder="Ej: Cómo automatizar flujos con Cloudflare Workers">
+        </div>
+        <div class="field">
+          <label for="post-author">Autor</label>
+          <input type="text" id="post-author" value="Agustín Stoppello">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="post-tags">Etiquetas (separadas por coma)</label>
+          <input type="text" id="post-tags" placeholder="UX/UI, Cloudflare, Automatización">
+        </div>
+        <div class="field">
+          <label for="post-cover">URL de portada (opcional)</label>
+          <input type="text" id="post-cover" placeholder="/imag/... o https://..." oninput="updatePreview('post-cover','post-preview')">
+        </div>
+      </div>
+      <div id="post-preview" class="preview-box" style="height:90px;">Vista previa de portada</div>
       <div class="field">
-        <label for="post-title">Título *</label>
-        <input type="text" id="post-title">
+        <label for="post-summary">Resumen / Bajada (aparece en la tarjeta del blog)</label>
+        <input type="text" id="post-summary" placeholder="Resumen breve en 1 línea…">
       </div>
       <div class="field">
-        <label for="post-author">Autor</label>
-        <input type="text" id="post-author" value="Agustín Stoppello">
-      </div>
-      <div class="field">
-        <label for="post-content">Contenido *</label>
-        <textarea id="post-content" rows="6"></textarea>
+        <label for="post-content">Contenido del artículo (Markdown) *</label>
+        <div class="md-editor" data-md-editor="post">
+          <div class="md-toolbar">
+            <div class="md-tools">
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','## ','')">H2</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','### ','')">H3</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','**','**')">B</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','*','*')">I</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','- ','')">Lista</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','> ','')">Cita</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','```\n','\n```')">Código</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','[texto](https://',')')">Link</button>
+              <button type="button" class="md-btn" onclick="mdInsert('post-content','![imagen](/imag/',')')">Img</button>
+            </div>
+            <div class="md-modes">
+              <button type="button" class="md-btn active" onclick="setMdMode('post','edit',this)">Editar</button>
+              <button type="button" class="md-btn" onclick="setMdMode('post','split',this)">Dividido</button>
+              <button type="button" class="md-btn" onclick="setMdMode('post','preview',this)">Vista previa</button>
+            </div>
+          </div>
+          <div class="md-body" id="md-body-post">
+            <textarea id="post-content" placeholder="Escribí tu artículo usando Markdown…" oninput="syncMd('post-content','md-prev-post','md-stat-post')"></textarea>
+            <div id="md-prev-post" class="md-preview prose"></div>
+          </div>
+          <div class="md-statusbar">
+            <span>Markdown soportado</span>
+            <span id="md-stat-post">0 palabras</span>
+          </div>
+        </div>
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('post-modal')">Cancelar</button>
-        <button type="button" class="btn btn-accent btn-sm" onclick="savePost()">Guardar</button>
+        <button type="button" class="btn btn-accent btn-sm" onclick="savePost()">Publicar artículo</button>
       </div>
     </div>
   </div>
 
+  <script src="js/markdown.js"></script>
   <script>
     const ADMIN_KEY = 'admin_authenticated';
-    // Para mayor seguridad en producción, proteger /admin.html con Cloudflare Access (Zero Trust).
     const ADMIN_PASSWORD = 'admin2025';
 
     let projectsCache = [];
@@ -501,6 +642,56 @@
     function openModal(id) { document.getElementById(id).classList.add('open'); }
     function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
+    // ─── Markdown Editor Helpers ──────────────────────────────────────
+    function mdInsert(textareaId, before, after) {
+      const ta = document.getElementById(textareaId);
+      const start = ta.selectionStart;
+      const end = ta.selectionEnd;
+      const selected = ta.value.slice(start, end) || 'texto';
+      ta.value = ta.value.slice(0, start) + before + selected + after + ta.value.slice(end);
+      ta.focus();
+      ta.selectionStart = start + before.length;
+      ta.selectionEnd = start + before.length + selected.length;
+      ta.dispatchEvent(new Event('input'));
+    }
+
+    function setMdMode(editorKey, mode, btn) {
+      const body = document.getElementById(`md-body-${editorKey}`);
+      body.classList.remove('mode-split', 'mode-preview');
+      if (mode === 'split') body.classList.add('mode-split');
+      if (mode === 'preview') body.classList.add('mode-preview');
+      btn.parentNode.querySelectorAll('.md-btn').forEach((b) => b.classList.toggle('active', b === btn));
+      if (editorKey === 'project') syncMd('p-content', 'md-prev-project', 'md-stat-project');
+      if (editorKey === 'post') syncMd('post-content', 'md-prev-post', 'md-stat-post');
+    }
+
+    function syncMd(textareaId, previewId, statId) {
+      const val = document.getElementById(textareaId).value;
+      const prev = document.getElementById(previewId);
+      const stat = document.getElementById(statId);
+      prev.innerHTML = val.trim()
+        ? window.renderMarkdown(val)
+        : '<p style="color:var(--text-muted);">La vista previa aparecerá acá mientras escribís…</p>';
+      const rt = window.readingTime(val);
+      stat.textContent = `${rt.words} palabras · ~${rt.mins} min de lectura`;
+    }
+
+    function insertCaseStudyTemplate() {
+      const ta = document.getElementById('p-content');
+      const tpl = `## El problema\nDescribí qué tarea manual o necesidad tenía el cliente.\n\n## La solución\n- Arquitectura y stack utilizado\n- Decisiones clave de UX/UI\n\n## Resultados\n> Qué impacto concreto generó el producto en el uso diario.`;
+      ta.value = ta.value.trim() ? ta.value + '\n\n' + tpl : tpl;
+      ta.dispatchEvent(new Event('input'));
+    }
+
+    function updatePreview(inputId, boxId) {
+      const url = document.getElementById(inputId).value.trim();
+      const box = document.getElementById(boxId);
+      box.innerHTML = url
+        ? `<img src="${esc(url)}" alt="Vista previa" onerror="this.parentNode.textContent='No se pudo cargar la imagen'">`
+        : 'Vista previa de portada';
+    }
+
+    // ─── Auth ─────────────────────────────────────────────────────────
     function adminLogin() {
       const pw = document.getElementById('admin-password').value;
       if (pw === ADMIN_PASSWORD) {
@@ -526,7 +717,6 @@
       if (e.key === 'Enter') adminLogin();
     });
 
-    // Tabs
     document.querySelectorAll('.admin-tab').forEach((btn) => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.admin-tab').forEach((b) => b.classList.toggle('active', b === btn));
@@ -558,6 +748,7 @@
                 <div class="admin-item-title">
                   <span>${esc(p.title)}</span>
                   ${p.featured ? '<span class="badge-lime">Destacado</span>' : ''}
+                  ${p.demo_url ? '<span class="badge-muted">Demo</span>' : ''}
                   ${p.category ? `<span class="badge-muted">${esc(p.category)}</span>` : ''}
                 </div>
                 <p class="admin-item-sub">${esc(p.description)}</p>
@@ -575,19 +766,15 @@
       }
     }
 
-    function updateImagePreview() {
-      const url = document.getElementById('p-image').value.trim();
-      const box = document.getElementById('p-preview');
-      box.innerHTML = url ? `<img src="${esc(url)}" alt="Vista previa" onerror="this.parentNode.textContent='No se pudo cargar la imagen'">` : 'Vista previa de portada';
-    }
-
     function openProjectModal(id) {
       document.getElementById('p-id').value = '';
       document.getElementById('p-title').value = '';
       document.getElementById('p-category').value = '';
       document.getElementById('p-desc').value = '';
+      document.getElementById('p-content').value = '';
       document.getElementById('p-tech').value = '';
       document.getElementById('p-image').value = '';
+      document.getElementById('p-demo').value = '';
       document.getElementById('p-url').value = '';
       document.getElementById('p-github').value = '';
       document.getElementById('p-featured').checked = false;
@@ -600,8 +787,10 @@
           document.getElementById('p-title').value = p.title || '';
           document.getElementById('p-category').value = p.category || '';
           document.getElementById('p-desc').value = p.description || '';
+          document.getElementById('p-content').value = p.content || '';
           document.getElementById('p-tech').value = (p.technologies || []).join(', ');
           document.getElementById('p-image').value = p.image_url || '';
+          document.getElementById('p-demo').value = p.demo_url || '';
           document.getElementById('p-url').value = p.project_url || '';
           document.getElementById('p-github').value = p.github_url || '';
           document.getElementById('p-featured').checked = !!p.featured;
@@ -609,7 +798,8 @@
       } else {
         document.getElementById('project-modal-title').textContent = 'Nuevo proyecto';
       }
-      updateImagePreview();
+      updatePreview('p-image', 'p-preview');
+      syncMd('p-content', 'md-prev-project', 'md-stat-project');
       openModal('project-modal');
     }
 
@@ -619,13 +809,15 @@
         title: document.getElementById('p-title').value.trim(),
         category: document.getElementById('p-category').value.trim(),
         description: document.getElementById('p-desc').value.trim(),
+        content: document.getElementById('p-content').value.trim(),
         technologies: document.getElementById('p-tech').value,
         image_url: document.getElementById('p-image').value.trim(),
+        demo_url: document.getElementById('p-demo').value.trim(),
         project_url: document.getElementById('p-url').value.trim(),
         github_url: document.getElementById('p-github').value.trim(),
         featured: document.getElementById('p-featured').checked,
       };
-      if (!payload.title || !payload.description) return flash('Título y descripción son obligatorios.', 'err');
+      if (!payload.title || !payload.description) return flash('Título y resumen corto son obligatorios.', 'err');
       if (id) payload.id = parseInt(id, 10);
 
       const res = await fetch(id ? '/api/update-project' : '/api/create-project', {
@@ -756,21 +948,26 @@
           list.innerHTML = '<p style="color:var(--text-secondary);">No hay artículos publicados.</p>';
           return;
         }
-        list.innerHTML = postsCache.map((p) => `
-          <div class="admin-item">
-            <div class="admin-item-info">
-              <div class="admin-item-title">
-                <span>${esc(p.title)}</span>
-                <span class="badge-muted">${esc(p.author)}</span>
+        list.innerHTML = postsCache.map((p) => {
+          const rt = window.readingTime(p.content);
+          return `
+            <div class="admin-item">
+              <div class="admin-item-info">
+                <div class="admin-item-title">
+                  <span>${esc(p.title)}</span>
+                  <span class="badge-muted">${esc(p.author)}</span>
+                  <span class="badge-muted">${rt.mins} min</span>
+                </div>
+                <p class="admin-item-sub">${esc(p.summary || (p.content || '').slice(0, 150))}</p>
               </div>
-              <p class="admin-item-sub">${esc(p.content).slice(0, 160)}…</p>
+              <div class="admin-item-actions">
+                <a href="/blog.html" target="_blank" class="btn btn-ghost btn-sm">Ver &nearr;</a>
+                <button type="button" class="btn btn-ghost btn-sm" onclick="openPostModal(${p.id})">Editar</button>
+                <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deletePost(${p.id})">Eliminar</button>
+              </div>
             </div>
-            <div class="admin-item-actions">
-              <button type="button" class="btn btn-ghost btn-sm" onclick="openPostModal(${p.id})">Editar</button>
-              <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deletePost(${p.id})">Eliminar</button>
-            </div>
-          </div>
-        `).join('');
+          `;
+        }).join('');
       } catch (e) {
         list.innerHTML = `<p style="color:#ff8a8a;">Error: ${esc(e.message)}</p>`;
       }
@@ -780,7 +977,11 @@
       document.getElementById('post-id').value = '';
       document.getElementById('post-title').value = '';
       document.getElementById('post-author').value = 'Agustín Stoppello';
+      document.getElementById('post-tags').value = '';
+      document.getElementById('post-cover').value = '';
+      document.getElementById('post-summary').value = '';
       document.getElementById('post-content').value = '';
+
       if (id) {
         const p = postsCache.find((x) => x.id === id);
         if (p) {
@@ -788,11 +989,16 @@
           document.getElementById('post-id').value = p.id;
           document.getElementById('post-title').value = p.title || '';
           document.getElementById('post-author').value = p.author || 'Agustín Stoppello';
+          document.getElementById('post-tags').value = (p.tags || []).join(', ');
+          document.getElementById('post-cover').value = p.cover_url || '';
+          document.getElementById('post-summary').value = p.summary || '';
           document.getElementById('post-content').value = p.content || '';
         }
       } else {
         document.getElementById('post-modal-title').textContent = 'Nuevo artículo';
       }
+      updatePreview('post-cover', 'post-preview');
+      syncMd('post-content', 'md-prev-post', 'md-stat-post');
       openModal('post-modal');
     }
 
@@ -801,6 +1007,9 @@
       const payload = {
         title: document.getElementById('post-title').value.trim(),
         author: document.getElementById('post-author').value.trim() || 'Agustín Stoppello',
+        tags: document.getElementById('post-tags').value,
+        cover_url: document.getElementById('post-cover').value.trim(),
+        summary: document.getElementById('post-summary').value.trim(),
         content: document.getElementById('post-content').value.trim(),
       };
       if (!payload.title || !payload.content) return flash('Título y contenido son obligatorios.', 'err');

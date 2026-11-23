@@ -108,6 +108,10 @@
       padding: 64px 0;
       color: var(--text-secondary);
     }
+    .detail-case-study {
+      max-width: 780px;
+      margin-bottom: 64px;
+    }
   </style>
 </head>
 <body>
@@ -155,6 +159,7 @@
     </div>
   </footer>
 
+  <script src="js/markdown.js"></script>
   <script>
     function esc(t) {
       const d = document.createElement('div');
@@ -192,13 +197,20 @@
           .join('');
 
         let actionsHtml = '';
+        if (project.demo_url) {
+          actionsHtml += `<a href="${escAttr(project.demo_url)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent">Probar demo en vivo &nearr;</a>`;
+        }
         if (project.project_url && !project.project_url.startsWith('/Proyects/')) {
-          actionsHtml += `<a href="${escAttr(project.project_url)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent">Visitar proyecto &nearr;</a>`;
+          actionsHtml += `<a href="${escAttr(project.project_url)}" target="_blank" rel="noopener noreferrer" class="btn ${project.demo_url ? 'btn-ghost' : 'btn-accent'}">Visitar proyecto &nearr;</a>`;
         }
         if (project.github_url) {
           actionsHtml += `<a href="${escAttr(project.github_url)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Ver en GitHub &nearr;</a>`;
         }
         actionsHtml += `<a href="/#contacto" class="btn btn-ghost">Consultar por un proyecto similar</a>`;
+
+        const caseStudyHtml = project.content
+          ? `<article class="detail-case-study prose">${window.renderMarkdown(project.content)}</article>`
+          : '';
 
         root.className = '';
         root.innerHTML = `
@@ -212,6 +224,7 @@
             <div class="detail-techs">${techsHtml || '<span class="detail-tech">Proyecto</span>'}</div>
             <div class="detail-actions">${actionsHtml}</div>
           </div>
+          ${caseStudyHtml}
         `;
 
         // Load related projects

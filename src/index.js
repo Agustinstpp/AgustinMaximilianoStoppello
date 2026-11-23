@@ -58,6 +58,14 @@ function formatProject(row) {
   };
 }
 
+function formatPost(row) {
+  if (!row) return null;
+  return {
+    ...row,
+    tags: parseTechnologiesInput(row.tags),
+  };
+}
+
 function formatTodo(row) {
   if (!row) return null;
   return {
@@ -137,7 +145,18 @@ async function getProject(id, env, restFormat = false) {
 
 async function createProject(request, env, restFormat = false) {
   const body = await readJsonBody(request);
-  const { title, description, technologies, image_url, project_url, github_url, category, featured } = body;
+  const {
+    title,
+    description,
+    content,
+    technologies,
+    image_url,
+    project_url,
+    demo_url,
+    github_url,
+    category,
+    featured,
+  } = body;
 
   if (!title || !description) {
     return jsonResponse({ error: 'Title and description are required' }, 400);
@@ -147,16 +166,18 @@ async function createProject(request, env, restFormat = false) {
   const isFeatured = featured === true || featured === 'true' || featured === 1 ? 1 : 0;
 
   const row = await env.DB.prepare(
-    `INSERT INTO projects (title, description, technologies, image_url, project_url, github_url, category, featured)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO projects (title, description, content, technologies, image_url, project_url, demo_url, github_url, category, featured)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      RETURNING *`
   )
     .bind(
       title,
       description,
+      content || null,
       techJson,
       image_url || null,
       project_url || null,
+      demo_url || null,
       github_url || null,
       category || null,
       isFeatured
@@ -170,7 +191,18 @@ async function createProject(request, env, restFormat = false) {
 async function updateProject(request, env, paramId = null, restFormat = false) {
   const body = await readJsonBody(request);
   const id = paramId || body.id;
-  const { title, description, technologies, image_url, project_url, github_url, category, featured } = body;
+  const {
+    title,
+    description,
+    content,
+    technologies,
+    image_url,
+    project_url,
+    demo_url,
+    github_url,
+    category,
+    featured,
+  } = body;
 
   if (!id) return jsonResponse({ error: 'Project ID is required' }, 400);
   if (!title || !description) {
@@ -184,9 +216,11 @@ async function updateProject(request, env, paramId = null, restFormat = false) {
     `UPDATE projects
      SET title = ?,
          description = ?,
+         content = ?,
          technologies = ?,
          image_url = ?,
          project_url = ?,
+         demo_url = ?,
          github_url = ?,
          category = ?,
          featured = ?,
@@ -197,9 +231,11 @@ async function updateProject(request, env, paramId = null, restFormat = false) {
     .bind(
       title,
       description,
+      content || null,
       techJson,
       image_url || null,
       project_url || null,
+      demo_url || null,
       github_url || null,
       category || null,
       isFeatured,
@@ -231,56 +267,73 @@ async function getPosts(env, restFormat = false) {
   const { results } = await env.DB.prepare(
     'SELECT * FROM posts ORDER BY created_at DESC, id DESC'
   ).all();
-  return jsonResponse(restFormat ? results : { posts: results });
+  const posts = results.map(formatPost);
+  return jsonResponse(restFormat ? posts : { posts });
 }
 
 async function getPost(id, env, restFormat = false) {
   if (!id) return jsonResponse({ error: 'Post ID is required' }, 400);
-  const post = await env.DB.prepare('SELECT * FROM posts WHERE id = ?').bind(id).first();
-  if (!post) return jsonResponse({ error: 'Post not found' }, 404);
+  const row = await env.DB.prepare('SELECT * FROM posts WHERE id = ?').bind(id).first();
+  if (!row) return jsonResponse({ error: 'Post not found' }, 404);
+  const post = formatPost(row);
   return jsonResponse(restFormat ? post : { post });
 }
 
 async function createPost(request, env, restFormat = false) {
-  const { title, content, author } = await readJsonBody(request);
+  const { title, content, author, summary, cover_url, tags } = await readJsonBody(request);
   if (!title || !content) {
     return jsonResponse({ error: 'Title and content are required' }, 400);
   }
 
-  const post = await env.DB.prepare(
-    `INSERT INTO posts (title, content, author)
-     VALUES (?, ?, ?)
+  const tagsJson = JSON.stringify(parseTechnologiesInput(tags));
+  const row = await env.DB.prepare(
+    `INSERT INTO posts (title, content, author, summary, cover_url, tags)
+     VALUES (?, ?, ?, ?, ?, ?)
      RETURNING *`
   )
-    .bind(title, content, author || 'Agustín Stoppello')
+    .bind(title, content, author || 'Agustín Stoppello', summary || null, cover_url || null, tagsJson)
     .first();
 
+  const post = formatPost(row);
   return jsonResponse(restFormat ? post : { post }, 201);
 }
 
 async function updatePost(request, env, paramId = null, restFormat = false) {
   const body = await readJsonBody(request);
   const id = paramId || body.id;
-  const { title, content, author } = body;
+  const { title, content, author, summary, cover_url, tags } = body;
 
   if (!id) return jsonResponse({ error: 'Post ID is required' }, 400);
   if (!title || !content) {
     return jsonResponse({ error: 'Title and content are required' }, 400);
   }
 
-  const post = await env.DB.prepare(
+  const tagsJson = JSON.stringify(parseTechnologiesInput(tags));
+  const row = await env.DB.prepare(
     `UPDATE posts
      SET title = ?,
          content = ?,
          author = ?,
+         summary = ?,
+         cover_url = ?,
+         tags = ?,
          updated_at = datetime('now')
      WHERE id = ?
      RETURNING *`
   )
-    .bind(title, content, author || 'Agustín Stoppello', id)
+    .bind(
+      title,
+      content,
+      author || 'Agustín Stoppello',
+      summary || null,
+      cover_url || null,
+      tagsJson,
+      id
+    )
     .first();
 
-  if (!post) return jsonResponse({ error: 'Post not found' }, 404);
+  if (!row) return jsonResponse({ error: 'Post not found' }, 404);
+  const post = formatPost(row);
   return jsonResponse(restFormat ? post : { post });
 }
 
