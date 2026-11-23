@@ -327,15 +327,18 @@ img {
   appearance: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
+  height: 54px;
+  min-width: 132px;
   background-color: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-secondary);
   font-family: inherit;
-  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  padding: 10px 22px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 24px;
   border-radius: var(--radius-pill);
   cursor: pointer;
   white-space: nowrap;
@@ -343,17 +346,13 @@ img {
 }
 
 .brand-chip-logo {
-  height: 20px;
+  height: 26px;
   width: auto;
-  max-width: 84px;
+  max-width: 120px;
   object-fit: contain;
   display: block;
-  opacity: 0.82;
+  opacity: 0.88;
   transition: opacity 0.2s ease, filter 0.2s ease;
-}
-
-.brand-chip-logo--invert {
-  filter: brightness(0) invert(1);
 }
 
 .brand-chip:hover .brand-chip-logo {
@@ -366,9 +365,9 @@ img {
 }
 
 .brand-chip-logo--color {
-  height: 26px;
-  max-width: 96px;
-  opacity: 0.95;
+  height: 36px;
+  max-width: 112px;
+  opacity: 0.96;
 }
 
 .brand-chip.active .brand-chip-logo--color {

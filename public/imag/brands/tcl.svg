@@ -11,6 +11,7 @@
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="1000"
    height="596.39362"
+   viewBox="0 0 1000 596.39362"
    id="svg281689"
    version="1.1"
    inkscape:version="0.48.2 r9819"
@@ -71,15 +72,7 @@
       <g
          id="g3053"
          clip-path="url(#clipPath3055)">
-        <g
-           id="g3059"
-           transform="translate(332.086,605.9463)">
-          <path
-             d="m 0,0 -68.896,0 0,30.878 c 0,5.599 4.584,10.184 10.185,10.184 L 0,41.062 0,0 z"
-             style="fill:#ed1c24;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             id="path3061"
-             inkscape:connector-curvature="0" />
-        </g>
+        <!-- Red background removed so TCL letters render cleanly on dark & lime backgrounds -->
         <g
            id="g3063"
            transform="translate(273.375,629.3974)">
