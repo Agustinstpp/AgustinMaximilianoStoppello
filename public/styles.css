@@ -671,6 +671,92 @@ img {
   object-position: center 20%;
 }
 
+/* ─── Events & Instagram Carousels (Eventos) ─────────────────────────────── */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+.event-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: clamp(18px, 3vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s ease;
+}
+
+.event-card:hover {
+  border-color: var(--border-hover);
+}
+
+.event-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.event-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.event-team {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.event-team strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.event-embed-wrap {
+  width: 100%;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background-color: #ffffff;
+}
+
+.event-embed-wrap .instagram-media {
+  margin: 0 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.event-fallback-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 2px;
+}
+
+.event-fallback-link:hover {
+  text-decoration: underline;
+}
+
 /* ─── FAQ (Preguntas Frecuentes) ─────────────────────────────────────────── */
 .faq-grid {
   display: grid;
@@ -826,6 +912,7 @@ img {
   }
 
   .about-split,
+  .events-grid,
   .faq-grid {
     grid-template-columns: 1fr;
     gap: 28px;
