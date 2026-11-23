@@ -347,12 +347,12 @@ img {
 }
 
 .brand-chip-logo {
-  height: 26px;
+  height: 24px;
   width: auto;
   max-width: 118px;
   object-fit: contain;
   display: block;
-  opacity: 0.82;
+  opacity: 0.85;
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
@@ -360,26 +360,13 @@ img {
   height: 32px;
 }
 
-.brand-chip-logo--mono {
-  height: 34px;
-  max-width: 112px;
-  filter: grayscale(1) brightness(1.45) contrast(1.25);
-  opacity: 0.85;
-}
-
-.brand-chip:hover .brand-chip-logo,
-.brand-chip:hover .brand-chip-logo--mono {
+.brand-chip:hover .brand-chip-logo {
   opacity: 1;
 }
 
 .brand-chip.active .brand-chip-logo {
   opacity: 1;
   filter: brightness(0);
-}
-
-.brand-chip.active .brand-chip-logo--mono {
-  opacity: 1;
-  filter: grayscale(1) brightness(0.12) contrast(1.6);
 }
 
 .brand-chip:hover {
