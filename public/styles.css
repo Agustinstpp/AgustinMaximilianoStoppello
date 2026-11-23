@@ -211,6 +211,25 @@ img {
   border-color: #0a0a0a;
 }
 
+.btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  fill: currentColor;
+}
+
+.btn-icon {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+.btn-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
 /* ─── Eyebrow & Headings ──────────────────────────────────────────────────── */
 .eyebrow {
   font-size: 0.72rem;
@@ -829,7 +848,7 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .cta-actions .btn {
+  .cta-actions .btn:not(.btn-icon) {
     width: 100%;
     white-space: normal;
     word-break: break-word;
