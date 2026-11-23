@@ -325,11 +325,14 @@ img {
 
 .brand-chip {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   background-color: var(--surface);
   border: 1px solid var(--border);
   color: var(--text-secondary);
   font-family: inherit;
-  font-size: clamp(0.95rem, 1.5vw, 1.08rem);
+  font-size: clamp(0.95rem, 1.5vw, 1.05rem);
   font-weight: 600;
   letter-spacing: -0.02em;
   padding: 10px 22px;
@@ -337,6 +340,29 @@ img {
   cursor: pointer;
   white-space: nowrap;
   transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.18s ease;
+}
+
+.brand-chip-logo {
+  height: 20px;
+  width: auto;
+  max-width: 84px;
+  object-fit: contain;
+  display: block;
+  opacity: 0.82;
+  transition: opacity 0.2s ease, filter 0.2s ease;
+}
+
+.brand-chip-logo--invert {
+  filter: brightness(0) invert(1);
+}
+
+.brand-chip:hover .brand-chip-logo {
+  opacity: 1;
+}
+
+.brand-chip.active .brand-chip-logo {
+  opacity: 1;
+  filter: brightness(0);
 }
 
 .brand-chip:hover {
