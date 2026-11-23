@@ -1,677 +1,837 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Agustín Stoppello</title>
-    <link rel="icon" href="imag/Logo sin fondo.PNG" type="image/x-icon">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="styles.css">
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <style>
-        .admin-badge { font-size: 0.7rem; }
-        .table td { vertical-align: middle; }
-        .tech-badge { font-size: 0.75rem; }
-        #login-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0,0,0,.6);
-            z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — agustinst.code</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="imag/IMG_0259.PNG" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .admin-main { padding: 40px 0 80px; }
+    .login-screen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-box {
+      width: 100%;
+      max-width: 390px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+    }
+    .login-box h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      margin: 14px 0 6px;
+    }
+    .login-box p {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 22px;
+    }
+    .admin-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .admin-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .admin-tab {
+      appearance: none;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-family: inherit;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 9px 18px;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .admin-tab:hover { color: var(--text); border-color: var(--border-hover); }
+    .admin-tab.active {
+      background-color: var(--accent);
+      border-color: var(--accent);
+      color: #0a0a0a;
+    }
+    .admin-panel { display: none; }
+    .admin-panel.active { display: block; }
+    .admin-panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .admin-panel-head h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .admin-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .admin-item {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+    .admin-item:hover { border-color: var(--border-hover); }
+    .admin-item-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      min-width: 0;
+      flex: 1;
+    }
+    .admin-thumb {
+      width: 72px;
+      height: 50px;
+      border-radius: 8px;
+      background-color: var(--surface-thumb);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--text-muted);
+    }
+    .admin-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .admin-item-info { min-width: 0; }
+    .admin-item-title {
+      font-size: 1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .admin-item-sub {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      max-width: 620px;
+    }
+    .badge-lime {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #0a0a0a;
+      background-color: var(--accent);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
+    .badge-muted {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      background-color: #1c1c1c;
+      border: 1px solid var(--border);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
+    .admin-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .btn-danger-ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 92, 92, 0.35);
+      color: #ff7a7a;
+    }
+    .btn-danger-ghost:hover {
+      background: rgba(255, 92, 92, 0.14);
+      border-color: #ff7a7a;
+    }
+    .admin-alert {
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .admin-alert.show { display: block; }
+    .admin-alert.ok {
+      background: rgba(200, 243, 29, 0.12);
+      border: 1px solid rgba(200, 243, 29, 0.35);
+      color: var(--accent);
+    }
+    .admin-alert.err {
+      background: rgba(255, 92, 92, 0.12);
+      border: 1px solid rgba(255, 92, 92, 0.35);
+      color: #ff8a8a;
+    }
+    /* Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-card {
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      background-color: var(--surface);
+      border: 1px solid var(--border-hover);
+      border-radius: var(--radius-lg);
+      padding: 26px;
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .modal-head h3 { font-size: 1.2rem; font-weight: 700; }
+    .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .field label { font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); }
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      background-color: #0b0b0b;
+      border: 1px solid var(--border-hover);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.92rem;
+      padding: 10px 12px;
+      outline: none;
+    }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus {
+      border-color: var(--accent);
+    }
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0 18px;
+      font-size: 0.9rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+    .checkbox-row input { width: 17px; height: 17px; accent-color: var(--accent); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 18px; }
+    .preview-box {
+      width: 100%;
+      height: 130px;
+      border-radius: 10px;
+      background: #0b0b0b;
+      border: 1px dashed var(--border-hover);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .preview-box img { width: 100%; height: 100%; object-fit: cover; }
+    @media (max-width: 640px) {
+      .field-row { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
-<body class="bg-light">
-
-    <!-- Login overlay -->
-    <div id="login-overlay">
-        <div class="card shadow-lg w-100" style="max-width: 340px;">
-            <div class="card-body p-4">
-                <h4 class="card-title mb-1 text-center">
-                    <i class="fas fa-lock me-2 text-primary"></i>Panel Admin
-                </h4>
-                <p class="text-muted text-center small mb-3">Ingresá la contraseña para continuar.</p>
-                <div id="login-error" class="alert alert-danger d-none py-2 small">Contraseña incorrecta.</div>
-                <input type="password" id="admin-password" class="form-control mb-3" placeholder="Contraseña" autocomplete="current-password">
-                <button class="btn btn-primary w-100" onclick="adminLogin()">
-                    <i class="fas fa-sign-in-alt me-1"></i>Ingresar
-                </button>
-            </div>
-        </div>
+<body>
+  <!-- ─── Login ───────────────────────────────────────────────────────── -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-box">
+      <a href="/" class="brand">
+        <span class="brand-avatar"><img src="imag/IMG_0259.PNG" alt="agustinst.code"></span>
+        <span><span class="brand-name">agustinst</span><span class="brand-accent">.code</span></span>
+      </a>
+      <h1>Panel Admin</h1>
+      <p>Ingresá tu contraseña para administrar proyectos, marcas y artículos en Cloudflare D1.</p>
+      <div class="field">
+        <label for="admin-password">Contraseña</label>
+        <input type="password" id="admin-password" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <div id="login-error" class="admin-alert err">Contraseña incorrecta.</div>
+      <button type="button" class="btn btn-accent" style="width:100%;" onclick="adminLogin()">Ingresar</button>
     </div>
+  </div>
 
-    <div class="container-fluid py-4 px-2 px-sm-4" id="admin-content" style="display:none;">
-        <!-- Header -->
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
-            <div>
-                <h1 class="h3 mb-0">
-                    <i class="fas fa-cogs me-2 text-primary"></i>Panel de Administración
-                </h1>
-                <small class="text-muted">Gestión de proyectos y blog</small>
-            </div>
-            <div class="d-flex gap-2 align-items-center">
-                <a href="Index.html" class="btn btn-outline-secondary btn-sm">
-                    <i class="fas fa-external-link-alt me-1"></i>Ver sitio
-                </a>
-                <button class="btn btn-outline-danger btn-sm" onclick="adminLogout()">
-                    <i class="fas fa-sign-out-alt me-1"></i>Salir
-                </button>
-            </div>
+  <!-- ─── Dashboard ───────────────────────────────────────────────────── -->
+  <div id="admin-app" style="display:none;">
+    <header class="site-header">
+      <div class="container nav-inner">
+        <a href="/" class="brand">
+          <span class="brand-avatar"><img src="imag/IMG_0259.PNG" alt="agustinst.code"></span>
+          <span><span class="brand-name">agustinst</span><span class="brand-accent">.code</span></span>
+        </a>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <a href="/" class="nav-link">Ver sitio &nearr;</a>
+          <button type="button" class="btn btn-ghost btn-sm" onclick="adminLogout()">Salir</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <div class="container">
+        <div class="admin-bar">
+          <div class="admin-tabs">
+            <button type="button" class="admin-tab active" data-tab="projects">Proyectos</button>
+            <button type="button" class="admin-tab" data-tab="brands">Trabajos por Marca</button>
+            <button type="button" class="admin-tab" data-tab="posts">Blog</button>
+          </div>
+          <span style="font-size:0.8rem;color:var(--text-muted);">Cloudflare D1 &middot; en vivo</span>
         </div>
 
-        <!-- Tabs -->
-        <ul class="nav nav-tabs mb-4" id="adminTabs">
-            <li class="nav-item">
-                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-projects">
-                    <i class="fas fa-folder me-1"></i>Proyectos
-                </button>
-            </li>
-            <li class="nav-item">
-                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-posts">
-                    <i class="fas fa-newspaper me-1"></i>Blog
-                </button>
-            </li>
-        </ul>
+        <div id="global-alert" class="admin-alert"></div>
 
-        <div class="tab-content">
-            <!-- ═══════════ PROJECTS TAB ═══════════ -->
-            <div class="tab-pane fade show active" id="tab-projects">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                    <h5 class="mb-0">Proyectos</h5>
-                    <button class="btn btn-primary btn-sm" onclick="openProjectModal()">
-                        <i class="fas fa-plus me-1"></i>Nuevo proyecto
-                    </button>
-                </div>
+        <!-- Tab: Projects -->
+        <section id="tab-projects" class="admin-panel active">
+          <div class="admin-panel-head">
+            <h2>Proyectos</h2>
+            <button type="button" class="btn btn-accent btn-sm" onclick="openProjectModal()">+ Nuevo proyecto</button>
+          </div>
+          <div id="projects-list" class="admin-list"></div>
+        </section>
 
-                <div id="projects-alert"></div>
+        <!-- Tab: Brand Works -->
+        <section id="tab-brands" class="admin-panel">
+          <div class="admin-panel-head">
+            <h2>Trabajos por Marca (Carrusel)</h2>
+            <button type="button" class="btn btn-accent btn-sm" onclick="openBrandModal()">+ Nuevo trabajo de marca</button>
+          </div>
+          <div id="brands-list" class="admin-list"></div>
+        </section>
 
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-0">
-                        <div id="projects-loading" class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                        </div>
-                        <div class="table-responsive d-none" id="projects-table-wrap">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width:40px" class="d-none d-sm-table-cell">#</th>
-                                        <th>Título</th>
-                                        <th class="d-none d-sm-table-cell">Categoría</th>
-                                        <th class="d-none d-md-table-cell">Tecnologías</th>
-                                        <th style="width:80px" class="text-center d-none d-sm-table-cell">Destacado</th>
-                                        <th style="width:120px" class="text-end">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="projects-tbody"></tbody>
-                            </table>
-                        </div>
-                        <div id="projects-empty" class="text-center text-muted py-5 d-none">
-                            <i class="fas fa-folder-open fa-3x mb-2 opacity-50"></i>
-                            <p>No hay proyectos cargados.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Tab: Posts -->
+        <section id="tab-posts" class="admin-panel">
+          <div class="admin-panel-head">
+            <h2>Artículos del Blog</h2>
+            <button type="button" class="btn btn-accent btn-sm" onclick="openPostModal()">+ Nuevo artículo</button>
+          </div>
+          <div id="posts-list" class="admin-list"></div>
+        </section>
+      </div>
+    </main>
+  </div>
 
-            <!-- ═══════════ POSTS TAB ═══════════ -->
-            <div class="tab-pane fade" id="tab-posts">
-                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                    <h5 class="mb-0">Artículos del Blog</h5>
-                    <button class="btn btn-primary btn-sm" onclick="openPostModal()">
-                        <i class="fas fa-plus me-1"></i>Nuevo artículo
-                    </button>
-                </div>
-
-                <div id="posts-alert"></div>
-
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body p-0">
-                        <div id="posts-loading" class="text-center py-5">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Cargando...</span>
-                            </div>
-                        </div>
-                        <div class="table-responsive d-none" id="posts-table-wrap">
-                            <table class="table table-hover mb-0">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th style="width:40px" class="d-none d-sm-table-cell">#</th>
-                                        <th>Título</th>
-                                        <th class="d-none d-sm-table-cell">Autor</th>
-                                        <th class="d-none d-sm-table-cell">Fecha</th>
-                                        <th style="width:120px" class="text-end">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="posts-tbody"></tbody>
-                            </table>
-                        </div>
-                        <div id="posts-empty" class="text-center text-muted py-5 d-none">
-                            <i class="fas fa-newspaper fa-3x mb-2 opacity-50"></i>
-                            <p>No hay artículos publicados.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <!-- ─── Project Modal ───────────────────────────────────────────────── -->
+  <div id="project-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="project-modal-title">Nuevo proyecto</h3>
+        <button type="button" class="brand-works-close" onclick="closeModal('project-modal')">&times;</button>
+      </div>
+      <input type="hidden" id="p-id">
+      <div class="field-row">
+        <div class="field">
+          <label for="p-title">Título *</label>
+          <input type="text" id="p-title" placeholder="Ej: YacaJobs">
         </div>
+        <div class="field">
+          <label for="p-category">Categoría</label>
+          <input type="text" id="p-category" placeholder="Ej: MARCA · BRANDING">
+        </div>
+      </div>
+      <div class="field">
+        <label for="p-desc">Descripción *</label>
+        <textarea id="p-desc" rows="3" placeholder="Qué problema resolviste y cómo…"></textarea>
+      </div>
+      <div class="field">
+        <label for="p-tech">Tecnologías (separadas por coma)</label>
+        <input type="text" id="p-tech" placeholder="Figma, Cloudflare, HTML, CSS">
+      </div>
+      <div class="field">
+        <label for="p-image">URL de imagen (ej: /imag/Portada Smart Techs PC.jpg o https://…)</label>
+        <input type="text" id="p-image" placeholder="/imag/..." oninput="updateImagePreview()">
+      </div>
+      <div id="p-preview" class="preview-box">Vista previa de portada</div>
+      <div class="field-row">
+        <div class="field">
+          <label for="p-url">URL del proyecto (externa)</label>
+          <input type="text" id="p-url" placeholder="https://...">
+        </div>
+        <div class="field">
+          <label for="p-github">URL de GitHub</label>
+          <input type="text" id="p-github" placeholder="https://github.com/...">
+        </div>
+      </div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="p-featured">
+        <span>Mostrar como <strong>Destacado</strong> en la página principal</span>
+      </label>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('project-modal')">Cancelar</button>
+        <button type="button" class="btn btn-accent btn-sm" onclick="saveProject()">Guardar</button>
+      </div>
     </div>
+  </div>
 
-    <!-- ═══════════ PROJECT MODAL ═══════════ -->
-    <div class="modal fade" id="projectModal" tabindex="-1" aria-labelledby="projectModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-md-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="projectModalLabel">Proyecto</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="project-form-alert"></div>
-                    <form id="project-form" novalidate>
-                        <input type="hidden" id="project-id">
-                        <div class="row g-3">
-                            <div class="col-md-8">
-                                <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
-                                <input type="text" id="project-title" class="form-control" placeholder="Ej: LlegaRapido" required>
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label fw-semibold">Categoría</label>
-                                <input type="text" id="project-category" class="form-control" placeholder="Ej: UX/UI">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Descripción <span class="text-danger">*</span></label>
-                                <textarea id="project-description" class="form-control" rows="3" placeholder="Descripción del proyecto..." required></textarea>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Tecnologías</label>
-                                <input type="text" id="project-technologies" class="form-control" placeholder="Figma, HTML, CSS, Bootstrap (separadas por coma)">
-                                <div class="form-text">Separalas con coma.</div>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">URL de imagen</label>
-                                <input type="text" id="project-image-url" class="form-control" placeholder="/imag/mi-imagen.jpg">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">URL del proyecto</label>
-                                <input type="text" id="project-url" class="form-control" placeholder="/Proyects/MiProyecto.html">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label fw-semibold">URL de GitHub</label>
-                                <input type="text" id="project-github-url" class="form-control" placeholder="https://github.com/usuario/repo">
-                            </div>
-                            <div class="col-md-6 d-flex align-items-end">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="project-featured">
-                                    <label class="form-check-label fw-semibold" for="project-featured">
-                                        Proyecto destacado
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="project-save-btn" onclick="saveProject()">
-                        <i class="fas fa-save me-1"></i>Guardar
-                    </button>
-                </div>
-            </div>
+  <!-- ─── Brand Work Modal ────────────────────────────────────────────── -->
+  <div id="brand-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="brand-modal-title">Trabajo con marca</h3>
+        <button type="button" class="brand-works-close" onclick="closeModal('brand-modal')">&times;</button>
+      </div>
+      <input type="hidden" id="b-id">
+      <div class="field-row">
+        <div class="field">
+          <label for="b-brand">Marca *</label>
+          <select id="b-brand">
+            <option value="Club Don Bosco">Club Don Bosco</option>
+            <option value="TCL">TCL</option>
+            <option value="Wampa">Wampa</option>
+            <option value="ZenFit">ZenFit</option>
+            <option value="Puma">Puma</option>
+            <option value="Patagonia">Patagonia</option>
+          </select>
         </div>
-    </div>
-
-    <!-- ═══════════ POST MODAL ═══════════ -->
-    <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="postModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable modal-fullscreen-md-down">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="postModalLabel">Artículo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="post-form-alert"></div>
-                    <form id="post-form" novalidate>
-                        <input type="hidden" id="post-id">
-                        <div class="row g-3">
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Título <span class="text-danger">*</span></label>
-                                <input type="text" id="post-title" class="form-control" placeholder="Título del artículo" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Autor</label>
-                                <input type="text" id="post-author" class="form-control" placeholder="Agustín Stoppello" value="Agustín Stoppello">
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label fw-semibold">Contenido <span class="text-danger">*</span></label>
-                                <textarea id="post-content" class="form-control" rows="8" placeholder="Contenido del artículo..." required></textarea>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="post-save-btn" onclick="savePost()">
-                        <i class="fas fa-save me-1"></i>Guardar
-                    </button>
-                </div>
-            </div>
+        <div class="field">
+          <label for="b-tag">Etiqueta</label>
+          <input type="text" id="b-tag" placeholder="Ej: PLATAFORMA WEB · DISEÑO">
         </div>
+      </div>
+      <div class="field">
+        <label for="b-title">Título del trabajo *</label>
+        <input type="text" id="b-title" placeholder="Ej: Plataforma web institucional">
+      </div>
+      <div class="field">
+        <label for="b-desc">Descripción *</label>
+        <textarea id="b-desc" rows="3" placeholder="Detalle del trabajo realizado…"></textarea>
+      </div>
+      <div class="field">
+        <label for="b-url">Link opcional (web, Instagram, Figma…)</label>
+        <input type="text" id="b-url" placeholder="https://...">
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('brand-modal')">Cancelar</button>
+        <button type="button" class="btn btn-accent btn-sm" onclick="saveBrandWork()">Guardar</button>
+      </div>
     </div>
+  </div>
 
-    <!-- ═══════════ CONFIRM DELETE MODAL ═══════════ -->
-    <div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header border-0">
-                    <h5 class="modal-title text-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>Confirmar eliminación
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+  <!-- ─── Post Modal ──────────────────────────────────────────────────── -->
+  <div id="post-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h3 id="post-modal-title">Nuevo artículo</h3>
+        <button type="button" class="brand-works-close" onclick="closeModal('post-modal')">&times;</button>
+      </div>
+      <input type="hidden" id="post-id">
+      <div class="field">
+        <label for="post-title">Título *</label>
+        <input type="text" id="post-title">
+      </div>
+      <div class="field">
+        <label for="post-author">Autor</label>
+        <input type="text" id="post-author" value="Agustín Stoppello">
+      </div>
+      <div class="field">
+        <label for="post-content">Contenido *</label>
+        <textarea id="post-content" rows="6"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('post-modal')">Cancelar</button>
+        <button type="button" class="btn btn-accent btn-sm" onclick="savePost()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const ADMIN_KEY = 'admin_authenticated';
+    // Para mayor seguridad en producción, proteger /admin.html con Cloudflare Access (Zero Trust).
+    const ADMIN_PASSWORD = 'admin2025';
+
+    let projectsCache = [];
+    let brandWorksCache = [];
+    let postsCache = [];
+
+    function esc(t) {
+      const d = document.createElement('div');
+      d.textContent = t || '';
+      return d.innerHTML;
+    }
+
+    function flash(msg, type = 'ok') {
+      const el = document.getElementById('global-alert');
+      el.textContent = msg;
+      el.className = `admin-alert show ${type}`;
+      clearTimeout(flash._t);
+      flash._t = setTimeout(() => el.classList.remove('show'), 4000);
+    }
+
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    function adminLogin() {
+      const pw = document.getElementById('admin-password').value;
+      if (pw === ADMIN_PASSWORD) {
+        sessionStorage.setItem(ADMIN_KEY, '1');
+        unlockApp();
+      } else {
+        document.getElementById('login-error').classList.add('show');
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem(ADMIN_KEY);
+      location.reload();
+    }
+
+    function unlockApp() {
+      document.getElementById('login-screen').style.display = 'none';
+      document.getElementById('admin-app').style.display = '';
+      loadAll();
+    }
+
+    document.getElementById('admin-password').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') adminLogin();
+    });
+
+    // Tabs
+    document.querySelectorAll('.admin-tab').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.admin-tab').forEach((b) => b.classList.toggle('active', b === btn));
+        document.querySelectorAll('.admin-panel').forEach((p) => p.classList.toggle('active', p.id === `tab-${btn.dataset.tab}`));
+      });
+    });
+
+    async function loadAll() {
+      await Promise.all([loadProjects(), loadBrandWorks(), loadPosts()]);
+    }
+
+    // ─── Projects CRUD ────────────────────────────────────────────────
+    async function loadProjects() {
+      const list = document.getElementById('projects-list');
+      list.innerHTML = '<p style="color:var(--text-secondary);">Cargando…</p>';
+      try {
+        const res = await fetch('/api/get-projects');
+        const data = await res.json();
+        projectsCache = data.projects || [];
+        if (!projectsCache.length) {
+          list.innerHTML = '<p style="color:var(--text-secondary);">No hay proyectos cargados.</p>';
+          return;
+        }
+        list.innerHTML = projectsCache.map((p) => `
+          <div class="admin-item">
+            <div class="admin-item-left">
+              <div class="admin-thumb">${p.image_url ? `<img src="${esc(p.image_url)}" alt="">` : 'Sin img'}</div>
+              <div class="admin-item-info">
+                <div class="admin-item-title">
+                  <span>${esc(p.title)}</span>
+                  ${p.featured ? '<span class="badge-lime">Destacado</span>' : ''}
+                  ${p.category ? `<span class="badge-muted">${esc(p.category)}</span>` : ''}
                 </div>
-                <div class="modal-body" id="confirm-message">
-                    ¿Estás seguro de que querés eliminar este elemento? Esta acción no se puede deshacer.
-                </div>
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-danger" id="confirm-delete-btn">
-                        <i class="fas fa-trash me-1"></i>Eliminar
-                    </button>
-                </div>
+                <p class="admin-item-sub">${esc(p.description)}</p>
+              </div>
             </div>
-        </div>
-    </div>
+            <div class="admin-item-actions">
+              <a href="/proyecto.html?id=${p.id}" target="_blank" class="btn btn-ghost btn-sm">Ver &nearr;</a>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="openProjectModal(${p.id})">Editar</button>
+              <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deleteProject(${p.id})">Eliminar</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = `<p style="color:#ff8a8a;">Error: ${esc(e.message)}</p>`;
+      }
+    }
 
-    <script>
-        // ─── Auth ─────────────────────────────────────────────────────────────────
-        const ADMIN_KEY = 'admin_authenticated';
-        // NOTE: This is a client-side convenience check only.
-        // For production, protect this page using Cloudflare Access (Zero Trust),
-        // "Password protection" feature (Site settings → Access control → Password protection).
-        // That enforces auth at the CDN level before the page is served.
-        const ADMIN_PASSWORD = 'admin2025';
+    function updateImagePreview() {
+      const url = document.getElementById('p-image').value.trim();
+      const box = document.getElementById('p-preview');
+      box.innerHTML = url ? `<img src="${esc(url)}" alt="Vista previa" onerror="this.parentNode.textContent='No se pudo cargar la imagen'">` : 'Vista previa de portada';
+    }
 
-        function adminLogin() {
-            const pw = document.getElementById('admin-password').value;
-            if (pw === ADMIN_PASSWORD) {
-                sessionStorage.setItem(ADMIN_KEY, '1');
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('admin-content').style.display = '';
-                loadProjects();
-                loadPosts();
-            } else {
-                document.getElementById('login-error').classList.remove('d-none');
-                document.getElementById('admin-password').focus();
-            }
+    function openProjectModal(id) {
+      document.getElementById('p-id').value = '';
+      document.getElementById('p-title').value = '';
+      document.getElementById('p-category').value = '';
+      document.getElementById('p-desc').value = '';
+      document.getElementById('p-tech').value = '';
+      document.getElementById('p-image').value = '';
+      document.getElementById('p-url').value = '';
+      document.getElementById('p-github').value = '';
+      document.getElementById('p-featured').checked = false;
+
+      if (id) {
+        const p = projectsCache.find((x) => x.id === id);
+        if (p) {
+          document.getElementById('project-modal-title').textContent = 'Editar proyecto';
+          document.getElementById('p-id').value = p.id;
+          document.getElementById('p-title').value = p.title || '';
+          document.getElementById('p-category').value = p.category || '';
+          document.getElementById('p-desc').value = p.description || '';
+          document.getElementById('p-tech').value = (p.technologies || []).join(', ');
+          document.getElementById('p-image').value = p.image_url || '';
+          document.getElementById('p-url').value = p.project_url || '';
+          document.getElementById('p-github').value = p.github_url || '';
+          document.getElementById('p-featured').checked = !!p.featured;
         }
+      } else {
+        document.getElementById('project-modal-title').textContent = 'Nuevo proyecto';
+      }
+      updateImagePreview();
+      openModal('project-modal');
+    }
 
-        function adminLogout() {
-            sessionStorage.removeItem(ADMIN_KEY);
-            location.reload();
+    async function saveProject() {
+      const id = document.getElementById('p-id').value;
+      const payload = {
+        title: document.getElementById('p-title').value.trim(),
+        category: document.getElementById('p-category').value.trim(),
+        description: document.getElementById('p-desc').value.trim(),
+        technologies: document.getElementById('p-tech').value,
+        image_url: document.getElementById('p-image').value.trim(),
+        project_url: document.getElementById('p-url').value.trim(),
+        github_url: document.getElementById('p-github').value.trim(),
+        featured: document.getElementById('p-featured').checked,
+      };
+      if (!payload.title || !payload.description) return flash('Título y descripción son obligatorios.', 'err');
+      if (id) payload.id = parseInt(id, 10);
+
+      const res = await fetch(id ? '/api/update-project' : '/api/create-project', {
+        method: id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) return flash('Error al guardar proyecto.', 'err');
+      closeModal('project-modal');
+      flash(id ? 'Proyecto actualizado.' : 'Proyecto creado.');
+      loadProjects();
+    }
+
+    async function deleteProject(id) {
+      if (!confirm('¿Eliminar este proyecto?')) return;
+      const res = await fetch('/api/delete-project', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) return flash('Error al eliminar.', 'err');
+      flash('Proyecto eliminado.');
+      loadProjects();
+    }
+
+    // ─── Brand Works CRUD ─────────────────────────────────────────────
+    async function loadBrandWorks() {
+      const list = document.getElementById('brands-list');
+      list.innerHTML = '<p style="color:var(--text-secondary);">Cargando…</p>';
+      try {
+        const res = await fetch('/api/get-brand-works');
+        const data = await res.json();
+        brandWorksCache = data.works || [];
+        if (!brandWorksCache.length) {
+          list.innerHTML = '<p style="color:var(--text-secondary);">No hay trabajos de marca cargados.</p>';
+          return;
         }
+        list.innerHTML = brandWorksCache.map((w) => `
+          <div class="admin-item">
+            <div class="admin-item-info">
+              <div class="admin-item-title">
+                <span class="badge-lime">${esc(w.brand)}</span>
+                <span>${esc(w.title)}</span>
+                <span class="badge-muted">${esc(w.tag)}</span>
+              </div>
+              <p class="admin-item-sub">${esc(w.description)}</p>
+            </div>
+            <div class="admin-item-actions">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="openBrandModal(${w.id})">Editar</button>
+              <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deleteBrandWork(${w.id})">Eliminar</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = `<p style="color:#ff8a8a;">Error: ${esc(e.message)}</p>`;
+      }
+    }
 
-        document.getElementById('admin-password').addEventListener('keydown', e => {
-            if (e.key === 'Enter') adminLogin();
-        });
+    function openBrandModal(id) {
+      document.getElementById('b-id').value = '';
+      document.getElementById('b-brand').value = 'Club Don Bosco';
+      document.getElementById('b-tag').value = 'DISEÑO · DESARROLLO';
+      document.getElementById('b-title').value = '';
+      document.getElementById('b-desc').value = '';
+      document.getElementById('b-url').value = '';
 
-        // Auto-unlock if already authenticated this session
-        if (sessionStorage.getItem(ADMIN_KEY) === '1') {
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('admin-content').style.display = '';
+      if (id) {
+        const w = brandWorksCache.find((x) => x.id === id);
+        if (w) {
+          document.getElementById('brand-modal-title').textContent = `Editar trabajo (${w.brand})`;
+          document.getElementById('b-id').value = w.id;
+          document.getElementById('b-brand').value = w.brand;
+          document.getElementById('b-tag').value = w.tag || '';
+          document.getElementById('b-title').value = w.title || '';
+          document.getElementById('b-desc').value = w.description || '';
+          document.getElementById('b-url').value = w.url || '';
         }
+      } else {
+        document.getElementById('brand-modal-title').textContent = 'Nuevo trabajo con marca';
+      }
+      openModal('brand-modal');
+    }
 
-        // ─── Helpers ──────────────────────────────────────────────────────────────
-        function escapeHtml(text) {
-            const d = document.createElement('div');
-            d.textContent = text || '';
-            return d.innerHTML;
+    async function saveBrandWork() {
+      const id = document.getElementById('b-id').value;
+      const payload = {
+        brand: document.getElementById('b-brand').value,
+        tag: document.getElementById('b-tag').value.trim(),
+        title: document.getElementById('b-title').value.trim(),
+        description: document.getElementById('b-desc').value.trim(),
+        url: document.getElementById('b-url').value.trim(),
+      };
+      if (!payload.title || !payload.description) return flash('Título y descripción son obligatorios.', 'err');
+      if (id) payload.id = parseInt(id, 10);
+
+      const res = await fetch(id ? '/api/update-brand-work' : '/api/create-brand-work', {
+        method: id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) return flash('Error al guardar trabajo de marca.', 'err');
+      closeModal('brand-modal');
+      flash(id ? 'Trabajo de marca actualizado.' : 'Trabajo de marca creado.');
+      loadBrandWorks();
+    }
+
+    async function deleteBrandWork(id) {
+      if (!confirm('¿Eliminar este trabajo de marca?')) return;
+      const res = await fetch('/api/delete-brand-work', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) return flash('Error al eliminar.', 'err');
+      flash('Trabajo de marca eliminado.');
+      loadBrandWorks();
+    }
+
+    // ─── Posts CRUD ───────────────────────────────────────────────────
+    async function loadPosts() {
+      const list = document.getElementById('posts-list');
+      list.innerHTML = '<p style="color:var(--text-secondary);">Cargando…</p>';
+      try {
+        const res = await fetch('/api/get-posts');
+        const data = await res.json();
+        postsCache = data.posts || [];
+        if (!postsCache.length) {
+          list.innerHTML = '<p style="color:var(--text-secondary);">No hay artículos publicados.</p>';
+          return;
         }
+        list.innerHTML = postsCache.map((p) => `
+          <div class="admin-item">
+            <div class="admin-item-info">
+              <div class="admin-item-title">
+                <span>${esc(p.title)}</span>
+                <span class="badge-muted">${esc(p.author)}</span>
+              </div>
+              <p class="admin-item-sub">${esc(p.content).slice(0, 160)}…</p>
+            </div>
+            <div class="admin-item-actions">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="openPostModal(${p.id})">Editar</button>
+              <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deletePost(${p.id})">Eliminar</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        list.innerHTML = `<p style="color:#ff8a8a;">Error: ${esc(e.message)}</p>`;
+      }
+    }
 
-        function showAlert(containerId, message, type = 'success') {
-            const el = document.getElementById(containerId);
-            el.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show py-2" role="alert">
-                ${escapeHtml(message)}
-                <button type="button" class="btn-close btn-close-sm" data-bs-dismiss="alert" aria-label="Cerrar"></button>
-            </div>`;
+    function openPostModal(id) {
+      document.getElementById('post-id').value = '';
+      document.getElementById('post-title').value = '';
+      document.getElementById('post-author').value = 'Agustín Stoppello';
+      document.getElementById('post-content').value = '';
+      if (id) {
+        const p = postsCache.find((x) => x.id === id);
+        if (p) {
+          document.getElementById('post-modal-title').textContent = 'Editar artículo';
+          document.getElementById('post-id').value = p.id;
+          document.getElementById('post-title').value = p.title || '';
+          document.getElementById('post-author').value = p.author || 'Agustín Stoppello';
+          document.getElementById('post-content').value = p.content || '';
         }
+      } else {
+        document.getElementById('post-modal-title').textContent = 'Nuevo artículo';
+      }
+      openModal('post-modal');
+    }
 
-        function clearAlert(containerId) {
-            document.getElementById(containerId).innerHTML = '';
-        }
+    async function savePost() {
+      const id = document.getElementById('post-id').value;
+      const payload = {
+        title: document.getElementById('post-title').value.trim(),
+        author: document.getElementById('post-author').value.trim() || 'Agustín Stoppello',
+        content: document.getElementById('post-content').value.trim(),
+      };
+      if (!payload.title || !payload.content) return flash('Título y contenido son obligatorios.', 'err');
+      if (id) payload.id = parseInt(id, 10);
 
-        // ─── Projects ─────────────────────────────────────────────────────────────
-        let projectModalInstance = null;
-        let projectsData = [];
+      const res = await fetch(id ? '/api/update-post' : '/api/create-post', {
+        method: id ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) return flash('Error al guardar artículo.', 'err');
+      closeModal('post-modal');
+      flash(id ? 'Artículo actualizado.' : 'Artículo publicado.');
+      loadPosts();
+    }
 
-        async function loadProjects() {
-            document.getElementById('projects-loading').classList.remove('d-none');
-            document.getElementById('projects-table-wrap').classList.add('d-none');
-            document.getElementById('projects-empty').classList.add('d-none');
+    async function deletePost(id) {
+      if (!confirm('¿Eliminar este artículo?')) return;
+      const res = await fetch('/api/delete-post', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) return flash('Error al eliminar.', 'err');
+      flash('Artículo eliminado.');
+      loadPosts();
+    }
 
-            try {
-                const res = await fetch('/api/get-projects');
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                projectsData = data.projects || [];
-                renderProjectsTable(projectsData);
-            } catch (err) {
-                showAlert('projects-alert', 'Error al cargar los proyectos: ' + err.message, 'danger');
-                document.getElementById('projects-empty').classList.remove('d-none');
-            } finally {
-                document.getElementById('projects-loading').classList.add('d-none');
-            }
-        }
-
-        function renderProjectsTable(projects) {
-            if (!projects.length) {
-                document.getElementById('projects-empty').classList.remove('d-none');
-                return;
-            }
-            document.getElementById('projects-table-wrap').classList.remove('d-none');
-            document.getElementById('projects-tbody').innerHTML = projects.map(p => `
-                <tr>
-                    <td class="text-muted small d-none d-sm-table-cell">${p.id}</td>
-                    <td>
-                        <div class="fw-semibold">${escapeHtml(p.title)}</div>
-                        <div class="text-muted small text-truncate" style="max-width:300px">${escapeHtml(p.description)}</div>
-                    </td>
-                    <td class="d-none d-sm-table-cell"><span class="badge bg-secondary admin-badge">${escapeHtml(p.category || '—')}</span></td>
-                    <td class="d-none d-md-table-cell">
-                        ${(p.technologies || []).map(t => `<span class="badge bg-light text-dark border tech-badge me-1">${escapeHtml(t)}</span>`).join('')}
-                    </td>
-                    <td class="text-center d-none d-sm-table-cell">
-                        ${p.featured
-                            ? '<i class="fas fa-star text-warning" title="Destacado"></i>'
-                            : '<i class="far fa-star text-muted" title="No destacado"></i>'}
-                    </td>
-                    <td class="text-end">
-                        <button class="btn btn-outline-primary btn-sm me-1" onclick="openProjectModal(${p.id})" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="confirmDeleteProject(${p.id})" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function openProjectModal(id) {
-            clearAlert('project-form-alert');
-            document.getElementById('project-form').reset();
-            document.getElementById('project-id').value = '';
-
-            if (id) {
-                const p = projectsData.find(x => x.id === id);
-                if (!p) return;
-                document.getElementById('projectModalLabel').textContent = 'Editar proyecto';
-                document.getElementById('project-id').value = p.id;
-                document.getElementById('project-title').value = p.title || '';
-                document.getElementById('project-category').value = p.category || '';
-                document.getElementById('project-description').value = p.description || '';
-                document.getElementById('project-technologies').value = (p.technologies || []).join(', ');
-                document.getElementById('project-image-url').value = p.image_url || '';
-                document.getElementById('project-url').value = p.project_url || '';
-                document.getElementById('project-github-url').value = p.github_url || '';
-                document.getElementById('project-featured').checked = !!p.featured;
-            } else {
-                document.getElementById('projectModalLabel').textContent = 'Nuevo proyecto';
-            }
-
-            projectModalInstance = projectModalInstance || new bootstrap.Modal(document.getElementById('projectModal'));
-            projectModalInstance.show();
-        }
-
-        async function saveProject() {
-            clearAlert('project-form-alert');
-            const id = document.getElementById('project-id').value;
-            const title = document.getElementById('project-title').value.trim();
-            const description = document.getElementById('project-description').value.trim();
-
-            if (!title || !description) {
-                showAlert('project-form-alert', 'El título y la descripción son obligatorios.', 'danger');
-                return;
-            }
-
-            const payload = {
-                title,
-                description,
-                technologies: document.getElementById('project-technologies').value,
-                image_url: document.getElementById('project-image-url').value.trim(),
-                project_url: document.getElementById('project-url').value.trim(),
-                github_url: document.getElementById('project-github-url').value.trim(),
-                category: document.getElementById('project-category').value.trim(),
-                featured: document.getElementById('project-featured').checked
-            };
-
-            const btn = document.getElementById('project-save-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
-
-            try {
-                let res;
-                if (id) {
-                    payload.id = parseInt(id, 10);
-                    res = await fetch('/api/update-project', {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                } else {
-                    res = await fetch('/api/create-project', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                }
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Error desconocido');
-
-                projectModalInstance.hide();
-                showAlert('projects-alert', id ? 'Proyecto actualizado correctamente.' : 'Proyecto creado correctamente.');
-                loadProjects();
-            } catch (err) {
-                showAlert('project-form-alert', 'Error: ' + err.message, 'danger');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save me-1"></i>Guardar';
-            }
-        }
-
-        function confirmDeleteProject(id) {
-            const p = projectsData.find(x => x.id === id);
-            const title = p ? p.title : String(id);
-            document.getElementById('confirm-message').textContent =
-                `¿Eliminar el proyecto "${title}"? Esta acción no se puede deshacer.`;
-            const btn = document.getElementById('confirm-delete-btn');
-            // Remove previous listener before adding new one
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.addEventListener('click', async () => {
-                await deleteProject(id);
-                bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
-            });
-            new bootstrap.Modal(document.getElementById('confirmModal')).show();
-        }
-
-        async function deleteProject(id) {
-            try {
-                const res = await fetch('/api/delete-project', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Error desconocido');
-                showAlert('projects-alert', 'Proyecto eliminado correctamente.');
-                loadProjects();
-            } catch (err) {
-                showAlert('projects-alert', 'Error al eliminar: ' + err.message, 'danger');
-            }
-        }
-
-        // ─── Posts ────────────────────────────────────────────────────────────────
-        let postModalInstance = null;
-        let postsData = [];
-
-        async function loadPosts() {
-            document.getElementById('posts-loading').classList.remove('d-none');
-            document.getElementById('posts-table-wrap').classList.add('d-none');
-            document.getElementById('posts-empty').classList.add('d-none');
-
-            try {
-                const res = await fetch('/api/get-posts');
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                postsData = data.posts || [];
-                renderPostsTable(postsData);
-            } catch (err) {
-                showAlert('posts-alert', 'Error al cargar los artículos: ' + err.message, 'danger');
-                document.getElementById('posts-empty').classList.remove('d-none');
-            } finally {
-                document.getElementById('posts-loading').classList.add('d-none');
-            }
-        }
-
-        function renderPostsTable(posts) {
-            if (!posts.length) {
-                document.getElementById('posts-empty').classList.remove('d-none');
-                return;
-            }
-            document.getElementById('posts-table-wrap').classList.remove('d-none');
-            document.getElementById('posts-tbody').innerHTML = posts.map(p => `
-                <tr>
-                    <td class="text-muted small d-none d-sm-table-cell">${p.id}</td>
-                    <td>
-                        <div class="fw-semibold">${escapeHtml(p.title)}</div>
-                        <div class="text-muted small text-truncate" style="max-width:320px">${escapeHtml(p.content)}</div>
-                    </td>
-                    <td class="d-none d-sm-table-cell">${escapeHtml(p.author)}</td>
-                    <td class="text-muted small d-none d-sm-table-cell">${new Date(p.created_at).toLocaleDateString('es-AR')}</td>
-                    <td class="text-end">
-                        <button class="btn btn-outline-primary btn-sm me-1" onclick="openPostModal(${p.id})" title="Editar">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-outline-danger btn-sm" onclick="confirmDeletePost(${p.id})" title="Eliminar">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        function openPostModal(id) {
-            clearAlert('post-form-alert');
-            document.getElementById('post-form').reset();
-            document.getElementById('post-id').value = '';
-            document.getElementById('post-author').value = 'Agustín Stoppello';
-
-            if (id) {
-                const p = postsData.find(x => x.id === id);
-                if (!p) return;
-                document.getElementById('postModalLabel').textContent = 'Editar artículo';
-                document.getElementById('post-id').value = p.id;
-                document.getElementById('post-title').value = p.title || '';
-                document.getElementById('post-author').value = p.author || 'Agustín Stoppello';
-                document.getElementById('post-content').value = p.content || '';
-            } else {
-                document.getElementById('postModalLabel').textContent = 'Nuevo artículo';
-            }
-
-            postModalInstance = postModalInstance || new bootstrap.Modal(document.getElementById('postModal'));
-            postModalInstance.show();
-        }
-
-        async function savePost() {
-            clearAlert('post-form-alert');
-            const id = document.getElementById('post-id').value;
-            const title = document.getElementById('post-title').value.trim();
-            const content = document.getElementById('post-content').value.trim();
-            const author = document.getElementById('post-author').value.trim() || 'Agustín Stoppello';
-
-            if (!title || !content) {
-                showAlert('post-form-alert', 'El título y el contenido son obligatorios.', 'danger');
-                return;
-            }
-
-            const payload = { title, content, author };
-            const btn = document.getElementById('post-save-btn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>Guardando…';
-
-            try {
-                let res;
-                if (id) {
-                    payload.id = parseInt(id, 10);
-                    res = await fetch('/api/update-post', {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                } else {
-                    res = await fetch('/api/create-post', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    });
-                }
-
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Error desconocido');
-
-                postModalInstance.hide();
-                showAlert('posts-alert', id ? 'Artículo actualizado correctamente.' : 'Artículo creado correctamente.');
-                loadPosts();
-            } catch (err) {
-                showAlert('post-form-alert', 'Error: ' + err.message, 'danger');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save me-1"></i>Guardar';
-            }
-        }
-
-        function confirmDeletePost(id) {
-            const p = postsData.find(x => x.id === id);
-            const title = p ? p.title : String(id);
-            document.getElementById('confirm-message').textContent =
-                `¿Eliminar el artículo "${title}"? Esta acción no se puede deshacer.`;
-            const btn = document.getElementById('confirm-delete-btn');
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            newBtn.addEventListener('click', async () => {
-                await deletePost(id);
-                bootstrap.Modal.getInstance(document.getElementById('confirmModal')).hide();
-            });
-            new bootstrap.Modal(document.getElementById('confirmModal')).show();
-        }
-
-        async function deletePost(id) {
-            try {
-                const res = await fetch('/api/delete-post', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id })
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error || 'Error desconocido');
-                showAlert('posts-alert', 'Artículo eliminado correctamente.');
-                loadPosts();
-            } catch (err) {
-                showAlert('posts-alert', 'Error al eliminar: ' + err.message, 'danger');
-            }
-        }
-
-        // Load data when auth is already valid on page load
-        if (sessionStorage.getItem(ADMIN_KEY) === '1') {
-            document.addEventListener('DOMContentLoaded', () => {
-                loadProjects();
-                loadPosts();
-            });
-        }
-    </script>
+    if (sessionStorage.getItem(ADMIN_KEY) === '1') {
+      unlockApp();
+    }
+  </script>
 </body>
 </html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Proyecto — agustinst.code</title>
+  <link rel="icon" href="imag/IMG_0259.PNG" type="image/png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .project-detail {
+      padding: clamp(44px, 7vw, 76px) 0 84px;
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 28px;
+      transition: color 0.2s ease;
+    }
+    .back-link:hover {
+      color: var(--accent);
+    }
+    .detail-header {
+      max-width: 780px;
+      margin-bottom: 32px;
+    }
+    .detail-category {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .detail-title {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.08;
+      margin-bottom: 18px;
+    }
+    .detail-desc {
+      font-size: clamp(1rem, 1.6vw, 1.12rem);
+      color: var(--text-secondary);
+      line-height: 1.7;
+    }
+    .detail-hero-media {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .detail-hero-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .detail-placeholder {
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .detail-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+      padding: 24px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 56px;
+    }
+    .detail-techs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .detail-tech {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+    }
+    .detail-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .detail-status {
+      padding: 64px 0;
+      color: var(--text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a href="/" class="brand" aria-label="agustinst.code inicio">
+        <span class="brand-avatar">
+          <img src="imag/IMG_0259.PNG" alt="agustinst.code">
+        </span>
+        <span><span class="brand-name">agustinst</span><span class="brand-accent">.code</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="/proyect.html" class="nav-link">Todos los proyectos</a>
+        <a href="/#sobre-mi" class="nav-link">Sobre mí</a>
+        <a href="/#contacto" class="btn btn-accent btn-sm">Contacto</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="project-detail">
+    <div class="container">
+      <a href="/#trabajos" class="back-link">&larr; Volver a trabajos</a>
+
+      <div id="project-root" class="detail-status">Cargando proyecto…</div>
+
+      <section id="more-projects-section" style="display:none;">
+        <h2 class="section-title">Otros trabajos</h2>
+        <div id="more-projects-grid" class="projects-grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>Copyright &copy; 2025 &middot; Agustín M. Stoppello</span>
+      <div class="footer-links">
+        <a href="/">agustinst.code</a>
+        <span>&middot;</span>
+        <a href="https://www.linkedin.com/in/agustinmaximilianostoppello/" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+        <span>&middot;</span>
+        <a href="https://github.com/Agustinstpp" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <span>&middot;</span>
+        <a href="https://x.com/agustinst_code" target="_blank" rel="noopener noreferrer">X</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function esc(t) {
+      const d = document.createElement('div');
+      d.textContent = t || '';
+      return d.innerHTML;
+    }
+
+    function escAttr(t) {
+      return String(t || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    async function loadProjectDetail() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const root = document.getElementById('project-root');
+
+      if (!id) {
+        root.innerHTML = '<h2>Proyecto no especificado</h2><p style="margin-top:12px"><a href="/proyect.html" class="btn btn-accent">Ver todos los proyectos</a></p>';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/get-project?id=${encodeURIComponent(id)}`);
+        if (!res.ok) throw new Error('Proyecto no encontrado');
+        const { project } = await res.json();
+
+        document.title = `${project.title} — agustinst.code`;
+
+        const mediaHtml = project.image_url
+          ? `<img src="${escAttr(project.image_url)}" alt="${escAttr(project.title)}">`
+          : `<span class="detail-placeholder">[CAPTURA DEL PROYECTO]</span>`;
+
+        const techsHtml = (project.technologies || [])
+          .map((t) => `<span class="detail-tech">${esc(t)}</span>`)
+          .join('');
+
+        let actionsHtml = '';
+        if (project.project_url && !project.project_url.startsWith('/Proyects/')) {
+          actionsHtml += `<a href="${escAttr(project.project_url)}" target="_blank" rel="noopener noreferrer" class="btn btn-accent">Visitar proyecto &nearr;</a>`;
+        }
+        if (project.github_url) {
+          actionsHtml += `<a href="${escAttr(project.github_url)}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost">Ver en GitHub &nearr;</a>`;
+        }
+        actionsHtml += `<a href="/#contacto" class="btn btn-ghost">Consultar por un proyecto similar</a>`;
+
+        root.className = '';
+        root.innerHTML = `
+          <div class="detail-header">
+            ${project.category ? `<span class="detail-category">${esc(project.category)}</span>` : ''}
+            <h1 class="detail-title">${esc(project.title)}</h1>
+            <p class="detail-desc">${esc(project.description)}</p>
+          </div>
+          <div class="detail-hero-media">${mediaHtml}</div>
+          <div class="detail-meta-bar">
+            <div class="detail-techs">${techsHtml || '<span class="detail-tech">Proyecto</span>'}</div>
+            <div class="detail-actions">${actionsHtml}</div>
+          </div>
+        `;
+
+        // Load related projects
+        const allRes = await fetch('/api/get-projects');
+        if (allRes.ok) {
+          const { projects } = await allRes.json();
+          const others = (projects || []).filter((p) => String(p.id) !== String(project.id)).slice(0, 3);
+          if (others.length) {
+            document.getElementById('more-projects-section').style.display = '';
+            document.getElementById('more-projects-grid').innerHTML = others
+              .map((p) => `
+                <a class="project-card" href="/proyecto.html?id=${p.id}">
+                  <div class="project-thumb">
+                    ${p.image_url
+                      ? `<img src="${escAttr(p.image_url)}" alt="${escAttr(p.title)}" loading="lazy">`
+                      : `<span class="project-thumb-placeholder">[CAPTURA DEL PROYECTO]</span>`}
+                  </div>
+                  ${p.category ? `<span class="project-category">${esc(p.category)}</span>` : ''}
+                  <h3 class="project-title">${esc(p.title)}</h3>
+                  <p class="project-desc">${esc(p.description)}</p>
+                  <span class="project-link-hint">Ver proyecto &rarr;</span>
+                </a>
+              `).join('');
+          }
+        }
+      } catch (err) {
+        root.innerHTML = `<h2>No se encontró el proyecto</h2><p style="margin:12px 0 24px;color:var(--text-secondary)">${esc(err.message)}</p><a href="/proyect.html" class="btn btn-accent">Ver todos los proyectos</a>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadProjectDetail);
+  </script>
+</body>
+</html>

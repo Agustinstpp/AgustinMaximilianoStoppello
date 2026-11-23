@@ -132,7 +132,10 @@
     <!-- ─── Trabajos seleccionados (cargados desde Cloudflare D1) ─────── -->
     <section id="trabajos" class="section">
       <div class="container">
-        <h2 class="section-title">Trabajos seleccionados</h2>
+        <div class="certs-header" style="margin-bottom: clamp(24px, 4vw, 36px);">
+          <h2 class="section-title">Trabajos seleccionados</h2>
+          <a href="/proyect.html" class="nav-link" style="font-weight: 600; color: var(--accent);">Ver todos &rarr;</a>
+        </div>
         <div id="projects-grid" class="projects-grid">
           <article class="project-card">
             <div class="project-thumb">
@@ -731,12 +734,34 @@
             <span class="brand-work-tag">${escapeBrandHtml(w.tag)}</span>
             <h4>${escapeBrandHtml(w.title)}</h4>
             <p>${escapeBrandHtml(w.description)}</p>
+            ${w.url ? `<a href="${escapeBrandHtml(w.url)}" target="_blank" rel="noopener noreferrer" class="project-link-hint" style="margin-top:10px;">Ver trabajo &nearr;</a>` : ''}
           </article>`
         )
         .join('');
 
       brandPanel.classList.add('open');
     }
+
+    // Hydrate BRAND_WORKS dynamically from Cloudflare D1
+    fetch('/api/get-brand-works')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data || !Array.isArray(data.works) || data.works.length === 0) return;
+        const grouped = {};
+        data.works.forEach((w) => {
+          if (!grouped[w.brand]) grouped[w.brand] = [];
+          grouped[w.brand].push(w);
+        });
+        Object.keys(grouped).forEach((brand) => {
+          BRAND_WORKS[brand] = grouped[brand];
+        });
+        if (activeBrand) {
+          const current = activeBrand;
+          activeBrand = null;
+          setActiveBrand(current);
+        }
+      })
+      .catch(() => {});
 
     function clearActiveBrand() {
       activeBrand = null;

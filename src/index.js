@@ -381,6 +381,77 @@ async function deleteTodo(request, env, paramId = null, restFormat = false) {
   return jsonResponse({ message: 'Tarea eliminada', data: [formatTodo(deleted)] });
 }
 
+// ─── Brand Works Handlers ─────────────────────────────────────────────────────
+
+async function getBrandWorks(url, env) {
+  const brand = url.searchParams.get('brand');
+  let query = 'SELECT * FROM brand_works';
+  const params = [];
+
+  if (brand) {
+    query += ' WHERE brand = ?';
+    params.push(brand);
+  }
+  query += ' ORDER BY id ASC';
+
+  const { results } = await env.DB.prepare(query).bind(...params).all();
+  return jsonResponse({ works: results });
+}
+
+async function createBrandWork(request, env) {
+  const { brand, tag, title, description, url } = await readJsonBody(request);
+  if (!brand || !title || !description) {
+    return jsonResponse({ error: 'Brand, title and description are required' }, 400);
+  }
+
+  const work = await env.DB.prepare(
+    `INSERT INTO brand_works (brand, tag, title, description, url)
+     VALUES (?, ?, ?, ?, ?)
+     RETURNING *`
+  )
+    .bind(brand, tag || 'DISEÑO · DESARROLLO', title, description, url || null)
+    .first();
+
+  return jsonResponse({ work }, 201);
+}
+
+async function updateBrandWork(request, env) {
+  const { id, brand, tag, title, description, url } = await readJsonBody(request);
+  if (!id) return jsonResponse({ error: 'Work ID is required' }, 400);
+  if (!brand || !title || !description) {
+    return jsonResponse({ error: 'Brand, title and description are required' }, 400);
+  }
+
+  const work = await env.DB.prepare(
+    `UPDATE brand_works
+     SET brand = ?,
+         tag = ?,
+         title = ?,
+         description = ?,
+         url = ?,
+         updated_at = datetime('now')
+     WHERE id = ?
+     RETURNING *`
+  )
+    .bind(brand, tag || 'DISEÑO · DESARROLLO', title, description, url || null, id)
+    .first();
+
+  if (!work) return jsonResponse({ error: 'Work not found' }, 404);
+  return jsonResponse({ work });
+}
+
+async function deleteBrandWork(request, env) {
+  const { id } = await readJsonBody(request);
+  if (!id) return jsonResponse({ error: 'Work ID is required' }, 400);
+
+  const deleted = await env.DB.prepare('DELETE FROM brand_works WHERE id = ? RETURNING id, title')
+    .bind(id)
+    .first();
+
+  if (!deleted) return jsonResponse({ error: 'Work not found' }, 404);
+  return jsonResponse({ message: 'Trabajo eliminado', id: deleted.id });
+}
+
 // ─── API Router ───────────────────────────────────────────────────────────────
 
 async function handleApi(request, url, env) {
@@ -433,6 +504,17 @@ async function handleApi(request, url, env) {
         : methodNotAllowed();
     case 'delete-todo':
       return method === 'DELETE' ? deleteTodo(request, env, null, false) : methodNotAllowed();
+
+    case 'get-brand-works':
+      return method === 'GET' ? getBrandWorks(url, env) : methodNotAllowed();
+    case 'create-brand-work':
+      return method === 'POST' ? createBrandWork(request, env) : methodNotAllowed();
+    case 'update-brand-work':
+      return method === 'PUT' || method === 'PATCH'
+        ? updateBrandWork(request, env)
+        : methodNotAllowed();
+    case 'delete-brand-work':
+      return method === 'DELETE' ? deleteBrandWork(request, env) : methodNotAllowed();
 
     // RESTful collection routes
     case 'projects':

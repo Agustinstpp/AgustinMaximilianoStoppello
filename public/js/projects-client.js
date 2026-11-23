@@ -1,4 +1,4 @@
-// Client-side utility for loading selected works from Cloudflare D1
+// Client-side utility for loading projects from Cloudflare D1
 
 class ProjectsClient {
   constructor(baseUrl = '') {
@@ -38,26 +38,16 @@ class ProjectsClient {
           ? `<span class="project-category">${this.escapeHtml(project.category)}</span>`
           : '';
 
-        const href = project.project_url || project.github_url || '';
-        const isExternal = /^https?:\/\//i.test(href);
-        const linkHint = href
-          ? `<span class="project-link-hint">Ver proyecto &rarr;</span>`
-          : '';
+        const detailHref = `/proyecto.html?id=${encodeURIComponent(project.id)}`;
 
-        const inner = `
-          <div class="project-thumb">${thumb}</div>
-          ${category}
-          <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
-          <p class="project-desc">${this.escapeHtml(project.description)}</p>
-          ${linkHint}
-        `;
-
-        if (href) {
-          const targetAttrs = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
-          return `<a class="project-card" href="${this.escapeAttr(href)}"${targetAttrs}>${inner}</a>`;
-        }
-
-        return `<article class="project-card">${inner}</article>`;
+        return `
+          <a class="project-card" href="${detailHref}">
+            <div class="project-thumb">${thumb}</div>
+            ${category}
+            <h3 class="project-title">${this.escapeHtml(project.title)}</h3>
+            <p class="project-desc">${this.escapeHtml(project.description)}</p>
+            <span class="project-link-hint">Ver proyecto &rarr;</span>
+          </a>`;
       })
       .join('');
   }
@@ -84,12 +74,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (!container) return;
 
   try {
-    const projects = await window.projectsClient.getProjects();
+    const projects = await window.projectsClient.getProjects(true);
     if (projects.length > 0) {
       window.projectsClient.renderProjects(projects, 'projects-grid');
     }
   } catch (error) {
-    // Keep static fallback cards already rendered in HTML
     console.error('Failed to load projects from D1:', error);
   }
 });
