@@ -24,9 +24,23 @@ class ProjectsClient {
     return data.project || null;
   }
 
+  renderEmptyState(container) {
+    container.innerHTML = `
+      <div class="empty-state-card">
+        <span class="empty-state-eyebrow">PRÓXIMAMENTE</span>
+        <h3>Nuevos proyectos en camino</h3>
+        <p>Estoy preparando y documentando mis próximos trabajos y demos de software. Muy pronto vas a poder verlos acá.</p>
+      </div>`;
+  }
+
   renderProjects(projects, containerId = 'projects-grid') {
     const container = document.getElementById(containerId);
-    if (!container || !projects || projects.length === 0) return;
+    if (!container) return;
+
+    if (!projects || projects.length === 0) {
+      this.renderEmptyState(container);
+      return;
+    }
 
     container.innerHTML = projects
       .map((project) => {
@@ -75,9 +89,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     const projects = await window.projectsClient.getProjects(true);
-    if (projects.length > 0) {
-      window.projectsClient.renderProjects(projects, 'projects-grid');
-    }
+    window.projectsClient.renderProjects(projects, 'projects-grid');
   } catch (error) {
     console.error('Failed to load projects from D1:', error);
   }

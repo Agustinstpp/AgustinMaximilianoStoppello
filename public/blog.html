@@ -218,7 +218,12 @@
         const data = await res.json();
         postsCache = data.posts || [];
         if (!postsCache.length) {
-          grid.innerHTML = '<p style="color:var(--text-secondary);">Todavía no hay artículos publicados.</p>';
+          grid.innerHTML = `
+            <div class="empty-state-card">
+              <span class="empty-state-eyebrow">PRÓXIMAMENTE</span>
+              <h3>Próximamente nuevos artículos</h3>
+              <p>Estoy redactando nuevas notas sobre desarrollo de software, UX/UI y automatización. ¡Volvé pronto!</p>
+            </div>`;
           return;
         }
         grid.innerHTML = postsCache.map((p) => {

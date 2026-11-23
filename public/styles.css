@@ -1344,6 +1344,42 @@ img {
   margin: 18px 0;
 }
 
+/* ─── Empty State ("Próximamente") ────────────────────────────────────────── */
+.empty-state-card {
+  grid-column: 1 / -1;
+  background-color: var(--surface);
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: clamp(36px, 6vw, 60px) 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.empty-state-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.empty-state-card h3 {
+  font-size: clamp(1.25rem, 2.5vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.empty-state-card p {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  max-width: 480px;
+  line-height: 1.6;
+}
+
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
 .site-footer {
   border-top: 1px solid #181818;

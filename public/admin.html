@@ -86,6 +86,18 @@
       flex-wrap: wrap;
     }
     .admin-item:hover { border-color: var(--border-hover); }
+    .admin-item--hidden { opacity: 0.58; border-style: dashed; }
+    .badge-hidden {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #ffb86c;
+      background-color: rgba(255, 184, 108, 0.12);
+      border: 1px solid rgba(255, 184, 108, 0.32);
+      padding: 2px 8px;
+      border-radius: var(--radius-pill);
+    }
     .admin-item-left { display: flex; align-items: center; gap: 16px; min-width: 0; flex: 1; }
     .admin-thumb {
       width: 72px;
@@ -494,6 +506,10 @@
         <input type="checkbox" id="p-featured">
         <span>Mostrar como <strong>Destacado</strong> en la página principal</span>
       </label>
+      <label class="checkbox-row" style="margin-top:-6px;">
+        <input type="checkbox" id="p-visible" checked>
+        <span><strong>Visible</strong> en el sitio público</span>
+      </label>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('project-modal')">Cancelar</button>
         <button type="button" class="btn btn-accent btn-sm" onclick="saveProject()">Guardar proyecto</button>
@@ -609,6 +625,10 @@
           </div>
         </div>
       </div>
+      <label class="checkbox-row">
+        <input type="checkbox" id="post-visible" checked>
+        <span><strong>Visible</strong> en el blog público</span>
+      </label>
       <div class="modal-actions">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('post-modal')">Cancelar</button>
         <button type="button" class="btn btn-accent btn-sm" onclick="savePost()">Publicar artículo</button>
@@ -733,20 +753,23 @@
       const list = document.getElementById('projects-list');
       list.innerHTML = '<p style="color:var(--text-secondary);">Cargando…</p>';
       try {
-        const res = await fetch('/api/get-projects');
+        const res = await fetch('/api/get-projects?include_hidden=true');
         const data = await res.json();
         projectsCache = data.projects || [];
         if (!projectsCache.length) {
           list.innerHTML = '<p style="color:var(--text-secondary);">No hay proyectos cargados.</p>';
           return;
         }
-        list.innerHTML = projectsCache.map((p) => `
-          <div class="admin-item">
+        list.innerHTML = projectsCache.map((p) => {
+          const vis = p.is_visible !== false;
+          return `
+          <div class="admin-item${vis ? '' : ' admin-item--hidden'}">
             <div class="admin-item-left">
               <div class="admin-thumb">${p.image_url ? `<img src="${esc(p.image_url)}" alt="">` : 'Sin img'}</div>
               <div class="admin-item-info">
                 <div class="admin-item-title">
                   <span>${esc(p.title)}</span>
+                  ${!vis ? '<span class="badge-hidden">Oculto</span>' : ''}
                   ${p.featured ? '<span class="badge-lime">Destacado</span>' : ''}
                   ${p.demo_url ? '<span class="badge-muted">Demo</span>' : ''}
                   ${p.category ? `<span class="badge-muted">${esc(p.category)}</span>` : ''}
@@ -755,15 +778,28 @@
               </div>
             </div>
             <div class="admin-item-actions">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="toggleProjectVis(${p.id}, ${!vis})">${vis ? 'Ocultar' : 'Mostrar'}</button>
               <a href="/proyecto.html?id=${p.id}" target="_blank" class="btn btn-ghost btn-sm">Ver &nearr;</a>
               <button type="button" class="btn btn-ghost btn-sm" onclick="openProjectModal(${p.id})">Editar</button>
               <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deleteProject(${p.id})">Eliminar</button>
             </div>
           </div>
-        `).join('');
+        `;
+        }).join('');
       } catch (e) {
         list.innerHTML = `<p style="color:#ff8a8a;">Error: ${esc(e.message)}</p>`;
       }
+    }
+
+    async function toggleProjectVis(id, nextVisible) {
+      const res = await fetch('/api/toggle-project-visibility', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, is_visible: nextVisible }),
+      });
+      if (!res.ok) return flash('Error al cambiar visibilidad.', 'err');
+      flash(nextVisible ? 'Proyecto visible en el sitio.' : 'Proyecto ocultado del sitio.');
+      loadProjects();
     }
 
     function openProjectModal(id) {
@@ -778,6 +814,7 @@
       document.getElementById('p-url').value = '';
       document.getElementById('p-github').value = '';
       document.getElementById('p-featured').checked = false;
+      document.getElementById('p-visible').checked = true;
 
       if (id) {
         const p = projectsCache.find((x) => x.id === id);
@@ -794,6 +831,7 @@
           document.getElementById('p-url').value = p.project_url || '';
           document.getElementById('p-github').value = p.github_url || '';
           document.getElementById('p-featured').checked = !!p.featured;
+          document.getElementById('p-visible').checked = p.is_visible !== false;
         }
       } else {
         document.getElementById('project-modal-title').textContent = 'Nuevo proyecto';
@@ -816,6 +854,7 @@
         project_url: document.getElementById('p-url').value.trim(),
         github_url: document.getElementById('p-github').value.trim(),
         featured: document.getElementById('p-featured').checked,
+        is_visible: document.getElementById('p-visible').checked,
       };
       if (!payload.title || !payload.description) return flash('Título y resumen corto son obligatorios.', 'err');
       if (id) payload.id = parseInt(id, 10);
@@ -941,7 +980,7 @@
       const list = document.getElementById('posts-list');
       list.innerHTML = '<p style="color:var(--text-secondary);">Cargando…</p>';
       try {
-        const res = await fetch('/api/get-posts');
+        const res = await fetch('/api/get-posts?include_hidden=true');
         const data = await res.json();
         postsCache = data.posts || [];
         if (!postsCache.length) {
@@ -950,17 +989,20 @@
         }
         list.innerHTML = postsCache.map((p) => {
           const rt = window.readingTime(p.content);
+          const vis = p.is_visible !== false;
           return `
-            <div class="admin-item">
+            <div class="admin-item${vis ? '' : ' admin-item--hidden'}">
               <div class="admin-item-info">
                 <div class="admin-item-title">
                   <span>${esc(p.title)}</span>
+                  ${!vis ? '<span class="badge-hidden">Oculto</span>' : ''}
                   <span class="badge-muted">${esc(p.author)}</span>
                   <span class="badge-muted">${rt.mins} min</span>
                 </div>
                 <p class="admin-item-sub">${esc(p.summary || (p.content || '').slice(0, 150))}</p>
               </div>
               <div class="admin-item-actions">
+                <button type="button" class="btn btn-ghost btn-sm" onclick="togglePostVis(${p.id}, ${!vis})">${vis ? 'Ocultar' : 'Mostrar'}</button>
                 <a href="/blog.html" target="_blank" class="btn btn-ghost btn-sm">Ver &nearr;</a>
                 <button type="button" class="btn btn-ghost btn-sm" onclick="openPostModal(${p.id})">Editar</button>
                 <button type="button" class="btn btn-danger-ghost btn-sm" onclick="deletePost(${p.id})">Eliminar</button>
@@ -973,6 +1015,17 @@
       }
     }
 
+    async function togglePostVis(id, nextVisible) {
+      const res = await fetch('/api/toggle-post-visibility', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, is_visible: nextVisible }),
+      });
+      if (!res.ok) return flash('Error al cambiar visibilidad.', 'err');
+      flash(nextVisible ? 'Artículo visible en el blog.' : 'Artículo ocultado del blog.');
+      loadPosts();
+    }
+
     function openPostModal(id) {
       document.getElementById('post-id').value = '';
       document.getElementById('post-title').value = '';
@@ -981,6 +1034,7 @@
       document.getElementById('post-cover').value = '';
       document.getElementById('post-summary').value = '';
       document.getElementById('post-content').value = '';
+      document.getElementById('post-visible').checked = true;
 
       if (id) {
         const p = postsCache.find((x) => x.id === id);
@@ -993,6 +1047,7 @@
           document.getElementById('post-cover').value = p.cover_url || '';
           document.getElementById('post-summary').value = p.summary || '';
           document.getElementById('post-content').value = p.content || '';
+          document.getElementById('post-visible').checked = p.is_visible !== false;
         }
       } else {
         document.getElementById('post-modal-title').textContent = 'Nuevo artículo';
@@ -1011,6 +1066,7 @@
         cover_url: document.getElementById('post-cover').value.trim(),
         summary: document.getElementById('post-summary').value.trim(),
         content: document.getElementById('post-content').value.trim(),
+        is_visible: document.getElementById('post-visible').checked,
       };
       if (!payload.title || !payload.content) return flash('Título y contenido son obligatorios.', 'err');
       if (id) payload.id = parseInt(id, 10);

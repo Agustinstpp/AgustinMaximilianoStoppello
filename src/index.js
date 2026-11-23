@@ -55,6 +55,7 @@ function formatProject(row) {
     ...row,
     technologies: parseTechnologiesInput(row.technologies),
     featured: Boolean(row.featured),
+    is_visible: row.is_visible !== 0,
   };
 }
 
@@ -63,6 +64,7 @@ function formatPost(row) {
   return {
     ...row,
     tags: parseTechnologiesInput(row.tags),
+    is_visible: row.is_visible !== 0,
   };
 }
 
@@ -102,12 +104,16 @@ async function handleHealth(env) {
 async function getProjects(url, env, restFormat = false) {
   const category = url.searchParams.get('category');
   const featured = url.searchParams.get('featured');
+  const includeHidden = url.searchParams.get('include_hidden') === 'true';
   const limitParam = url.searchParams.get('limit');
   const offsetParam = url.searchParams.get('offset');
 
   const conditions = [];
   const params = [];
 
+  if (!includeHidden) {
+    conditions.push('is_visible = 1');
+  }
   if (category) {
     conditions.push('category = ?');
     params.push(category);
@@ -164,10 +170,11 @@ async function createProject(request, env, restFormat = false) {
 
   const techJson = JSON.stringify(parseTechnologiesInput(technologies));
   const isFeatured = featured === true || featured === 'true' || featured === 1 ? 1 : 0;
+  const isVisible = body.is_visible === false || body.is_visible === 'false' || body.is_visible === 0 ? 0 : 1;
 
   const row = await env.DB.prepare(
-    `INSERT INTO projects (title, description, content, technologies, image_url, project_url, demo_url, github_url, category, featured)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `INSERT INTO projects (title, description, content, technologies, image_url, project_url, demo_url, github_url, category, featured, is_visible)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
      RETURNING *`
   )
     .bind(
@@ -180,7 +187,8 @@ async function createProject(request, env, restFormat = false) {
       demo_url || null,
       github_url || null,
       category || null,
-      isFeatured
+      isFeatured,
+      isVisible
     )
     .first();
 
@@ -211,6 +219,7 @@ async function updateProject(request, env, paramId = null, restFormat = false) {
 
   const techJson = JSON.stringify(parseTechnologiesInput(technologies));
   const isFeatured = featured === true || featured === 'true' || featured === 1 ? 1 : 0;
+  const isVisible = body.is_visible === false || body.is_visible === 'false' || body.is_visible === 0 ? 0 : 1;
 
   const row = await env.DB.prepare(
     `UPDATE projects
@@ -224,6 +233,7 @@ async function updateProject(request, env, paramId = null, restFormat = false) {
          github_url = ?,
          category = ?,
          featured = ?,
+         is_visible = ?,
          updated_at = datetime('now')
      WHERE id = ?
      RETURNING *`
@@ -239,6 +249,7 @@ async function updateProject(request, env, paramId = null, restFormat = false) {
       github_url || null,
       category || null,
       isFeatured,
+      isVisible,
       id
     )
     .first();
@@ -261,12 +272,27 @@ async function deleteProject(request, env, paramId = null) {
   return jsonResponse({ message: 'Proyecto eliminado', id: deleted.id });
 }
 
+async function toggleProjectVisibility(request, env) {
+  const { id, is_visible } = await readJsonBody(request);
+  if (!id) return jsonResponse({ error: 'Project ID is required' }, 400);
+  const vis = is_visible === false || is_visible === 'false' || is_visible === 0 ? 0 : 1;
+  const row = await env.DB.prepare(
+    `UPDATE projects SET is_visible = ?, updated_at = datetime('now') WHERE id = ? RETURNING *`
+  )
+    .bind(vis, id)
+    .first();
+  if (!row) return jsonResponse({ error: 'Project not found' }, 404);
+  return jsonResponse({ project: formatProject(row) });
+}
+
 // ─── Posts Handlers ───────────────────────────────────────────────────────────
 
-async function getPosts(env, restFormat = false) {
-  const { results } = await env.DB.prepare(
-    'SELECT * FROM posts ORDER BY created_at DESC, id DESC'
-  ).all();
+async function getPosts(url, env, restFormat = false) {
+  const includeHidden = url.searchParams.get('include_hidden') === 'true';
+  const query = includeHidden
+    ? 'SELECT * FROM posts ORDER BY created_at DESC, id DESC'
+    : 'SELECT * FROM posts WHERE is_visible = 1 ORDER BY created_at DESC, id DESC';
+  const { results } = await env.DB.prepare(query).all();
   const posts = results.map(formatPost);
   return jsonResponse(restFormat ? posts : { posts });
 }
@@ -280,18 +306,20 @@ async function getPost(id, env, restFormat = false) {
 }
 
 async function createPost(request, env, restFormat = false) {
-  const { title, content, author, summary, cover_url, tags } = await readJsonBody(request);
+  const body = await readJsonBody(request);
+  const { title, content, author, summary, cover_url, tags } = body;
   if (!title || !content) {
     return jsonResponse({ error: 'Title and content are required' }, 400);
   }
 
   const tagsJson = JSON.stringify(parseTechnologiesInput(tags));
+  const isVisible = body.is_visible === false || body.is_visible === 'false' || body.is_visible === 0 ? 0 : 1;
   const row = await env.DB.prepare(
-    `INSERT INTO posts (title, content, author, summary, cover_url, tags)
-     VALUES (?, ?, ?, ?, ?, ?)
+    `INSERT INTO posts (title, content, author, summary, cover_url, tags, is_visible)
+     VALUES (?, ?, ?, ?, ?, ?, ?)
      RETURNING *`
   )
-    .bind(title, content, author || 'Agustín Stoppello', summary || null, cover_url || null, tagsJson)
+    .bind(title, content, author || 'Agustín Stoppello', summary || null, cover_url || null, tagsJson, isVisible)
     .first();
 
   const post = formatPost(row);
@@ -309,6 +337,7 @@ async function updatePost(request, env, paramId = null, restFormat = false) {
   }
 
   const tagsJson = JSON.stringify(parseTechnologiesInput(tags));
+  const isVisible = body.is_visible === false || body.is_visible === 'false' || body.is_visible === 0 ? 0 : 1;
   const row = await env.DB.prepare(
     `UPDATE posts
      SET title = ?,
@@ -317,6 +346,7 @@ async function updatePost(request, env, paramId = null, restFormat = false) {
          summary = ?,
          cover_url = ?,
          tags = ?,
+         is_visible = ?,
          updated_at = datetime('now')
      WHERE id = ?
      RETURNING *`
@@ -328,6 +358,7 @@ async function updatePost(request, env, paramId = null, restFormat = false) {
       summary || null,
       cover_url || null,
       tagsJson,
+      isVisible,
       id
     )
     .first();
@@ -335,6 +366,19 @@ async function updatePost(request, env, paramId = null, restFormat = false) {
   if (!row) return jsonResponse({ error: 'Post not found' }, 404);
   const post = formatPost(row);
   return jsonResponse(restFormat ? post : { post });
+}
+
+async function togglePostVisibility(request, env) {
+  const { id, is_visible } = await readJsonBody(request);
+  if (!id) return jsonResponse({ error: 'Post ID is required' }, 400);
+  const vis = is_visible === false || is_visible === 'false' || is_visible === 0 ? 0 : 1;
+  const row = await env.DB.prepare(
+    `UPDATE posts SET is_visible = ?, updated_at = datetime('now') WHERE id = ? RETURNING *`
+  )
+    .bind(vis, id)
+    .first();
+  if (!row) return jsonResponse({ error: 'Post not found' }, 404);
+  return jsonResponse({ post: formatPost(row) });
 }
 
 async function deletePost(request, env, paramId = null) {
@@ -531,9 +575,13 @@ async function handleApi(request, url, env) {
         : methodNotAllowed();
     case 'delete-project':
       return method === 'DELETE' ? deleteProject(request, env, null) : methodNotAllowed();
+    case 'toggle-project-visibility':
+      return method === 'PATCH' || method === 'PUT'
+        ? toggleProjectVisibility(request, env)
+        : methodNotAllowed();
 
     case 'get-posts':
-      return method === 'GET' ? getPosts(env, false) : methodNotAllowed();
+      return method === 'GET' ? getPosts(url, env, false) : methodNotAllowed();
     case 'get-post':
       return method === 'GET'
         ? getPost(url.searchParams.get('id'), env, false)
@@ -546,6 +594,10 @@ async function handleApi(request, url, env) {
         : methodNotAllowed();
     case 'delete-post':
       return method === 'DELETE' ? deletePost(request, env, null) : methodNotAllowed();
+    case 'toggle-post-visibility':
+      return method === 'PATCH' || method === 'PUT'
+        ? togglePostVisibility(request, env)
+        : methodNotAllowed();
 
     case 'get-todos':
       return method === 'GET' ? getTodos(url, env, false) : methodNotAllowed();
@@ -575,7 +627,7 @@ async function handleApi(request, url, env) {
       if (method === 'POST') return createProject(request, env, true);
       return methodNotAllowed();
     case 'posts':
-      if (method === 'GET') return getPosts(env, true);
+      if (method === 'GET') return getPosts(url, env, true);
       if (method === 'POST') return createPost(request, env, true);
       return methodNotAllowed();
     case 'todos':
