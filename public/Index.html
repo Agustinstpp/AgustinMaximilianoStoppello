@@ -207,9 +207,9 @@
               <span class="event-carousel-counter" data-counter>1 / 4</span>
               <div class="event-carousel-track" data-track>
                 <div class="event-carousel-slide"><img src="imag/events/emprende-u/slide-1.jpg" alt="Emprende U 2026 - YacaJobs (1/4)" loading="lazy"></div>
-                <div class="event-carousel-slide"><img src="imag/events/emprende-u/slide-2.jpg" alt="Emprende U 2026 - YacaJobs (2/4)" loading="lazy"></div>
+                <div class="event-carousel-slide"><video src="imag/events/emprende-u/slide-2.mp4" poster="imag/events/emprende-u/slide-2.jpg" controls playsinline preload="metadata"></video></div>
                 <div class="event-carousel-slide"><img src="imag/events/emprende-u/slide-3.jpg" alt="Emprende U 2026 - YacaJobs (3/4)" loading="lazy"></div>
-                <div class="event-carousel-slide"><img src="imag/events/emprende-u/slide-4.jpg" alt="Emprende U 2026 - YacaJobs (4/4)" loading="lazy"></div>
+                <div class="event-carousel-slide"><video src="imag/events/emprende-u/slide-4.mp4" poster="imag/events/emprende-u/slide-4.jpg" controls playsinline preload="metadata"></video></div>
               </div>
               <button type="button" class="event-carousel-btn event-carousel-btn--prev" data-prev aria-label="Foto anterior">&#8249;</button>
               <button type="button" class="event-carousel-btn event-carousel-btn--next" data-next aria-label="Foto siguiente">&#8250;</button>
@@ -877,6 +877,7 @@
       });
 
       function goTo(nextIndex) {
+        carousel.querySelectorAll('video').forEach((v) => v.pause());
         index = (nextIndex + total) % total;
         track.style.transform = `translateX(-${index * 100}%)`;
         if (counter) counter.textContent = `${index + 1} / ${total}`;
