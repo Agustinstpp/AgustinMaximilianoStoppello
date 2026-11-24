@@ -65,12 +65,19 @@
         </div>
 
         <div class="hero-mascot-wrap">
-          <div class="hero-mascot-stage" id="hero-mascot" title="agustinst.code">
-            <div class="hero-mascot-glow" aria-hidden="true"></div>
-            <div class="hero-mascot-ring" aria-hidden="true"></div>
-            <div class="hero-mascot-medal">
-              <img src="imag/IMG_0259.PNG" alt="Ilustración de Agustín Stoppello">
+          <div class="hero-hacker-portrait" id="hero-portrait" title="Click para glitch">
+            <div class="hero-hacker-glow" aria-hidden="true"></div>
+            <div class="hero-hacker-frame">
+              <img class="hero-hacker-img" src="imag/hero-profile.jpg" alt="Agustín Stoppello">
+              <img class="hero-hacker-glitch hero-hacker-glitch--1" src="imag/hero-profile.jpg" alt="" aria-hidden="true">
+              <img class="hero-hacker-glitch hero-hacker-glitch--2" src="imag/hero-profile.jpg" alt="" aria-hidden="true">
+              <div class="hero-hacker-scanlines" aria-hidden="true"></div>
+              <div class="hero-hacker-fade" aria-hidden="true"></div>
             </div>
+            <span class="hero-hacker-hud">
+              <span class="hero-hacker-dot" aria-hidden="true"></span>
+              agustinst.code // online
+            </span>
           </div>
         </div>
       </div>
@@ -893,32 +900,15 @@
       titleEl.addEventListener('click', runHackerDecode);
     })();
 
-    // Interactive 3D tilt & click pop for Hero mascot
-    (function initHeroMascot() {
-      const stage = document.getElementById('hero-mascot');
-      if (!stage) return;
-      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReduced) return;
-
-      const heroSection = stage.closest('.hero');
-      if (heroSection) {
-        heroSection.addEventListener('mousemove', (e) => {
-          const rect = stage.getBoundingClientRect();
-          const cx = rect.left + rect.width / 2;
-          const cy = rect.top + rect.height / 2;
-          const dx = Math.max(-1, Math.min(1, (e.clientX - cx) / 260));
-          const dy = Math.max(-1, Math.min(1, (e.clientY - cy) / 260));
-          stage.style.transform = `rotateY(${dx * 16}deg) rotateX(${-dy * 16}deg)`;
-        });
-        heroSection.addEventListener('mouseleave', () => {
-          stage.style.transform = 'rotateY(0deg) rotateX(0deg)';
-        });
-      }
-
-      stage.addEventListener('click', () => {
-        stage.classList.remove('pop');
-        void stage.offsetWidth;
-        stage.classList.add('pop');
+    // Trigger manual glitch burst on portrait click
+    (function initHeroPortraitGlitch() {
+      const portrait = document.getElementById('hero-portrait');
+      if (!portrait) return;
+      portrait.addEventListener('click', () => {
+        portrait.classList.remove('glitch-burst');
+        void portrait.offsetWidth;
+        portrait.classList.add('glitch-burst');
+        setTimeout(() => portrait.classList.remove('glitch-burst'), 1150);
       });
     })();
 
