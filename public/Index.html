@@ -680,21 +680,55 @@
   </footer>
 
   <script>
-    // Mobile nav toggle
+    // Mobile nav toggle with hacker decode effect
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');
 
     if (navToggle && navLinks) {
+      const mobileLinks = Array.from(navLinks.querySelectorAll('.nav-link'));
+      const navGlyphs = '01<>/{}[]#$%*_+';
+
+      function scrambleNavLinks() {
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        mobileLinks.forEach((link) => {
+          const target = link.dataset.label || link.textContent.trim();
+          link.dataset.label = target;
+          let step = 0;
+          clearInterval(link._scrambleTimer);
+          link._scrambleTimer = setInterval(() => {
+            let out = '';
+            for (let i = 0; i < target.length; i++) {
+              if (i < step || target[i] === ' ') {
+                out += target[i];
+              } else {
+                out += navGlyphs[Math.floor(Math.random() * navGlyphs.length)];
+              }
+            }
+            link.textContent = out;
+            step += 0.6;
+            if (step >= target.length) {
+              clearInterval(link._scrambleTimer);
+              link.textContent = target;
+            }
+          }, 26);
+        });
+      }
+
+      function closeMobileNav() {
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+        navToggle.innerHTML = '&#9776;';
+      }
+
       navToggle.addEventListener('click', () => {
         const isOpen = navLinks.classList.toggle('open');
         navToggle.setAttribute('aria-expanded', String(isOpen));
+        navToggle.innerHTML = isOpen ? '&times;' : '&#9776;';
+        if (isOpen) scrambleNavLinks();
       });
 
       navLinks.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
-          navLinks.classList.remove('open');
-          navToggle.setAttribute('aria-expanded', 'false');
-        });
+        link.addEventListener('click', closeMobileNav);
       });
     }
 
