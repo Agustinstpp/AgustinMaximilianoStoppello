@@ -105,11 +105,12 @@
     }, ok ? 480 : 1200);
   }
 
-  // Intercept all /api/* fetch calls automatically
+  // Intercept all /api/* fetch calls automatically (skip silent /api/version polls)
   const nativeFetch = global.fetch.bind(global);
   global.fetch = async function (input, init) {
     const url = typeof input === 'string' ? input : input && input.url ? input.url : '';
-    const isApi = url.includes('/api/') || url.endsWith('/health');
+    const isSilent = url.includes('/api/version');
+    const isApi = !isSilent && (url.includes('/api/') || url.endsWith('/health'));
 
     if (!isApi) return nativeFetch(input, init);
 
@@ -124,5 +125,117 @@
     }
   };
 
-  global.HackerLoader = { start, stop };
+  // ─── Live Version Watcher + Hacker Patch Flicker ──────────────────────────
+  const VERSION_KEY = 'agustinst_last_fp';
+  const PENDING_KEY = 'agustinst_just_patched';
+  let loadedFingerprint = null;
+  let updateBannerEl = null;
+
+  function playHackerPatchFlicker(message, onDone) {
+    if (!document.body) {
+      if (onDone) onDone();
+      return;
+    }
+    const overlay = document.createElement('div');
+    overlay.className = 'hacker-patch-overlay';
+    overlay.innerHTML = `
+      <div class="hacker-patch-box">
+        <div class="hacker-patch-line">&gt; ${message || 'APLICANDO MODIFICACIONES // SYNCING EDGE'}</div>
+        <div class="hacker-patch-bar"><span></span></div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.body.classList.add('hacker-screen-flicker');
+
+    setTimeout(() => {
+      document.body.classList.remove('hacker-screen-flicker');
+      overlay.classList.add('fade-out');
+      setTimeout(() => {
+        overlay.remove();
+        if (onDone) onDone();
+      }, 220);
+    }, 620);
+  }
+
+  function showUpdateBanner(newFp) {
+    if (updateBannerEl || !document.body) return;
+    updateBannerEl = document.createElement('div');
+    updateBannerEl.className = 'hacker-update-banner';
+    updateBannerEl.setAttribute('role', 'status');
+    updateBannerEl.innerHTML = `
+      <span class="hacker-update-dot" aria-hidden="true"></span>
+      <span class="hacker-update-msg">Nueva actualización disponible</span>
+      <button type="button" class="hacker-update-btn" id="hacker-apply-update">Actualizar &#8635;</button>
+      <button type="button" class="hacker-update-close" aria-label="Cerrar">&times;</button>
+    `;
+    document.body.appendChild(updateBannerEl);
+
+    requestAnimationFrame(() => updateBannerEl.classList.add('show'));
+
+    updateBannerEl.querySelector('#hacker-apply-update').addEventListener('click', () => {
+      try {
+        localStorage.setItem(VERSION_KEY, newFp);
+        sessionStorage.setItem(PENDING_KEY, '1');
+      } catch {}
+      playHackerPatchFlicker('PATCHING SYSTEM // ACTUALIZANDO VERSIÓN', () => {
+        global.location.reload();
+      });
+    });
+
+    updateBannerEl.querySelector('.hacker-update-close').addEventListener('click', () => {
+      updateBannerEl.classList.remove('show');
+      setTimeout(() => {
+        if (updateBannerEl) updateBannerEl.remove();
+        updateBannerEl = null;
+      }, 220);
+    });
+  }
+
+  async function checkVersion(isInitial) {
+    try {
+      const res = await nativeFetch('/api/version?t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) return;
+      const data = await res.json();
+      const fp = data && data.fingerprint;
+      if (!fp) return;
+
+      if (isInitial) {
+        loadedFingerprint = fp;
+        let prevFp = null;
+        let justPatched = false;
+        try {
+          prevFp = localStorage.getItem(VERSION_KEY);
+          justPatched = sessionStorage.getItem(PENDING_KEY) === '1';
+          localStorage.setItem(VERSION_KEY, fp);
+          sessionStorage.removeItem(PENDING_KEY);
+        } catch {}
+
+        // If user reloaded from an older version (or just clicked Actualizar), play quick hacker patch flicker
+        if (justPatched || (prevFp && prevFp !== fp)) {
+          playHackerPatchFlicker(`MODIFICACIONES APLICADAS // v${data.appVersion || '2.6'}`);
+        }
+      } else if (loadedFingerprint && fp !== loadedFingerprint) {
+        showUpdateBanner(fp);
+      }
+    } catch {
+      // Ignore offline/network hiccups silently
+    }
+  }
+
+  function initVersionWatcher() {
+    if (global.location.pathname.includes('admin.html')) return;
+    checkVersion(true);
+    setInterval(() => checkVersion(false), 45000);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') checkVersion(false);
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initVersionWatcher);
+  } else {
+    initVersionWatcher();
+  }
+
+  global.HackerLoader = { start, stop, playHackerPatchFlicker };
 })(window);

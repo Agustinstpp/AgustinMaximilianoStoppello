@@ -1878,6 +1878,188 @@ img {
   }
 }
 
+/* ─── Hacker Update Banner & Patch Flicker Overlay ───────────────────────── */
+.hacker-update-banner {
+  position: fixed;
+  left: 50%;
+  bottom: 22px;
+  transform: translate(-50%, 24px);
+  z-index: 9997;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 16px;
+  border-radius: var(--radius-pill);
+  background: rgba(8, 8, 8, 0.96);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(200, 243, 29, 0.55);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.88), 0 0 26px rgba(200, 243, 29, 0.22);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.78rem;
+  color: var(--text);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+  max-width: calc(100vw - 28px);
+}
+
+.hacker-update-banner.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.hacker-update-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+  flex-shrink: 0;
+  animation: cursorBlink 1s steps(1) infinite;
+}
+
+.hacker-update-msg {
+  white-space: nowrap;
+}
+
+.hacker-update-btn {
+  appearance: none;
+  border: 0;
+  background-color: var(--accent);
+  color: #0a0a0a;
+  font-family: inherit;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.hacker-update-btn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.hacker-update-close {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.hacker-update-close:hover {
+  color: var(--text);
+}
+
+.hacker-patch-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(200, 243, 29, 0.08) 0px,
+      rgba(200, 243, 29, 0.08) 1px,
+      transparent 2px,
+      transparent 4px
+    ),
+    rgba(6, 6, 6, 0.86);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: hackerPatchFlash 0.62s steps(2) 1;
+  transition: opacity 0.22s ease;
+}
+
+.hacker-patch-overlay.fade-out {
+  opacity: 0;
+}
+
+.hacker-patch-box {
+  background: #090909;
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 20px 26px;
+  box-shadow: 0 0 36px rgba(200, 243, 29, 0.28);
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.84rem;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  width: min(440px, 100%);
+}
+
+.hacker-patch-line {
+  margin-bottom: 12px;
+  text-shadow: 0 0 12px rgba(200, 243, 29, 0.65);
+}
+
+.hacker-patch-bar {
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(200, 243, 29, 0.16);
+  overflow: hidden;
+}
+
+.hacker-patch-bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: hackerPatchFill 0.58s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+body.hacker-screen-flicker {
+  animation: bodyHackerGlitch 0.58s linear 1;
+}
+
+@keyframes hackerPatchFill {
+  0% { width: 8%; }
+  45% { width: 64%; }
+  100% { width: 100%; }
+}
+
+@keyframes hackerPatchFlash {
+  0% { opacity: 0.4; }
+  20% { opacity: 1; }
+  35% { opacity: 0.72; }
+  55% { opacity: 1; }
+  75% { opacity: 0.85; }
+  100% { opacity: 1; }
+}
+
+@keyframes bodyHackerGlitch {
+  0%, 100% { filter: none; }
+  20% { filter: contrast(1.25) hue-rotate(8deg); }
+  40% { filter: brightness(1.12); }
+  65% { filter: contrast(1.3) brightness(0.92); }
+  85% { filter: none; }
+}
+
+@media (max-width: 600px) {
+  .hacker-update-banner {
+    width: calc(100vw - 24px);
+    justify-content: space-between;
+    border-radius: 14px;
+  }
+  .hacker-update-msg {
+    font-size: 0.72rem;
+    white-space: normal;
+  }
+}
+
 /* ─── Footer ──────────────────────────────────────────────────────────────── */
 .site-footer {
   border-top: 1px solid #181818;

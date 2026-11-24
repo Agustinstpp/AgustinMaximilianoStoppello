@@ -1,3 +1,5 @@
+const APP_VERSION = '2.6.0';
+
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
@@ -76,7 +78,37 @@ function formatTodo(row) {
   };
 }
 
-// ─── Health ───────────────────────────────────────────────────────────────────
+// ─── Health & Version Fingerprint ─────────────────────────────────────────────
+
+async function handleVersion(env) {
+  try {
+    const row = await env.DB.prepare(
+      `SELECT
+         (SELECT COALESCE(MAX(updated_at), '') || ':' || COUNT(*) FROM projects WHERE is_visible = 1) AS p,
+         (SELECT COALESCE(MAX(updated_at), '') || ':' || COUNT(*) FROM posts WHERE is_visible = 1) AS b,
+         (SELECT COALESCE(MAX(updated_at), '') || ':' || COUNT(*) FROM brand_works) AS w`
+    ).first();
+
+    const fingerprint = `${APP_VERSION}|${row?.p || ''}|${row?.b || ''}|${row?.w || ''}`;
+    return new Response(
+      JSON.stringify({
+        appVersion: APP_VERSION,
+        fingerprint,
+        timestamp: new Date().toISOString(),
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Cache-Control': 'no-store, no-cache, must-revalidate',
+          ...CORS_HEADERS,
+        },
+      }
+    );
+  } catch (error) {
+    return jsonResponse({ appVersion: APP_VERSION, fingerprint: APP_VERSION, error: error.message }, 200);
+  }
+}
 
 async function handleHealth(env) {
   try {
@@ -702,6 +734,8 @@ async function handleApi(request, url, env) {
 
     case 'upload-image':
       return method === 'POST' ? uploadImageToR2(request, env) : methodNotAllowed();
+    case 'version':
+      return method === 'GET' ? handleVersion(env) : methodNotAllowed();
 
     // RESTful collection routes
     case 'projects':
