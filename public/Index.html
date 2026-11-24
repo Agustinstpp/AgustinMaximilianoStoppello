@@ -49,17 +49,29 @@
   <main>
     <!-- ─── Hero ──────────────────────────────────────────────────────── -->
     <section class="hero">
-      <div class="container">
-        <span class="eyebrow">SOFTWARE DEVELOPER &middot; UX/UI</span>
-        <h1 class="hero-title" id="hero-title" aria-label="Hola, soy Agustín.">
-          Hola, soy <span class="accent">Agustín</span>.
-        </h1>
-        <p class="hero-subtitle">
-          Desarrollo software y diseño interfaces para productos digitales que se usan. Más de 6 años creando desde Corrientes, Argentina.
-        </p>
-        <div class="hero-actions">
-          <a href="#trabajos" class="btn btn-accent">Ver trabajos</a>
-          <a href="#contacto" class="btn btn-ghost">Escribime</a>
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <span class="eyebrow">SOFTWARE DEVELOPER &middot; UX/UI</span>
+          <h1 class="hero-title" id="hero-title" aria-label="Hola, soy Agustín.">
+            Hola, soy <span class="accent">Agustín</span>.
+          </h1>
+          <p class="hero-subtitle">
+            Desarrollo software y diseño interfaces para productos digitales que se usan. Más de 6 años creando desde Corrientes, Argentina.
+          </p>
+          <div class="hero-actions">
+            <a href="#trabajos" class="btn btn-accent">Ver trabajos</a>
+            <a href="#contacto" class="btn btn-ghost">Escribime</a>
+          </div>
+        </div>
+
+        <div class="hero-mascot-wrap">
+          <div class="hero-mascot-stage" id="hero-mascot" title="agustinst.code">
+            <div class="hero-mascot-glow" aria-hidden="true"></div>
+            <div class="hero-mascot-ring" aria-hidden="true"></div>
+            <div class="hero-mascot-medal">
+              <img src="imag/IMG_0259.PNG" alt="Ilustración de Agustín Stoppello">
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -879,6 +891,35 @@
       titleEl.style.cursor = 'pointer';
       titleEl.title = 'Click para repetir animación';
       titleEl.addEventListener('click', runHackerDecode);
+    })();
+
+    // Interactive 3D tilt & click pop for Hero mascot
+    (function initHeroMascot() {
+      const stage = document.getElementById('hero-mascot');
+      if (!stage) return;
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) return;
+
+      const heroSection = stage.closest('.hero');
+      if (heroSection) {
+        heroSection.addEventListener('mousemove', (e) => {
+          const rect = stage.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = Math.max(-1, Math.min(1, (e.clientX - cx) / 260));
+          const dy = Math.max(-1, Math.min(1, (e.clientY - cy) / 260));
+          stage.style.transform = `rotateY(${dx * 16}deg) rotateX(${-dy * 16}deg)`;
+        });
+        heroSection.addEventListener('mouseleave', () => {
+          stage.style.transform = 'rotateY(0deg) rotateX(0deg)';
+        });
+      }
+
+      stage.addEventListener('click', () => {
+        stage.classList.remove('pop');
+        void stage.offsetWidth;
+        stage.classList.add('pop');
+      });
     })();
 
     // Native dark event carousels (buttons, dots, and mobile swipe)

@@ -256,9 +256,122 @@ img {
   padding: clamp(56px, 9vw, 96px) 0 clamp(44px, 7vw, 72px);
 }
 
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: clamp(32px, 5vw, 64px);
+  align-items: center;
+}
+
+.hero-content {
+  min-width: 0;
+}
+
 .hero .eyebrow {
   margin-bottom: 20px;
   display: inline-block;
+}
+
+.hero-mascot-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 900px;
+}
+
+.hero-mascot-stage {
+  position: relative;
+  width: clamp(220px, 25vw, 310px);
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform 0.16s ease-out;
+  cursor: pointer;
+}
+
+.hero-mascot-glow {
+  position: absolute;
+  inset: -14%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 243, 29, 0.24) 0%, rgba(200, 243, 29, 0.06) 45%, rgba(200, 243, 29, 0) 72%);
+  pointer-events: none;
+  filter: blur(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.hero-mascot-stage:hover .hero-mascot-glow {
+  transform: scale(1.08);
+  opacity: 1;
+}
+
+.hero-mascot-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px dashed rgba(200, 243, 29, 0.32);
+  animation: mascotSpin 30s linear infinite;
+  pointer-events: none;
+}
+
+.hero-mascot-ring::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+}
+
+.hero-mascot-medal {
+  position: relative;
+  z-index: 2;
+  width: 82%;
+  height: 82%;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid rgba(200, 243, 29, 0.55);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.65), 0 0 32px rgba(200, 243, 29, 0.14);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateZ(26px);
+  animation: mascotFloat 5s ease-in-out infinite;
+}
+
+.hero-mascot-medal img {
+  width: 94%;
+  height: 94%;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.hero-mascot-stage.pop .hero-mascot-medal {
+  animation: mascotPop 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes mascotFloat {
+  0%, 100% { transform: translateZ(26px) translateY(0); }
+  50% { transform: translateZ(26px) translateY(-10px); }
+}
+
+@keyframes mascotSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes mascotPop {
+  0% { transform: translateZ(26px) scale(1); }
+  40% { transform: translateZ(42px) scale(1.07) rotate(-4deg); }
+  75% { transform: translateZ(30px) scale(0.98) rotate(2deg); }
+  100% { transform: translateZ(26px) scale(1) rotate(0deg); }
 }
 
 .hero-title {
@@ -1420,11 +1533,21 @@ img {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .hero-grid,
   .about-split,
   .events-grid,
   .faq-grid {
     grid-template-columns: 1fr;
     gap: 28px;
+  }
+
+  .hero-mascot-wrap {
+    order: -1;
+    justify-content: flex-start;
+  }
+
+  .hero-mascot-stage {
+    width: 170px;
   }
 
   .about-aside {
@@ -1510,5 +1633,9 @@ img {
     animation: none;
     flex-wrap: wrap;
     width: auto;
+  }
+  .hero-mascot-ring,
+  .hero-mascot-medal {
+    animation: none;
   }
 }
