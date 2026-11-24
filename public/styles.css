@@ -321,114 +321,138 @@ img {
 }
 
 .hero-hacker-img {
-  animation: hackerFlicker 6s infinite;
+  animation: hackerFlicker 2.8s infinite;
 }
 
 .hero-hacker-glitch--1 {
   opacity: 0;
-  filter: grayscale(100%) contrast(1.4) brightness(1.15) drop-shadow(-3px 0 0 rgba(200, 243, 29, 0.85));
+  filter: grayscale(100%) contrast(1.65) brightness(1.25) drop-shadow(-8px 0 0 rgba(200, 243, 29, 0.95));
   mix-blend-mode: screen;
-  animation: hackerGlitchSlice1 4.6s infinite;
+  animation: hackerGlitchSlice1 2.1s infinite;
 }
 
 .hero-hacker-glitch--2 {
   opacity: 0;
-  filter: grayscale(100%) contrast(1.4) brightness(1.1) drop-shadow(3px 0 0 rgba(120, 255, 214, 0.7));
+  filter: grayscale(100%) contrast(1.65) brightness(1.2) drop-shadow(8px 0 0 rgba(0, 240, 255, 0.9));
   mix-blend-mode: screen;
-  animation: hackerGlitchSlice2 4.6s infinite;
+  animation: hackerGlitchSlice2 2.1s infinite;
+}
+
+.hero-hacker-glitch--3 {
+  opacity: 0;
+  filter: grayscale(100%) contrast(1.8) brightness(1.15) drop-shadow(-5px 3px 0 rgba(255, 42, 109, 0.85));
+  mix-blend-mode: screen;
+  animation: hackerGlitchSlice3 2.6s infinite;
 }
 
 .hero-hacker-portrait:hover .hero-hacker-glitch--1,
 .hero-hacker-portrait.glitch-burst .hero-hacker-glitch--1 {
-  animation: hackerGlitchSlice1 0.55s linear 2;
+  animation: hackerGlitchSlice1 0.35s linear infinite;
 }
 
 .hero-hacker-portrait:hover .hero-hacker-glitch--2,
 .hero-hacker-portrait.glitch-burst .hero-hacker-glitch--2 {
-  animation: hackerGlitchSlice2 0.55s linear 2;
+  animation: hackerGlitchSlice2 0.35s linear infinite;
+}
+
+.hero-hacker-portrait:hover .hero-hacker-glitch--3,
+.hero-hacker-portrait.glitch-burst .hero-hacker-glitch--3 {
+  animation: hackerGlitchSlice3 0.4s linear infinite;
 }
 
 .hero-hacker-scanlines {
   position: absolute;
   inset: 0;
-  z-index: 3;
+  z-index: 4;
   pointer-events: none;
   background: repeating-linear-gradient(
     to bottom,
     rgba(255, 255, 255, 0) 0px,
     rgba(255, 255, 255, 0) 2px,
-    rgba(0, 0, 0, 0.28) 3px,
-    rgba(200, 243, 29, 0.04) 4px
+    rgba(0, 0, 0, 0.42) 3px,
+    rgba(200, 243, 29, 0.09) 4px
   );
-  animation: scanlineShift 8s linear infinite;
+  animation: scanlineShift 3.5s linear infinite;
+}
+
+.hero-hacker-matrix {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.38;
+  mix-blend-mode: screen;
 }
 
 .hero-hacker-fade {
   position: absolute;
   inset: 0;
-  z-index: 4;
+  z-index: 5;
   pointer-events: none;
   background:
     linear-gradient(to top, var(--bg) 4%, rgba(10, 10, 10, 0.65) 22%, transparent 48%),
     linear-gradient(to bottom, var(--bg) 0%, transparent 18%);
 }
 
-.hero-hacker-hud {
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.72);
-  background-color: rgba(10, 10, 10, 0.76);
-  border: 1px solid rgba(200, 243, 29, 0.28);
-  padding: 5px 12px;
-  border-radius: var(--radius-pill);
-  white-space: nowrap;
-}
-
-.hero-hacker-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
-  animation: cursorBlink 1.2s steps(1) infinite;
-}
-
 @keyframes hackerGlowPulse {
-  0%, 100% { opacity: 0.75; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.05); }
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.08); }
 }
 
 @keyframes hackerFlicker {
-  0%, 88%, 92%, 96%, 100% { opacity: 1; }
-  89% { opacity: 0.78; }
-  90% { opacity: 1; }
-  93% { opacity: 0.85; filter: grayscale(100%) contrast(1.45) brightness(1.1); }
-  94% { opacity: 1; }
+  0%, 74%, 78%, 84%, 92%, 100% {
+    opacity: 1;
+    transform: translate(0, 0) skewX(0deg);
+    filter: grayscale(100%) contrast(1.28) brightness(0.95);
+  }
+  75% {
+    opacity: 0.72;
+    transform: translate(-3px, 0) skewX(-2deg);
+    filter: grayscale(100%) contrast(1.7) brightness(1.18);
+  }
+  76% {
+    opacity: 1;
+    transform: translate(3px, 0) skewX(1.5deg);
+  }
+  85% {
+    opacity: 0.6;
+    transform: translate(2px, -1px) skewX(-1deg);
+    filter: grayscale(100%) contrast(1.85) brightness(1.25);
+  }
+  86% {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  93% {
+    opacity: 0.8;
+    transform: translate(-4px, 1px) skewX(2.5deg);
+  }
 }
 
 @keyframes hackerGlitchSlice1 {
-  0%, 84%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(0 0 100% 0); }
-  85% { opacity: 0.9; transform: translate(-6px, 0); clip-path: inset(18% 0 64% 0); }
-  87% { opacity: 0.85; transform: translate(5px, 0); clip-path: inset(52% 0 30% 0); }
-  89% { opacity: 0.95; transform: translate(-4px, 0); clip-path: inset(34% 0 54% 0); }
-  91% { opacity: 0; transform: translate(0, 0); clip-path: inset(0 0 100% 0); }
+  0%, 62%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(0 0 100% 0); }
+  63% { opacity: 0.95; transform: translate(-14px, 0); clip-path: inset(12% 0 68% 0); }
+  66% { opacity: 0.9; transform: translate(12px, -2px); clip-path: inset(48% 0 32% 0); }
+  69% { opacity: 1; transform: translate(-16px, 1px); clip-path: inset(28% 0 56% 0); }
+  72% { opacity: 0.9; transform: translate(10px, 0); clip-path: inset(70% 0 14% 0); }
+  75% { opacity: 0; transform: translate(0, 0); clip-path: inset(0 0 100% 0); }
 }
 
 @keyframes hackerGlitchSlice2 {
-  0%, 85%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(100% 0 0 0); }
-  86% { opacity: 0.85; transform: translate(6px, 0); clip-path: inset(62% 0 22% 0); }
-  88% { opacity: 0.9; transform: translate(-5px, 0); clip-path: inset(26% 0 60% 0); }
-  90% { opacity: 0; transform: translate(0, 0); clip-path: inset(100% 0 0 0); }
+  0%, 64%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(100% 0 0 0); }
+  65% { opacity: 0.95; transform: translate(15px, 0); clip-path: inset(56% 0 22% 0); }
+  68% { opacity: 0.9; transform: translate(-13px, 2px); clip-path: inset(20% 0 62% 0); }
+  71% { opacity: 0.95; transform: translate(12px, -1px); clip-path: inset(38% 0 46% 0); }
+  74% { opacity: 0; transform: translate(0, 0); clip-path: inset(100% 0 0 0); }
+}
+
+@keyframes hackerGlitchSlice3 {
+  0%, 70%, 100% { opacity: 0; transform: translate(0, 0); clip-path: inset(100% 0 0 0); }
+  72% { opacity: 0.88; transform: translate(-11px, 3px); clip-path: inset(40% 0 42% 0); }
+  75% { opacity: 0.92; transform: translate(14px, -2px); clip-path: inset(16% 0 72% 0); }
+  78% { opacity: 0; transform: translate(0, 0); clip-path: inset(100% 0 0 0); }
 }
 
 @keyframes scanlineShift {

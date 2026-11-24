@@ -71,13 +71,11 @@
               <img class="hero-hacker-img" src="imag/hero-profile.jpg" alt="Agustín Stoppello">
               <img class="hero-hacker-glitch hero-hacker-glitch--1" src="imag/hero-profile.jpg" alt="" aria-hidden="true">
               <img class="hero-hacker-glitch hero-hacker-glitch--2" src="imag/hero-profile.jpg" alt="" aria-hidden="true">
+              <img class="hero-hacker-glitch hero-hacker-glitch--3" src="imag/hero-profile.jpg" alt="" aria-hidden="true">
+              <canvas class="hero-hacker-matrix" id="hero-matrix" aria-hidden="true"></canvas>
               <div class="hero-hacker-scanlines" aria-hidden="true"></div>
               <div class="hero-hacker-fade" aria-hidden="true"></div>
             </div>
-            <span class="hero-hacker-hud">
-              <span class="hero-hacker-dot" aria-hidden="true"></span>
-              agustinst.code // online
-            </span>
           </div>
         </div>
       </div>
@@ -900,16 +898,42 @@
       titleEl.addEventListener('click', runHackerDecode);
     })();
 
-    // Trigger manual glitch burst on portrait click
+    // Trigger manual glitch burst + Matrix code rain overlay on Hero portrait
     (function initHeroPortraitGlitch() {
       const portrait = document.getElementById('hero-portrait');
-      if (!portrait) return;
-      portrait.addEventListener('click', () => {
-        portrait.classList.remove('glitch-burst');
-        void portrait.offsetWidth;
-        portrait.classList.add('glitch-burst');
-        setTimeout(() => portrait.classList.remove('glitch-burst'), 1150);
-      });
+      if (portrait) {
+        portrait.addEventListener('click', () => {
+          portrait.classList.remove('glitch-burst');
+          void portrait.offsetWidth;
+          portrait.classList.add('glitch-burst');
+          setTimeout(() => portrait.classList.remove('glitch-burst'), 1100);
+        });
+      }
+
+      const canvas = document.getElementById('hero-matrix');
+      if (!canvas || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      const ctx = canvas.getContext('2d');
+      const w = (canvas.width = 320);
+      const h = (canvas.height = 340);
+      const fontSize = 12;
+      const cols = Math.floor(w / fontSize);
+      const drops = Array.from({ length: cols }, () => Math.random() * -24);
+      const chars = '01<>/{}[]#$%*=+;:~';
+
+      setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.14)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = '#c8f31d';
+        ctx.font = `600 ${fontSize}px monospace`;
+        for (let i = 0; i < drops.length; i++) {
+          const ch = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+          if (drops[i] * fontSize > h && Math.random() > 0.94) {
+            drops[i] = 0;
+          }
+          drops[i] += 0.65;
+        }
+      }, 75);
     })();
 
     // Native dark event carousels (buttons, dots, and mobile swipe)
