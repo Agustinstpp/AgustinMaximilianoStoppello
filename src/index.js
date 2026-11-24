@@ -549,6 +549,85 @@ async function deleteBrandWork(request, env) {
   return jsonResponse({ message: 'Trabajo eliminado', id: deleted.id });
 }
 
+// ─── R2 Media Upload & Serving ────────────────────────────────────────────────
+
+const ALLOWED_IMAGE_TYPES = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/gif': 'gif',
+  'image/svg+xml': 'svg',
+};
+
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024; // 10 MB
+
+async function uploadImageToR2(request, env) {
+  if (!env.MEDIA) {
+    return jsonResponse({ error: 'R2 MEDIA bucket is not configured' }, 500);
+  }
+
+  let formData;
+  try {
+    formData = await request.formData();
+  } catch {
+    return jsonResponse({ error: 'Invalid multipart/form-data body' }, 400);
+  }
+
+  const file = formData.get('file');
+  if (!file || typeof file === 'string') {
+    return jsonResponse({ error: 'Missing image file field' }, 400);
+  }
+
+  const ext = ALLOWED_IMAGE_TYPES[file.type];
+  if (!ext) {
+    return jsonResponse(
+      { error: 'Formato no soportado. Usá JPG, PNG, WebP, GIF o SVG.' },
+      400
+    );
+  }
+
+  if (file.size > MAX_UPLOAD_BYTES) {
+    return jsonResponse({ error: 'La imagen supera el límite de 10 MB.' }, 413);
+  }
+
+  const rand = crypto.randomUUID().slice(0, 8);
+  const key = `uploads/${Date.now()}-${rand}.${ext}`;
+
+  await env.MEDIA.put(key, file.stream(), {
+    httpMetadata: {
+      contentType: file.type,
+      cacheControl: 'public, max-age=31536000, immutable',
+    },
+  });
+
+  return jsonResponse({ url: `/media/${key}`, key }, 201);
+}
+
+async function serveMediaFromR2(url, env) {
+  if (!env.MEDIA) {
+    return new Response('Media bucket not configured', { status: 500 });
+  }
+
+  const key = decodeURIComponent(url.pathname.replace(/^\/media\//, ''));
+  if (!key || key.includes('..')) {
+    return new Response('Invalid media key', { status: 400 });
+  }
+
+  const object = await env.MEDIA.get(key);
+  if (!object) {
+    return new Response('Media not found', { status: 404 });
+  }
+
+  const headers = new Headers();
+  object.writeHttpMetadata(headers);
+  headers.set('etag', object.httpEtag);
+  if (!headers.has('cache-control')) {
+    headers.set('cache-control', 'public, max-age=31536000, immutable');
+  }
+
+  return new Response(object.body, { headers });
+}
+
 // ─── API Router ───────────────────────────────────────────────────────────────
 
 async function handleApi(request, url, env) {
@@ -621,6 +700,9 @@ async function handleApi(request, url, env) {
     case 'delete-brand-work':
       return method === 'DELETE' ? deleteBrandWork(request, env) : methodNotAllowed();
 
+    case 'upload-image':
+      return method === 'POST' ? uploadImageToR2(request, env) : methodNotAllowed();
+
     // RESTful collection routes
     case 'projects':
       if (method === 'GET') return getProjects(url, env, true);
@@ -679,6 +761,10 @@ export default {
 
       if (url.pathname.startsWith('/api/')) {
         return handleApi(request, url, env);
+      }
+
+      if (url.pathname.startsWith('/media/')) {
+        return serveMediaFromR2(url, env);
       }
 
       // Root route serves Index.html

@@ -1,7 +1,7 @@
 /**
  * Lightweight, XSS-safe Markdown renderer for agustinst.code
- * Supports: headings (##, ###), bold, italic, inline code, fenced code blocks,
- * blockquotes, unordered/ordered lists, links, images, and paragraphs.
+ * Supports: GFM tables (with alignment), headings (##, ###), bold, italic,
+ * inline code, fenced code blocks, blockquotes, ul/ol lists, hr, links, images, paragraphs.
  */
 (function (global) {
   function escapeHtml(str) {
@@ -38,6 +38,28 @@
     return out;
   }
 
+  function splitTableRow(line) {
+    let trimmed = line.trim();
+    if (trimmed.startsWith('|')) trimmed = trimmed.slice(1);
+    if (trimmed.endsWith('|')) trimmed = trimmed.slice(0, -1);
+    return trimmed.split('|').map((cell) => cell.trim());
+  }
+
+  function isTableSeparator(line) {
+    if (!line || !line.includes('|') && !/^\s*:?-{3,}:?\s*$/.test(line)) return false;
+    const cells = splitTableRow(line);
+    if (cells.length === 0) return false;
+    return cells.every((c) => /^:?-{3,}:?$/.test(c));
+  }
+
+  function parseAlignments(sepLine) {
+    return splitTableRow(sepLine).map((c) => {
+      if (c.startsWith(':') && c.endsWith(':')) return 'center';
+      if (c.endsWith(':')) return 'right';
+      return 'left';
+    });
+  }
+
   function renderMarkdown(md) {
     if (!md || !String(md).trim()) return '';
 
@@ -62,7 +84,9 @@
       }
     }
 
-    for (const rawLine of lines) {
+    for (let i = 0; i < lines.length; i++) {
+      const rawLine = lines[i];
+
       if (rawLine.trim().startsWith('```')) {
         flushPara();
         flushList();
@@ -86,6 +110,48 @@
       if (!line) {
         flushPara();
         flushList();
+        continue;
+      }
+
+      // GFM Table: current line has pipes AND next line is a valid separator row
+      if (line.includes('|') && i + 1 < lines.length && isTableSeparator(lines[i + 1])) {
+        flushPara();
+        flushList();
+
+        const headers = splitTableRow(line);
+        const aligns = parseAlignments(lines[i + 1]);
+        i += 2;
+
+        const bodyRows = [];
+        while (i < lines.length && lines[i].trim() && lines[i].includes('|')) {
+          bodyRows.push(splitTableRow(lines[i]));
+          i++;
+        }
+        i--; // compensate for loop increment
+
+        const thead = headers
+          .map((h, idx) => `<th style="text-align:${aligns[idx] || 'left'}">${renderInline(h)}</th>`)
+          .join('');
+
+        const tbody = bodyRows
+          .map((row) => {
+            const cells = headers
+              .map((_, idx) => `<td style="text-align:${aligns[idx] || 'left'}">${renderInline(row[idx] || '')}</td>`)
+              .join('');
+            return `<tr>${cells}</tr>`;
+          })
+          .join('');
+
+        html.push(
+          `<div class="prose-table-wrap"><table><thead><tr>${thead}</tr></thead><tbody>${tbody}</tbody></table></div>`
+        );
+        continue;
+      }
+
+      if (/^[-*_]{3,}$/.test(line)) {
+        flushPara();
+        flushList();
+        html.push('<hr>');
         continue;
       }
 

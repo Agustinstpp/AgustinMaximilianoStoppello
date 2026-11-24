@@ -447,8 +447,11 @@
           <input type="text" id="p-tech" placeholder="Cloudflare Workers, D1, Figma, JS">
         </div>
         <div class="field">
-          <label for="p-image">URL de portada (/imag/... o https://...)</label>
-          <input type="text" id="p-image" placeholder="/imag/Portada Smart Techs PC.jpg" oninput="updatePreview('p-image','p-preview')">
+          <label for="p-image">Portada (URL o subir a R2)</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="p-image" placeholder="/imag/... o /media/..." oninput="updatePreview('p-image','p-preview')">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="triggerR2Upload('p-image','p-preview')">Subir R2</button>
+          </div>
         </div>
       </div>
       <div id="p-preview" class="preview-box">Vista previa de portada</div>
@@ -482,8 +485,9 @@
               <button type="button" class="md-btn" onclick="mdInsert('p-content','- ','')">Lista</button>
               <button type="button" class="md-btn" onclick="mdInsert('p-content','> ','')">Cita</button>
               <button type="button" class="md-btn" onclick="mdInsert('p-content','```\n','\n```')">Código</button>
+              <button type="button" class="md-btn" onclick="mdInsertTable('p-content')">Tabla</button>
               <button type="button" class="md-btn" onclick="mdInsert('p-content','[texto](https://',')')">Link</button>
-              <button type="button" class="md-btn" onclick="mdInsert('p-content','![captura](/imag/',')')">Img</button>
+              <button type="button" class="md-btn" style="color:var(--accent);" onclick="triggerR2MarkdownUpload('p-content')">+ Img R2</button>
             </div>
             <div class="md-modes">
               <button type="button" class="md-btn active" onclick="setMdMode('project','edit',this)">Editar</button>
@@ -585,8 +589,11 @@
           <input type="text" id="post-tags" placeholder="UX/UI, Cloudflare, Automatización">
         </div>
         <div class="field">
-          <label for="post-cover">URL de portada (opcional)</label>
-          <input type="text" id="post-cover" placeholder="/imag/... o https://..." oninput="updatePreview('post-cover','post-preview')">
+          <label for="post-cover">Portada (URL o subir a R2)</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="post-cover" placeholder="/imag/... o /media/..." oninput="updatePreview('post-cover','post-preview')">
+            <button type="button" class="btn btn-ghost btn-sm" onclick="triggerR2Upload('post-cover','post-preview')">Subir R2</button>
+          </div>
         </div>
       </div>
       <div id="post-preview" class="preview-box" style="height:90px;">Vista previa de portada</div>
@@ -606,8 +613,9 @@
               <button type="button" class="md-btn" onclick="mdInsert('post-content','- ','')">Lista</button>
               <button type="button" class="md-btn" onclick="mdInsert('post-content','> ','')">Cita</button>
               <button type="button" class="md-btn" onclick="mdInsert('post-content','```\n','\n```')">Código</button>
+              <button type="button" class="md-btn" onclick="mdInsertTable('post-content')">Tabla</button>
               <button type="button" class="md-btn" onclick="mdInsert('post-content','[texto](https://',')')">Link</button>
-              <button type="button" class="md-btn" onclick="mdInsert('post-content','![imagen](/imag/',')')">Img</button>
+              <button type="button" class="md-btn" style="color:var(--accent);" onclick="triggerR2MarkdownUpload('post-content')">+ Img R2</button>
             </div>
             <div class="md-modes">
               <button type="button" class="md-btn active" onclick="setMdMode('post','edit',this)">Editar</button>
@@ -701,6 +709,67 @@
       const tpl = `## El problema\nDescribí qué tarea manual o necesidad tenía el cliente.\n\n## La solución\n- Arquitectura y stack utilizado\n- Decisiones clave de UX/UI\n\n## Resultados\n> Qué impacto concreto generó el producto en el uso diario.`;
       ta.value = ta.value.trim() ? ta.value + '\n\n' + tpl : tpl;
       ta.dispatchEvent(new Event('input'));
+    }
+
+    function mdInsertTable(textareaId) {
+      const ta = document.getElementById(textareaId);
+      const table = `\n| Columna 1 | Columna 2 | Columna 3 |\n| --- | --- | --- |\n| Dato A | Dato B | Dato C |\n| Dato D | Dato E | Dato F |\n`;
+      const start = ta.selectionStart;
+      ta.value = ta.value.slice(0, start) + table + ta.value.slice(ta.selectionEnd);
+      ta.focus();
+      ta.dispatchEvent(new Event('input'));
+    }
+
+    async function uploadFileToR2(file) {
+      const fd = new FormData();
+      fd.append('file', file);
+      const res = await fetch('/api/upload-image', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error subiendo imagen a R2');
+      return data.url;
+    }
+
+    function pickImageFile(onPicked) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/png,image/jpeg,image/webp,image/gif,image/svg+xml';
+      input.onchange = () => {
+        if (input.files && input.files[0]) onPicked(input.files[0]);
+      };
+      input.click();
+    }
+
+    function triggerR2Upload(inputId, previewBoxId) {
+      pickImageFile(async (file) => {
+        flash('Subiendo imagen a Cloudflare R2…');
+        try {
+          const url = await uploadFileToR2(file);
+          document.getElementById(inputId).value = url;
+          updatePreview(inputId, previewBoxId);
+          flash('Imagen subida a R2 correctamente.');
+        } catch (err) {
+          flash(err.message, 'err');
+        }
+      });
+    }
+
+    function triggerR2MarkdownUpload(textareaId) {
+      pickImageFile(async (file) => {
+        flash('Subiendo imagen a Cloudflare R2…');
+        try {
+          const url = await uploadFileToR2(file);
+          const alt = file.name.replace(/\.[^.]+$/, '');
+          const ta = document.getElementById(textareaId);
+          const snippet = `\n![${alt}](${url})\n`;
+          const start = ta.selectionStart;
+          ta.value = ta.value.slice(0, start) + snippet + ta.value.slice(ta.selectionEnd);
+          ta.focus();
+          ta.dispatchEvent(new Event('input'));
+          flash('Imagen subida a R2 e insertada en el editor.');
+        } catch (err) {
+          flash(err.message, 'err');
+        }
+      });
     }
 
     function updatePreview(inputId, boxId) {
