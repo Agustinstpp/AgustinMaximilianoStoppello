@@ -1661,6 +1661,29 @@ img {
   border-radius: var(--radius-sm);
   border: 1px solid var(--border);
   margin: 18px 0;
+  max-width: 100%;
+  height: auto;
+}
+
+.prose-figure {
+  margin: 22px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.prose-figure img {
+  margin: 0;
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-hover);
+  background-color: #0e0e0e;
+}
+
+.prose-figure figcaption {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-align: center;
 }
 
 .prose hr {

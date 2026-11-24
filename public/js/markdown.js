@@ -155,6 +155,18 @@
         continue;
       }
 
+      // Standalone image line -> render as clean <figure> with optional caption
+      const imgMatch = line.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imgMatch) {
+        flushPara();
+        flushList();
+        const alt = escapeHtml(imgMatch[1]);
+        const src = safeUrl(imgMatch[2]);
+        const caption = alt ? `<figcaption>${alt}</figcaption>` : '';
+        html.push(`<figure class="prose-figure"><img src="${src}" alt="${alt}" loading="lazy">${caption}</figure>`);
+        continue;
+      }
+
       if (line.startsWith('### ')) {
         flushPara();
         flushList();

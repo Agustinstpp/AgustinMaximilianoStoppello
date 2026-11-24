@@ -500,7 +500,7 @@
             <div id="md-prev-project" class="md-preview prose"></div>
           </div>
           <div class="md-statusbar">
-            <span>Markdown soportado</span>
+            <span>Markdown &middot; Pegá (Ctrl+V) o arrastrá imágenes para subirlas a R2</span>
             <span id="md-stat-project">0 palabras</span>
           </div>
         </div>
@@ -628,7 +628,7 @@
             <div id="md-prev-post" class="md-preview prose"></div>
           </div>
           <div class="md-statusbar">
-            <span>Markdown soportado</span>
+            <span>Markdown &middot; Pegá (Ctrl+V) o arrastrá imágenes para subirlas a R2</span>
             <span id="md-stat-post">0 palabras</span>
           </div>
         </div>
@@ -753,24 +753,71 @@
       });
     }
 
+    async function insertUploadedImageIntoTextarea(textareaId, file) {
+      const ta = document.getElementById(textareaId);
+      const placeholder = `\n![Subiendo ${file.name}…]()\n`;
+      const start = ta.selectionStart;
+      ta.value = ta.value.slice(0, start) + placeholder + ta.value.slice(ta.selectionEnd);
+      ta.dispatchEvent(new Event('input'));
+      flash('Subiendo imagen a Cloudflare R2…');
+
+      try {
+        const url = await uploadFileToR2(file);
+        const alt = (file.name || 'imagen').replace(/\.[^.]+$/, '');
+        ta.value = ta.value.replace(placeholder, `\n![${alt}](${url})\n`);
+        ta.focus();
+        ta.dispatchEvent(new Event('input'));
+        flash('Imagen subida a R2 e insertada en el Markdown.');
+      } catch (err) {
+        ta.value = ta.value.replace(placeholder, '');
+        ta.dispatchEvent(new Event('input'));
+        flash(err.message, 'err');
+      }
+    }
+
     function triggerR2MarkdownUpload(textareaId) {
-      pickImageFile(async (file) => {
-        flash('Subiendo imagen a Cloudflare R2…');
-        try {
-          const url = await uploadFileToR2(file);
-          const alt = file.name.replace(/\.[^.]+$/, '');
-          const ta = document.getElementById(textareaId);
-          const snippet = `\n![${alt}](${url})\n`;
-          const start = ta.selectionStart;
-          ta.value = ta.value.slice(0, start) + snippet + ta.value.slice(ta.selectionEnd);
-          ta.focus();
-          ta.dispatchEvent(new Event('input'));
-          flash('Imagen subida a R2 e insertada en el editor.');
-        } catch (err) {
-          flash(err.message, 'err');
+      pickImageFile((file) => insertUploadedImageIntoTextarea(textareaId, file));
+    }
+
+    // Enable paste (Ctrl+V) and drag-and-drop image upload directly inside Markdown editors
+    ['p-content', 'post-content'].forEach((id) => {
+      const ta = document.getElementById(id);
+      if (!ta) return;
+
+      ta.addEventListener('paste', (e) => {
+        const items = e.clipboardData && e.clipboardData.items;
+        if (!items) return;
+        for (const item of items) {
+          if (item.type && item.type.startsWith('image/')) {
+            const file = item.getAsFile();
+            if (file) {
+              e.preventDefault();
+              insertUploadedImageIntoTextarea(id, file);
+              return;
+            }
+          }
         }
       });
-    }
+
+      ta.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        ta.style.outline = '2px dashed var(--accent)';
+        ta.style.outlineOffset = '-4px';
+      });
+      ta.addEventListener('dragleave', () => {
+        ta.style.outline = '';
+      });
+      ta.addEventListener('drop', (e) => {
+        ta.style.outline = '';
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (!files || !files.length) return;
+        const imgFile = Array.from(files).find((f) => f.type && f.type.startsWith('image/'));
+        if (imgFile) {
+          e.preventDefault();
+          insertUploadedImageIntoTextarea(id, imgFile);
+        }
+      });
+    });
 
     function updatePreview(inputId, boxId) {
       const url = document.getElementById(inputId).value.trim();
