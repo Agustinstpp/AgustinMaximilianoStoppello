@@ -35,6 +35,8 @@
     // Bold & Italic
     out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    // Allow explicit <br> tags (common inside Markdown tables and prose)
+    out = out.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
     return out;
   }
 
@@ -72,7 +74,7 @@
 
     function flushPara() {
       if (paraBuf.length) {
-        html.push(`<p>${renderInline(paraBuf.join('<br>'))}</p>`);
+        html.push(`<p>${paraBuf.map(renderInline).join('<br>')}</p>`);
         paraBuf = [];
       }
     }
