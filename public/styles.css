@@ -1128,6 +1128,210 @@ img {
   background-color: var(--accent);
 }
 
+/* ─── Unified Timeline (Trayectoria: Experiencia & Educación) ─────────────── */
+.timeline-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: clamp(28px, 4vw, 40px);
+}
+
+.timeline-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.timeline-list {
+  position: relative;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-left: 30px;
+}
+
+.timeline-list::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    var(--accent) 0%,
+    rgba(200, 243, 29, 0.35) 35%,
+    var(--border-hover) 100%
+  );
+}
+
+.timeline-item {
+  position: relative;
+}
+
+.timeline-item.hidden {
+  display: none;
+}
+
+.timeline-node {
+  position: absolute;
+  left: -28px;
+  top: 24px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--bg);
+  border: 2px solid var(--border-hover);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.timeline-item--current .timeline-node {
+  border-color: var(--accent);
+  background-color: var(--accent);
+  box-shadow: 0 0 12px rgba(200, 243, 29, 0.75);
+}
+
+.timeline-item:hover .timeline-node {
+  border-color: var(--accent);
+  box-shadow: 0 0 10px rgba(200, 243, 29, 0.5);
+}
+
+.timeline-card {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 20px 24px;
+  transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+}
+
+.timeline-item:hover .timeline-card {
+  border-color: var(--border-hover);
+  background-color: var(--surface-hover);
+  transform: translateX(3px);
+}
+
+.timeline-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 14px;
+  margin-bottom: 10px;
+}
+
+.timeline-date {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+
+.timeline-badges {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.timeline-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
+}
+
+.timeline-badge--work {
+  color: var(--text);
+  background-color: #1c1c1c;
+  border: 1px solid var(--border-hover);
+}
+
+.timeline-badge--edu {
+  color: #b7e4ff;
+  background-color: rgba(120, 200, 255, 0.09);
+  border: 1px solid rgba(120, 200, 255, 0.28);
+}
+
+.timeline-badge--live {
+  color: #0a0a0a;
+  background-color: var(--accent);
+}
+
+.timeline-role {
+  font-size: clamp(1.05rem, 2vw, 1.22rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.timeline-org {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.timeline-loc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.timeline-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+/* Future-ready slots for learnings & milestone photos */
+.timeline-learnings {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.timeline-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.timeline-gallery img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+@media (max-width: 640px) {
+  .timeline-list {
+    padding-left: 24px;
+  }
+  .timeline-list::before {
+    left: 6px;
+  }
+  .timeline-node {
+    left: -24px;
+    top: 20px;
+    width: 12px;
+    height: 12px;
+  }
+  .timeline-card {
+    padding: 16px;
+  }
+}
+
 /* ─── Events & Native Dark Carousels (Eventos) ───────────────────────────── */
 .events-grid {
   display: grid;

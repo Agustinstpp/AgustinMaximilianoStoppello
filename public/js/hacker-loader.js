@@ -392,6 +392,7 @@
     const SECTION_LABELS = {
       trabajos: 'Trabajos seleccionados',
       'sobre-mi': 'Sobre mí',
+      trayectoria: 'Trayectoria',
       eventos: 'Eventos y reconocimientos',
       faq: 'Preguntas Frecuentes',
       contacto: 'Contacto / CTA',
