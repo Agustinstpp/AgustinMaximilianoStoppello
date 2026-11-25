@@ -33,13 +33,16 @@ html {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.6;
-  overflow-x: hidden;
+  overflow-x: clip;
+  max-width: 100%;
 }
 
 h1, h2, h3, h4 {
@@ -1323,20 +1326,65 @@ img {
 }
 
 @media (max-width: 640px) {
+  .timeline-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+  .timeline-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    gap: 6px;
+  }
+  .timeline-filters .cert-filter-btn {
+    width: 100%;
+    text-align: center;
+    padding: 7px 6px;
+    font-size: 0.78rem;
+  }
   .timeline-list {
-    padding-left: 24px;
+    padding-left: 22px;
+    gap: 14px;
   }
   .timeline-list::before {
-    left: 6px;
+    left: 5px;
   }
   .timeline-node {
-    left: -24px;
+    left: -22px;
     top: 20px;
     width: 12px;
     height: 12px;
   }
   .timeline-card {
-    padding: 16px;
+    padding: 15px 14px;
+    min-width: 0;
+    max-width: 100%;
+  }
+  .timeline-item:hover .timeline-card {
+    transform: none;
+  }
+  .timeline-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .timeline-role {
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+  }
+  .timeline-org,
+  .timeline-desc {
+    font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
+  .timeline-tags {
+    gap: 5px;
+    margin-top: 12px;
+  }
+  .timeline-tags .cert-tag {
+    font-size: 0.68rem;
+    padding: 3px 8px;
   }
 }
 
@@ -2781,9 +2829,10 @@ body.hacker-screen-flicker {
   }
 
   .about-aside {
-    justify-self: start;
-    align-items: flex-start;
+    justify-self: stretch;
+    align-items: center;
     max-width: 100%;
+    width: 100%;
   }
 
   .about-photo {
@@ -2936,6 +2985,10 @@ body.hacker-screen-flicker {
 
   .nav-links.open .nav-link:nth-child(5) {
     transition-delay: 0.20s;
+  }
+
+  .nav-links.open .nav-link:nth-child(6) {
+    transition-delay: 0.24s;
   }
 
   .nav-links .nav-link:hover,
