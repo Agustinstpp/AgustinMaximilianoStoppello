@@ -16,6 +16,7 @@
     [/toggle-post-visibility/, 'PATCHING // VISIBILITY'],
     [/get-posts|get-post\b/, 'SYNCING // D1 BLOG'],
     [/brand-work/, 'SYNCING // BRAND WORKS'],
+    [/analytics/, 'QUERYING // D1 METRICS'],
     [/health/, 'PINGING // EDGE D1'],
   ];
 
@@ -109,7 +110,7 @@
   const nativeFetch = global.fetch.bind(global);
   global.fetch = async function (input, init) {
     const url = typeof input === 'string' ? input : input && input.url ? input.url : '';
-    const isSilent = url.includes('/api/version');
+    const isSilent = url.includes('/api/version') || url.includes('/api/track');
     const isApi = !isSilent && (url.includes('/api/') || url.endsWith('/health'));
 
     if (!isApi) return nativeFetch(input, init);
@@ -297,10 +298,210 @@
     });
   }
 
+  // ─── Lightweight Privacy-Friendly Analytics Tracker ───────────────────────
+  function initAnalyticsTracker() {
+    if (global.location.pathname.includes('admin.html')) return;
+
+    const SID_KEY = 'agustinst_sid';
+    let sessionId = '';
+    try {
+      sessionId = sessionStorage.getItem(SID_KEY);
+      if (!sessionId) {
+        sessionId = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2)).slice(0, 24);
+        sessionStorage.setItem(SID_KEY, sessionId);
+      }
+    } catch {
+      sessionId = String(Date.now()) + Math.random().toString(36).slice(2, 10);
+    }
+
+    const w = global.innerWidth || 1280;
+    const device = w < 720 ? 'mobile' : w < 1024 ? 'tablet' : 'desktop';
+    let referrer = 'Directo';
+    if (document.referrer) {
+      try {
+        const refHost = new URL(document.referrer).hostname.replace(/^www\./, '');
+        if (refHost && refHost !== global.location.hostname.replace(/^www\./, '')) {
+          referrer = refHost;
+        }
+      } catch {}
+    }
+
+    function currentPath() {
+      const p = global.location.pathname || '/';
+      if (p === '/Index.html' || p === '/index.html') return '/';
+      return p + (global.location.search || '');
+    }
+
+    const queue = [];
+    let flushTimer = null;
+
+    function sendPayload(events, useBeacon) {
+      if (!events.length) return;
+      const body = JSON.stringify({ events });
+      if (useBeacon && navigator.sendBeacon) {
+        try {
+          const blob = new Blob([body], { type: 'application/json' });
+          if (navigator.sendBeacon('/api/track', blob)) return;
+        } catch {}
+      }
+      nativeFetch('/api/track', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body,
+        keepalive: true,
+      }).catch(() => {});
+    }
+
+    function flush(useBeacon) {
+      if (!queue.length) return;
+      const batch = queue.splice(0, 20);
+      sendPayload(batch, useBeacon);
+    }
+
+    function track(eventType, target, category, durationMs) {
+      queue.push({
+        session_id: sessionId,
+        event_type: eventType,
+        path: currentPath(),
+        target: target || null,
+        category: category || null,
+        duration_ms: durationMs || 0,
+        device,
+        referrer,
+      });
+      if (queue.length >= 6) {
+        flush(false);
+      } else {
+        clearTimeout(flushTimer);
+        flushTimer = setTimeout(() => flush(false), 1800);
+      }
+    }
+
+    // 1. Pageview
+    track('pageview', document.title || currentPath(), 'page', 0);
+
+    // 2. Section visibility (IntersectionObserver)
+    const SECTION_LABELS = {
+      trabajos: 'Trabajos seleccionados',
+      'sobre-mi': 'Sobre mí',
+      eventos: 'Eventos y reconocimientos',
+      faq: 'Preguntas Frecuentes',
+      contacto: 'Contacto / CTA',
+    };
+    const seenSections = new Set();
+
+    function observeSections() {
+      if (!('IntersectionObserver' in global)) return;
+      const targets = Array.from(document.querySelectorAll('section[id], section.hero, section.brands-section'));
+      if (!targets.length) return;
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            const el = entry.target;
+            const key = el.id || (el.classList.contains('hero') ? 'hero' : el.classList.contains('brands-section') ? 'marcas' : '');
+            if (!key || seenSections.has(key)) continue;
+            seenSections.add(key);
+            const label =
+              SECTION_LABELS[key] ||
+              (key === 'hero' ? 'Hero / Inicio' : key === 'marcas' ? 'Carrusel de Marcas' : key);
+            track('section_view', label, 'section', 0);
+            io.unobserve(el);
+          }
+        },
+        { threshold: 0.3 }
+      );
+      targets.forEach((el) => io.observe(el));
+    }
+    observeSections();
+
+    // 3. Meaningful click tracking
+    document.addEventListener(
+      'click',
+      (e) => {
+        const el = e.target && e.target.closest
+          ? e.target.closest('a, button, .project-card, .blog-card, .brand-chip, .faq-item summary')
+          : null;
+        if (!el) return;
+        if (el.closest('.hacker-update-banner')) return;
+
+        let target = '';
+        let category = 'other';
+
+        if (el.classList.contains('project-card')) {
+          const title = el.querySelector('.project-title')?.textContent?.trim() || el.getAttribute('href') || 'Proyecto';
+          target = 'Proyecto: ' + title;
+          category = 'project';
+        } else if (el.classList.contains('brand-chip')) {
+          target = 'Marca: ' + (el.dataset.brand || el.getAttribute('title') || 'Marca');
+          category = 'brand';
+        } else if (el.classList.contains('blog-card')) {
+          const title = el.querySelector('.blog-title')?.textContent?.trim() || 'Artículo';
+          target = 'Blog: ' + title;
+          category = 'blog';
+        } else if (el.closest('.cta-actions') || (el.getAttribute('href') || '').startsWith('mailto:')) {
+          target = 'Contacto: ' + (el.getAttribute('aria-label') || el.textContent.trim() || 'Link');
+          category = 'contact';
+        } else if (el.classList.contains('event-ig-link')) {
+          target = 'Instagram Evento';
+          category = 'social';
+        } else if (el.closest('.faq-item')) {
+          target = 'FAQ: ' + (el.querySelector('span')?.textContent?.trim() || el.textContent.trim()).slice(0, 60);
+          category = 'faq';
+        } else if (el.closest('.detail-actions')) {
+          target = 'Proyecto CTA: ' + el.textContent.trim();
+          category = 'project';
+        } else if (el.closest('.hero-actions')) {
+          target = 'Hero CTA: ' + el.textContent.trim();
+          category = 'cta';
+        } else if (el.classList.contains('nav-link') || el.closest('.site-header')) {
+          target = 'Nav: ' + (el.textContent.trim() || el.getAttribute('aria-label') || 'Menú');
+          category = 'nav';
+        } else if (el.closest('.footer-links')) {
+          target = 'Footer: ' + el.textContent.trim();
+          category = 'contact';
+        } else {
+          return;
+        }
+
+        track('click', target, category, 0);
+      },
+      { passive: true }
+    );
+
+    // 4. Active duration tracking
+    let activeStart = document.visibilityState === 'visible' ? Date.now() : null;
+    function reportDuration(useBeacon) {
+      if (!activeStart) return;
+      const elapsed = Date.now() - activeStart;
+      activeStart = document.visibilityState === 'visible' ? Date.now() : null;
+      if (elapsed >= 1000) {
+        track('duration', currentPath(), 'session', Math.min(elapsed, 1800000));
+        flush(useBeacon);
+      } else if (useBeacon) {
+        flush(true);
+      }
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'hidden') {
+        reportDuration(true);
+      } else {
+        activeStart = Date.now();
+      }
+    });
+    global.addEventListener('pagehide', () => reportDuration(true));
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initVersionWatcher);
+    document.addEventListener('DOMContentLoaded', () => {
+      initVersionWatcher();
+      initAnalyticsTracker();
+    });
   } else {
     initVersionWatcher();
+    initAnalyticsTracker();
   }
 
   global.HackerLoader = { start, stop, playHackerPatchFlicker };

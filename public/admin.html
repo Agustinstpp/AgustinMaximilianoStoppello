@@ -333,6 +333,207 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ─── Analytics Dashboard ───────────────────────────────────────── */
+    .stats-kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .stat-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .stat-card-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .stat-card-val {
+      font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .stat-card-val.accent { color: var(--accent); }
+    .stat-card-sub {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+    .stats-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+    .stats-box {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+    .stats-box-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stats-box-head h3 {
+      font-size: 0.98rem;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+    }
+    .stats-box-head span {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .stats-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 160px;
+      padding-top: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .stats-bar-col {
+      flex: 1;
+      min-width: 10px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+    }
+    .stats-bar-pair {
+      width: 100%;
+      max-width: 28px;
+      height: 132px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 2px;
+    }
+    .stats-bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      min-height: 3px;
+      transition: opacity 0.15s ease;
+    }
+    .stats-bar--views { background-color: var(--accent); }
+    .stats-bar--clicks { background-color: rgba(255, 255, 255, 0.28); }
+    .stats-bar-lbl {
+      font-size: 0.64rem;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      white-space: nowrap;
+    }
+    .stats-rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .stats-rank-item {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .stats-rank-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      font-size: 0.85rem;
+    }
+    .stats-rank-name {
+      color: var(--text);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .stats-rank-val {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.78rem;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .stats-progress {
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background-color: #191919;
+      overflow: hidden;
+    }
+    .stats-progress > span {
+      display: block;
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(200, 243, 29, 0.55), var(--accent));
+    }
+    .stats-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .stats-feed-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background-color: #0e0e0e;
+      border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .stats-feed-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .stats-feed-left strong {
+      color: var(--text);
+      font-weight: 600;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .stats-feed-meta {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .stats-period-bar {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .stats-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .stats-grid-2 { grid-template-columns: 1fr; }
+    }
     @media (max-width: 720px) {
       .field-row,
       .field-row-3,
@@ -383,6 +584,7 @@
             <button type="button" class="admin-tab active" data-tab="projects">Proyectos</button>
             <button type="button" class="admin-tab" data-tab="brands">Trabajos por Marca</button>
             <button type="button" class="admin-tab" data-tab="posts">Blog</button>
+            <button type="button" class="admin-tab" data-tab="stats">Estadísticas</button>
           </div>
           <span style="font-size:0.8rem;color:var(--text-muted);">Cloudflare D1 &middot; Editor Markdown</span>
         </div>
@@ -414,6 +616,25 @@
             <button type="button" class="btn btn-accent btn-sm" onclick="openPostModal()">+ Nuevo artículo</button>
           </div>
           <div id="posts-list" class="admin-list"></div>
+        </section>
+
+        <!-- Tab: Analytics / Estadísticas -->
+        <section id="tab-stats" class="admin-panel">
+          <div class="admin-panel-head">
+            <h2>Estadísticas del sitio</h2>
+            <div class="stats-period-bar">
+              <button type="button" class="md-btn" data-days="7" onclick="setStatsDays(7, this)">7 días</button>
+              <button type="button" class="md-btn active" data-days="30" onclick="setStatsDays(30, this)">30 días</button>
+              <button type="button" class="md-btn" data-days="90" onclick="setStatsDays(90, this)">90 días</button>
+              <button type="button" class="md-btn" data-days="365" onclick="setStatsDays(365, this)">1 año</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="loadAnalytics()">Actualizar &#8635;</button>
+              <button type="button" class="btn btn-danger-ghost btn-sm" onclick="clearAnalytics()">Reiniciar</button>
+            </div>
+          </div>
+
+          <div id="stats-root">
+            <p style="color:var(--text-secondary);">Cargando métricas desde Cloudflare D1…</p>
+          </div>
         </section>
       </div>
     </main>
@@ -862,7 +1083,205 @@
     });
 
     async function loadAll() {
-      await Promise.all([loadProjects(), loadBrandWorks(), loadPosts()]);
+      await Promise.all([loadProjects(), loadBrandWorks(), loadPosts(), loadAnalytics()]);
+    }
+
+    // ─── Analytics Dashboard ──────────────────────────────────────────
+    let statsDays = 30;
+
+    function setStatsDays(days, btn) {
+      statsDays = days;
+      if (btn && btn.parentNode) {
+        btn.parentNode.querySelectorAll('[data-days]').forEach((b) => b.classList.toggle('active', b === btn));
+      }
+      loadAnalytics();
+    }
+
+    function fmtDuration(sec) {
+      const s = Math.max(0, Math.round(sec || 0));
+      if (s < 60) return `${s}s`;
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return `${m}m ${r}s`;
+    }
+
+    function renderRankBars(items, valueKey, labelFn, badgeFn, emptyMsg) {
+      if (!items || !items.length) {
+        return `<p style="color:var(--text-muted);font-size:0.84rem;">${emptyMsg}</p>`;
+      }
+      const maxVal = Math.max(...items.map((it) => Number(it[valueKey] || 0)), 1);
+      return `<div class="stats-rank-list">${items
+        .map((it) => {
+          const val = Number(it[valueKey] || 0);
+          const pct = Math.max(4, Math.round((val / maxVal) * 100));
+          const badge = badgeFn ? badgeFn(it) : '';
+          return `
+            <div class="stats-rank-item">
+              <div class="stats-rank-row">
+                <span class="stats-rank-name" title="${esc(labelFn(it))}">${badge}${esc(labelFn(it))}</span>
+                <span class="stats-rank-val">${val}</span>
+              </div>
+              <div class="stats-progress"><span style="width:${pct}%"></span></div>
+            </div>`;
+        })
+        .join('')}</div>`;
+    }
+
+    async function loadAnalytics() {
+      const root = document.getElementById('stats-root');
+      if (!root) return;
+      try {
+        const res = await fetch(`/api/analytics?days=${statsDays}`);
+        if (!res.ok) throw new Error('No se pudieron cargar las métricas');
+        const data = await res.json();
+        const s = data.summary || {};
+        const topSec = (data.topSections && data.topSections[0]) ? data.topSections[0].target : '—';
+        const daily = data.daily || [];
+        const maxDay = Math.max(...daily.map((d) => Math.max(Number(d.pageviews || 0), Number(d.clicks || 0))), 1);
+
+        const chartHtml = daily.length
+          ? `<div class="stats-chart">${daily
+              .slice(-14)
+              .map((d) => {
+                const vh = Math.max(4, Math.round((Number(d.pageviews || 0) / maxDay) * 100));
+                const ch = Math.max(3, Math.round((Number(d.clicks || 0) / maxDay) * 100));
+                const label = String(d.day || '').slice(5);
+                return `
+                  <div class="stats-bar-col" title="${esc(d.day)}: ${d.pageviews} visitas · ${d.clicks} clicks · ${d.sessions} sesiones">
+                    <div class="stats-bar-pair">
+                      <div class="stats-bar stats-bar--views" style="height:${vh}%"></div>
+                      <div class="stats-bar stats-bar--clicks" style="height:${ch}%"></div>
+                    </div>
+                    <span class="stats-bar-lbl">${esc(label)}</span>
+                  </div>`;
+              })
+              .join('')}</div>`
+          : '<p style="color:var(--text-muted);font-size:0.85rem;">Todavía no hay visitas registradas en este período. Navegá tu sitio público para ver los datos en vivo.</p>';
+
+        const deviceLabels = { desktop: 'Computadora', mobile: 'Celular', tablet: 'Tablet' };
+        const catBadges = {
+          project: '<span class="badge-lime">Proyecto</span>',
+          brand: '<span class="badge-muted">Marca</span>',
+          blog: '<span class="badge-muted">Blog</span>',
+          contact: '<span class="badge-lime">Contacto</span>',
+          cta: '<span class="badge-muted">CTA</span>',
+          nav: '<span class="badge-muted">Nav</span>',
+          faq: '<span class="badge-muted">FAQ</span>',
+          social: '<span class="badge-muted">Social</span>',
+        };
+        const typeLabels = {
+          pageview: '<span class="badge-lime">Visita</span>',
+          click: '<span class="badge-muted">Click</span>',
+          section_view: '<span class="badge-muted">Sección</span>',
+        };
+
+        const feedHtml = (data.recentEvents || []).length
+          ? `<div class="stats-feed">${data.recentEvents
+              .map((ev) => {
+                const when = ev.created_at ? new Date(ev.created_at + 'Z').toLocaleString('es-AR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }) : '';
+                return `
+                  <div class="stats-feed-row">
+                    <div class="stats-feed-left">
+                      ${typeLabels[ev.event_type] || '<span class="badge-muted">Evento</span>'}
+                      <strong>${esc(ev.target || ev.path)}</strong>
+                    </div>
+                    <span class="stats-feed-meta">${esc(ev.device)} · ${esc(when)}</span>
+                  </div>`;
+              })
+              .join('')}</div>`
+          : '<p style="color:var(--text-muted);font-size:0.84rem;">Sin actividad reciente todavía.</p>';
+
+        root.innerHTML = `
+          <div class="stats-kpi-grid">
+            <div class="stat-card">
+              <span class="stat-card-label">Visitas (Pageviews)</span>
+              <span class="stat-card-val accent">${s.pageviews || 0}</span>
+              <span class="stat-card-sub">${s.uniqueSessions || 0} sesiones únicas</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-label">Clicks totales</span>
+              <span class="stat-card-val">${s.totalClicks || 0}</span>
+              <span class="stat-card-sub">${s.clicksPerSession || 0} clicks por sesión</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-label">Duración promedio</span>
+              <span class="stat-card-val">${fmtDuration(s.avgDurationSec)}</span>
+              <span class="stat-card-sub">Máx: ${fmtDuration(s.maxDurationSec)}</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-card-label">Apartado más visto</span>
+              <span class="stat-card-val" style="font-size:clamp(1.05rem,1.8vw,1.35rem);">${esc(topSec)}</span>
+              <span class="stat-card-sub">${s.sectionViews || 0} vistas de sección</span>
+            </div>
+          </div>
+
+          <div class="stats-box" style="margin-bottom:18px;">
+            <div class="stats-box-head">
+              <h3>Actividad diaria (últimos 14 días con tráfico)</h3>
+              <span>Verde: Visitas &middot; Gris: Clicks</span>
+            </div>
+            ${chartHtml}
+          </div>
+
+          <div class="stats-grid-2">
+            <div class="stats-box">
+              <div class="stats-box-head">
+                <h3>Apartados más visualizados</h3>
+                <span>Scroll real en pantalla</span>
+              </div>
+              ${renderRankBars(data.topSections, 'views', (i) => i.target, null, 'Todavía no hay vistas de secciones.')}
+            </div>
+            <div class="stats-box">
+              <div class="stats-box-head">
+                <h3>Elementos más clickeados</h3>
+                <span>Proyectos, marcas, contacto</span>
+              </div>
+              ${renderRankBars(data.topClicks, 'clicks', (i) => i.target, (i) => catBadges[i.category] || '', 'Todavía no hay clicks registrados.')}
+            </div>
+          </div>
+
+          <div class="stats-grid-2">
+            <div class="stats-box">
+              <div class="stats-box-head">
+                <h3>Páginas más visitadas</h3>
+                <span>Rutas del sitio</span>
+              </div>
+              ${renderRankBars(data.topPages, 'views', (i) => i.path, null, 'Sin páginas registradas.')}
+            </div>
+            <div class="stats-box">
+              <div class="stats-box-head">
+                <h3>Dispositivos &amp; Origen del tráfico</h3>
+                <span>Sesiones únicas</span>
+              </div>
+              ${renderRankBars(data.devices, 'sessions', (i) => deviceLabels[i.device] || i.device, null, 'Sin datos de dispositivos.')}
+              <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+                <div class="stats-box-head" style="margin-bottom:10px;">
+                  <h3 style="font-size:0.86rem;color:var(--text-secondary);">Fuentes / Referrers</h3>
+                </div>
+                ${renderRankBars(data.referrers, 'sessions', (i) => i.referrer, null, 'Sin referrers.')}
+              </div>
+            </div>
+          </div>
+
+          <div class="stats-box">
+            <div class="stats-box-head">
+              <h3>Actividad reciente en vivo</h3>
+              <span>Últimos 15 eventos</span>
+            </div>
+            ${feedHtml}
+          </div>
+        `;
+      } catch (e) {
+        root.innerHTML = `<p style="color:#ff8a8a;">Error cargando estadísticas: ${esc(e.message)}</p>`;
+      }
+    }
+
+    async function clearAnalytics() {
+      if (!confirm('¿Reiniciar todas las estadísticas guardadas en D1? Esta acción no se puede deshacer.')) return;
+      const res = await fetch('/api/analytics', { method: 'DELETE' });
+      if (!res.ok) return flash('Error al reiniciar estadísticas.', 'err');
+      flash('Estadísticas reiniciadas.');
+      loadAnalytics();
     }
 
     // ─── Projects CRUD ────────────────────────────────────────────────

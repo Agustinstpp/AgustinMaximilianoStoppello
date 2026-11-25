@@ -1,4 +1,4 @@
-const APP_VERSION = '2.10.0';
+const APP_VERSION = '2.11.0';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -660,6 +660,204 @@ async function serveMediaFromR2(url, env) {
   return new Response(object.body, { headers });
 }
 
+// ─── Analytics Handlers (D1) ──────────────────────────────────────────────────
+
+const ALLOWED_EVENT_TYPES = new Set(['pageview', 'click', 'section_view', 'duration']);
+
+function cleanStr(val, maxLen = 140) {
+  if (val === null || val === undefined) return '';
+  return String(val).trim().slice(0, maxLen);
+}
+
+async function trackAnalytics(request, env) {
+  const body = await readJsonBody(request);
+  const rawEvents = Array.isArray(body.events) ? body.events : [body];
+  const valid = [];
+
+  for (const ev of rawEvents.slice(0, 20)) {
+    if (!ev || typeof ev !== 'object') continue;
+    const eventType = cleanStr(ev.event_type, 24);
+    const sessionId = cleanStr(ev.session_id, 64);
+    const path = cleanStr(ev.path, 200) || '/';
+    if (!ALLOWED_EVENT_TYPES.has(eventType) || !sessionId) continue;
+    if (path.includes('admin.html')) continue;
+
+    const target = cleanStr(ev.target, 160) || null;
+    const category = cleanStr(ev.category, 40) || null;
+    const durationMs = Math.max(0, Math.min(3600000, parseInt(ev.duration_ms, 10) || 0));
+    const device = ['mobile', 'tablet', 'desktop'].includes(ev.device) ? ev.device : 'desktop';
+    const referrer = cleanStr(ev.referrer, 120) || 'Directo';
+
+    valid.push({ sessionId, eventType, path, target, category, durationMs, device, referrer });
+  }
+
+  if (!valid.length) {
+    return jsonResponse({ ok: true, recorded: 0 });
+  }
+
+  const stmt = env.DB.prepare(
+    `INSERT INTO analytics_events (session_id, event_type, path, target, category, duration_ms, device, referrer)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+  );
+
+  await env.DB.batch(
+    valid.map((e) =>
+      stmt.bind(e.sessionId, e.eventType, e.path, e.target, e.category, e.durationMs, e.device, e.referrer)
+    )
+  );
+
+  return jsonResponse({ ok: true, recorded: valid.length }, 201);
+}
+
+async function getAnalytics(url, env) {
+  const rawDays = parseInt(url.searchParams.get('days'), 10);
+  const days = [7, 30, 90, 365].includes(rawDays) ? rawDays : 30;
+  const sinceModifier = `-${days} days`;
+
+  const [
+    summaryRow,
+    durationRow,
+    dailyRes,
+    sectionsRes,
+    clicksRes,
+    pagesRes,
+    devicesRes,
+    referrersRes,
+    recentRes,
+  ] = await Promise.all([
+    env.DB.prepare(
+      `SELECT
+         SUM(CASE WHEN event_type = 'pageview' THEN 1 ELSE 0 END) AS pageviews,
+         SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) AS total_clicks,
+         SUM(CASE WHEN event_type = 'section_view' THEN 1 ELSE 0 END) AS section_views,
+         COUNT(DISTINCT session_id) AS unique_sessions
+       FROM analytics_events
+       WHERE created_at >= datetime('now', ?)`
+    )
+      .bind(sinceModifier)
+      .first(),
+
+    env.DB.prepare(
+      `SELECT AVG(session_ms) AS avg_ms, MAX(session_ms) AS max_ms
+       FROM (
+         SELECT session_id, SUM(duration_ms) AS session_ms
+         FROM analytics_events
+         WHERE event_type = 'duration' AND duration_ms > 0 AND created_at >= datetime('now', ?)
+         GROUP BY session_id
+       )`
+    )
+      .bind(sinceModifier)
+      .first(),
+
+    env.DB.prepare(
+      `SELECT
+         substr(created_at, 1, 10) AS day,
+         SUM(CASE WHEN event_type = 'pageview' THEN 1 ELSE 0 END) AS pageviews,
+         SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) AS clicks,
+         COUNT(DISTINCT session_id) AS sessions
+       FROM analytics_events
+       WHERE created_at >= datetime('now', ?)
+       GROUP BY day
+       ORDER BY day ASC`
+    )
+      .bind(sinceModifier)
+      .all(),
+
+    env.DB.prepare(
+      `SELECT target, COUNT(*) AS views, COUNT(DISTINCT session_id) AS unique_views
+       FROM analytics_events
+       WHERE event_type = 'section_view' AND target IS NOT NULL AND created_at >= datetime('now', ?)
+       GROUP BY target
+       ORDER BY views DESC
+       LIMIT 10`
+    )
+      .bind(sinceModifier)
+      .all(),
+
+    env.DB.prepare(
+      `SELECT target, COALESCE(category, 'other') AS category, COUNT(*) AS clicks
+       FROM analytics_events
+       WHERE event_type = 'click' AND target IS NOT NULL AND created_at >= datetime('now', ?)
+       GROUP BY target, category
+       ORDER BY clicks DESC
+       LIMIT 12`
+    )
+      .bind(sinceModifier)
+      .all(),
+
+    env.DB.prepare(
+      `SELECT path, COUNT(*) AS views, COUNT(DISTINCT session_id) AS sessions
+       FROM analytics_events
+       WHERE event_type = 'pageview' AND created_at >= datetime('now', ?)
+       GROUP BY path
+       ORDER BY views DESC
+       LIMIT 10`
+    )
+      .bind(sinceModifier)
+      .all(),
+
+    env.DB.prepare(
+      `SELECT device, COUNT(DISTINCT session_id) AS sessions
+       FROM analytics_events
+       WHERE event_type = 'pageview' AND created_at >= datetime('now', ?)
+       GROUP BY device
+       ORDER BY sessions DESC`
+    )
+      .bind(sinceModifier)
+      .all(),
+
+    env.DB.prepare(
+      `SELECT referrer, COUNT(DISTINCT session_id) AS sessions
+       FROM analytics_events
+       WHERE event_type = 'pageview' AND created_at >= datetime('now', ?)
+       GROUP BY referrer
+       ORDER BY sessions DESC
+       LIMIT 8`
+    )
+      .bind(sinceModifier)
+      .all(),
+
+    env.DB.prepare(
+      `SELECT id, event_type, path, target, category, duration_ms, device, referrer, created_at
+       FROM analytics_events
+       WHERE event_type != 'duration'
+       ORDER BY id DESC
+       LIMIT 15`
+    ).all(),
+  ]);
+
+  const pageviews = Number(summaryRow?.pageviews || 0);
+  const totalClicks = Number(summaryRow?.total_clicks || 0);
+  const uniqueSessions = Number(summaryRow?.unique_sessions || 0);
+  const avgDurationSec = Math.round(Number(durationRow?.avg_ms || 0) / 1000);
+  const maxDurationSec = Math.round(Number(durationRow?.max_ms || 0) / 1000);
+
+  return jsonResponse({
+    days,
+    summary: {
+      pageviews,
+      uniqueSessions,
+      totalClicks,
+      sectionViews: Number(summaryRow?.section_views || 0),
+      avgDurationSec,
+      maxDurationSec,
+      clicksPerSession: uniqueSessions > 0 ? Number((totalClicks / uniqueSessions).toFixed(1)) : 0,
+    },
+    daily: dailyRes.results || [],
+    topSections: sectionsRes.results || [],
+    topClicks: clicksRes.results || [],
+    topPages: pagesRes.results || [],
+    devices: devicesRes.results || [],
+    referrers: referrersRes.results || [],
+    recentEvents: recentRes.results || [],
+  });
+}
+
+async function resetAnalytics(env) {
+  await env.DB.prepare('DELETE FROM analytics_events').run();
+  return jsonResponse({ ok: true, message: 'Estadísticas reiniciadas' });
+}
+
 // ─── API Router ───────────────────────────────────────────────────────────────
 
 async function handleApi(request, url, env) {
@@ -736,6 +934,12 @@ async function handleApi(request, url, env) {
       return method === 'POST' ? uploadImageToR2(request, env) : methodNotAllowed();
     case 'version':
       return method === 'GET' ? handleVersion(env) : methodNotAllowed();
+    case 'track':
+      return method === 'POST' ? trackAnalytics(request, env) : methodNotAllowed();
+    case 'analytics':
+      if (method === 'GET') return getAnalytics(url, env);
+      if (method === 'DELETE') return resetAnalytics(env);
+      return methodNotAllowed();
 
     // RESTful collection routes
     case 'projects':
