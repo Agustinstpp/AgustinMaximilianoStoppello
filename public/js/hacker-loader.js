@@ -139,22 +139,88 @@
     const overlay = document.createElement('div');
     overlay.className = 'hacker-patch-overlay';
     overlay.innerHTML = `
+      <canvas class="hacker-patch-matrix" aria-hidden="true"></canvas>
+      <div class="hacker-patch-slice hacker-patch-slice--1" aria-hidden="true"></div>
+      <div class="hacker-patch-slice hacker-patch-slice--2" aria-hidden="true"></div>
+      <div class="hacker-patch-slice hacker-patch-slice--3" aria-hidden="true"></div>
+      <div class="hacker-patch-flash" aria-hidden="true"></div>
       <div class="hacker-patch-box">
+        <div class="hacker-patch-top">
+          <span class="hacker-patch-tag">SYS // HOT-PATCH</span>
+          <span class="hacker-patch-pct">0%</span>
+        </div>
         <div class="hacker-patch-line">&gt; ${message || 'APLICANDO MODIFICACIONES // SYNCING EDGE'}</div>
+        <div class="hacker-patch-logs" aria-hidden="true"></div>
         <div class="hacker-patch-bar"><span></span></div>
       </div>
     `;
     document.body.appendChild(overlay);
     document.body.classList.add('hacker-screen-flicker');
 
+    // Full-screen Matrix / hex rain burst
+    const canvas = overlay.querySelector('.hacker-patch-matrix');
+    let matrixTimer = null;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      const w = (canvas.width = window.innerWidth);
+      const h = (canvas.height = window.innerHeight);
+      const fontSize = 15;
+      const cols = Math.ceil(w / fontSize);
+      const drops = Array.from({ length: cols }, () => Math.random() * (h / fontSize));
+      const glyphs = '01<>/{}[]#$%&*+=-;:ABCDEF0123456789';
+      matrixTimer = setInterval(() => {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.22)';
+        ctx.fillRect(0, 0, w, h);
+        ctx.font = `700 ${fontSize}px monospace`;
+        for (let i = 0; i < drops.length; i++) {
+          const ch = glyphs[Math.floor(Math.random() * glyphs.length)];
+          ctx.fillStyle = Math.random() > 0.82 ? '#ffffff' : '#c8f31d';
+          ctx.fillText(ch, i * fontSize, drops[i] * fontSize);
+          drops[i] += 1.45;
+          if (drops[i] * fontSize > h && Math.random() > 0.85) drops[i] = 0;
+        }
+      }, 36);
+    }
+
+    // Rapid terminal log stream + percentage counter
+    const logsEl = overlay.querySelector('.hacker-patch-logs');
+    const pctEl = overlay.querySelector('.hacker-patch-pct');
+    const logSteps = [
+      () => `[${randomHex()}] DECRYPTING EDGE BUNDLE...`,
+      () => `[${randomHex()}] FLUSHING STALE CACHE // OK`,
+      () => `[${randomHex()}] INJECTING NEW MODULES...`,
+      () => `[${randomHex()}] VERIFYING CHECKSUM // PASS`,
+      () => `[${randomHex()}] HOT-SWAP COMPLETE // 200`,
+    ];
+    let stepIdx = 0;
+    const logTimer = setInterval(() => {
+      if (logsEl && stepIdx < logSteps.length) {
+        const row = document.createElement('div');
+        row.textContent = logSteps[stepIdx]();
+        logsEl.appendChild(row);
+        if (logsEl.children.length > 3) logsEl.removeChild(logsEl.firstChild);
+        stepIdx++;
+      }
+      if (pctEl) {
+        const pct = Math.min(100, Math.round((stepIdx / logSteps.length) * 100));
+        pctEl.textContent = pct + '%';
+      }
+    }, 210);
+
     setTimeout(() => {
-      document.body.classList.remove('hacker-screen-flicker');
-      overlay.classList.add('fade-out');
+      clearInterval(matrixTimer);
+      clearInterval(logTimer);
+      if (pctEl) pctEl.textContent = '100%';
+      overlay.classList.add('final-flash');
       setTimeout(() => {
-        overlay.remove();
-        if (onDone) onDone();
-      }, 220);
-    }, 620);
+        document.body.classList.remove('hacker-screen-flicker');
+        overlay.classList.add('fade-out');
+        setTimeout(() => {
+          overlay.remove();
+          if (onDone) onDone();
+        }, 220);
+      }, 140);
+    }, 1150);
   }
 
   function showUpdateBanner(newFp) {
