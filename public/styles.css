@@ -1023,6 +1023,111 @@ img {
   border-radius: 12px;
 }
 
+.spotify-carousel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding: 0 2px;
+}
+
+.spotify-carousel-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--text-secondary);
+}
+
+.spotify-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+
+.spotify-carousel-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.spotify-carousel-counter {
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-right: 2px;
+}
+
+.spotify-carousel-btn {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hover);
+  background-color: #121212;
+  color: var(--text);
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
+.spotify-carousel-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: rgba(200, 243, 29, 0.08);
+}
+
+.spotify-carousel-viewport {
+  overflow: hidden;
+  border-radius: 12px;
+  width: 100%;
+}
+
+.spotify-carousel-track {
+  display: flex;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.spotify-carousel-slide {
+  flex: 0 0 100%;
+  min-width: 100%;
+}
+
+.spotify-carousel-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.spotify-carousel-dot {
+  appearance: none;
+  border: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background-color: var(--border-hover);
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.spotify-carousel-dot.active {
+  width: 18px;
+  background-color: var(--accent);
+}
+
 /* ─── Events & Native Dark Carousels (Eventos) ───────────────────────────── */
 .events-grid {
   display: grid;

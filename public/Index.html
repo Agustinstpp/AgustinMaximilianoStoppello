@@ -197,18 +197,46 @@
           <div class="about-photo">
             <img src="imag/agustin-photo.jpg" alt="Agustín Stoppello" loading="lazy">
           </div>
-          <div class="about-spotify">
-            <iframe
-              data-testid="embed-iframe"
-              style="border-radius:12px"
-              src="https://open.spotify.com/embed/track/2n6qz4opcJlHsEpI8030YM?utm_source=generator&amp;theme=0&amp;si=0c68145bf7144909"
-              width="100%"
-              height="152"
-              frameborder="0"
-              allowfullscreen=""
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy">
-            </iframe>
+          <div class="about-spotify" data-music-carousel>
+            <div class="spotify-carousel-head">
+              <span class="spotify-carousel-label"><span class="spotify-dot" aria-hidden="true"></span>MÚSICA</span>
+              <div class="spotify-carousel-controls">
+                <span class="spotify-carousel-counter" data-music-counter>1 / 2</span>
+                <button type="button" class="spotify-carousel-btn" data-music-prev aria-label="Canción anterior">&#8249;</button>
+                <button type="button" class="spotify-carousel-btn" data-music-next aria-label="Canción siguiente">&#8250;</button>
+              </div>
+            </div>
+            <div class="spotify-carousel-viewport">
+              <div class="spotify-carousel-track" data-music-track>
+                <div class="spotify-carousel-slide">
+                  <iframe
+                    data-testid="embed-iframe"
+                    style="border-radius:12px"
+                    src="https://open.spotify.com/embed/track/2n6qz4opcJlHsEpI8030YM?utm_source=generator&amp;theme=0&amp;si=0c68145bf7144909"
+                    width="100%"
+                    height="152"
+                    frameborder="0"
+                    allowfullscreen=""
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy">
+                  </iframe>
+                </div>
+                <div class="spotify-carousel-slide">
+                  <iframe
+                    data-testid="embed-iframe"
+                    style="border-radius:12px"
+                    src="https://open.spotify.com/embed/track/7MIhUdNJtaOnDmC5nBC1fb?utm_source=generator&amp;theme=0&amp;si=310218d496ff4cbc"
+                    width="100%"
+                    height="152"
+                    frameborder="0"
+                    allowfullscreen=""
+                    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                    loading="lazy">
+                  </iframe>
+                </div>
+              </div>
+            </div>
+            <div class="spotify-carousel-dots" data-music-dots></div>
           </div>
         </div>
       </div>
@@ -682,6 +710,46 @@
         if (Math.abs(dx) > 40) {
           goTo(dx < 0 ? index + 1 : index - 1);
         }
+      }, { passive: true });
+    });
+
+    // Spotify music carousel
+    document.querySelectorAll('[data-music-carousel]').forEach((wrap) => {
+      const track = wrap.querySelector('[data-music-track]');
+      const slides = wrap.querySelectorAll('.spotify-carousel-slide');
+      const prevBtn = wrap.querySelector('[data-music-prev]');
+      const nextBtn = wrap.querySelector('[data-music-next]');
+      const counter = wrap.querySelector('[data-music-counter]');
+      const dotsWrap = wrap.querySelector('[data-music-dots]');
+      let index = 0;
+      const total = slides.length;
+      if (total < 2) return;
+
+      const dots = Array.from({ length: total }, (_, i) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'spotify-carousel-dot' + (i === 0 ? ' active' : '');
+        dot.setAttribute('aria-label', `Ir a canción ${i + 1}`);
+        dot.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(dot);
+        return dot;
+      });
+
+      function goTo(nextIndex) {
+        index = (nextIndex + total) % total;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        if (counter) counter.textContent = `${index + 1} / ${total}`;
+        dots.forEach((d, i) => d.classList.toggle('active', i === index));
+      }
+
+      prevBtn.addEventListener('click', () => goTo(index - 1));
+      nextBtn.addEventListener('click', () => goTo(index + 1));
+
+      let startX = 0;
+      wrap.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; }, { passive: true });
+      wrap.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - startX;
+        if (Math.abs(dx) > 40) goTo(dx < 0 ? index + 1 : index - 1);
       }, { passive: true });
     });
   </script>
