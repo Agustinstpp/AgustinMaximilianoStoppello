@@ -300,7 +300,15 @@
 
   // ─── Lightweight Privacy-Friendly Analytics Tracker ───────────────────────
   function initAnalyticsTracker() {
-    if (global.location.pathname.includes('admin.html')) return;
+    if (global.location.pathname.toLowerCase().includes('admin')) return;
+    try {
+      if (
+        localStorage.getItem('agustinst_is_admin') === '1' ||
+        sessionStorage.getItem('admin_authenticated') === '1'
+      ) {
+        return;
+      }
+    } catch {}
 
     const SID_KEY = 'agustinst_sid';
     let sessionId = '';

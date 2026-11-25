@@ -632,6 +632,11 @@
             </div>
           </div>
 
+          <div id="admin-ignore-bar" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:10px 14px;margin-bottom:16px;border-radius:10px;background:rgba(200,243,29,0.06);border:1px solid rgba(200,243,29,0.25);font-size:0.8rem;color:var(--text-secondary);">
+            <span id="admin-ignore-status"><strong style="color:var(--accent);">Modo Admin activo:</strong> tus visitas y clicks desde este navegador no se cuentan en las estadísticas.</span>
+            <button type="button" class="md-btn" id="admin-ignore-toggle" onclick="toggleAdminIgnore()">Contarme para pruebas</button>
+          </div>
+
           <div id="stats-root">
             <p style="color:var(--text-secondary);">Cargando métricas desde Cloudflare D1…</p>
           </div>
@@ -1050,10 +1055,37 @@
     }
 
     // ─── Auth ─────────────────────────────────────────────────────────
+    const ADMIN_IGNORE_KEY = 'agustinst_is_admin';
+
+    function renderAdminIgnoreUI() {
+      const statusEl = document.getElementById('admin-ignore-status');
+      const btnEl = document.getElementById('admin-ignore-toggle');
+      if (!statusEl || !btnEl) return;
+      const ignored = localStorage.getItem(ADMIN_IGNORE_KEY) === '1';
+      if (ignored) {
+        statusEl.innerHTML = '<strong style="color:var(--accent);">Modo Admin activo:</strong> tus visitas y clicks desde este navegador no se cuentan en las estadísticas.';
+        btnEl.textContent = 'Contarme para pruebas';
+      } else {
+        statusEl.innerHTML = '<strong style="color:#ffb86c;">Modo prueba:</strong> este navegador sí está enviando visitas a las estadísticas.';
+        btnEl.textContent = 'Excluir mi navegador';
+      }
+    }
+
+    function toggleAdminIgnore() {
+      const ignored = localStorage.getItem(ADMIN_IGNORE_KEY) === '1';
+      if (ignored) {
+        localStorage.removeItem(ADMIN_IGNORE_KEY);
+      } else {
+        localStorage.setItem(ADMIN_IGNORE_KEY, '1');
+      }
+      renderAdminIgnoreUI();
+    }
+
     function adminLogin() {
       const pw = document.getElementById('admin-password').value;
       if (pw === ADMIN_PASSWORD) {
         sessionStorage.setItem(ADMIN_KEY, '1');
+        try { localStorage.setItem(ADMIN_IGNORE_KEY, '1'); } catch {}
         unlockApp();
       } else {
         document.getElementById('login-error').classList.add('show');
@@ -1066,8 +1098,14 @@
     }
 
     function unlockApp() {
+      try {
+        if (localStorage.getItem(ADMIN_IGNORE_KEY) === null) {
+          localStorage.setItem(ADMIN_IGNORE_KEY, '1');
+        }
+      } catch {}
       document.getElementById('login-screen').style.display = 'none';
       document.getElementById('admin-app').style.display = '';
+      renderAdminIgnoreUI();
       loadAll();
     }
 

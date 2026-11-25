@@ -1,4 +1,4 @@
-const APP_VERSION = '2.12.0';
+const APP_VERSION = '2.12.1';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -680,7 +680,7 @@ async function trackAnalytics(request, env) {
     const sessionId = cleanStr(ev.session_id, 64);
     const path = cleanStr(ev.path, 200) || '/';
     if (!ALLOWED_EVENT_TYPES.has(eventType) || !sessionId) continue;
-    if (path.includes('admin.html')) continue;
+    if (path.toLowerCase().includes('admin')) continue;
 
     const target = cleanStr(ev.target, 160) || null;
     const category = cleanStr(ev.category, 40) || null;
