@@ -1013,6 +1013,31 @@
         });
       });
     });
+
+    // Mobile-only FAQ-style accordion for timeline cards (keeps full view on desktop)
+    const mobileTlMq = window.matchMedia('(max-width: 640px)');
+    document.querySelectorAll('.timeline-card').forEach((card) => {
+      const tagCount = card.querySelectorAll('.timeline-tags .cert-tag').length;
+      const hint = document.createElement('div');
+      hint.className = 'timeline-expand-hint';
+      hint.innerHTML = `<span class="timeline-expand-text">Ver detalles y ${tagCount} aptitudes</span><span class="timeline-expand-icon" aria-hidden="true">+</span>`;
+      const desc = card.querySelector('.timeline-desc');
+      if (desc) {
+        card.insertBefore(hint, desc);
+      } else {
+        card.appendChild(hint);
+      }
+
+      card.addEventListener('click', (e) => {
+        if (!mobileTlMq.matches) return;
+        if (e.target.closest('a')) return;
+        const isOpen = card.classList.toggle('is-open');
+        const txt = hint.querySelector('.timeline-expand-text');
+        if (txt) {
+          txt.textContent = isOpen ? 'Ocultar detalles' : `Ver detalles y ${tagCount} aptitudes`;
+        }
+      });
+    });
   </script>
   <script src="js/projects-client.js"></script>
 </body>
