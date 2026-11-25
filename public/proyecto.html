@@ -131,6 +131,7 @@
     </div>
   </header>
 
+  <div class="reading-progress" id="reading-progress" aria-hidden="true"></div>
   <main class="project-detail">
     <div class="container">
       <a href="/#trabajos" class="back-link">&larr; Volver a trabajos</a>
@@ -209,8 +210,9 @@
         }
         actionsHtml += `<a href="/#contacto" class="btn btn-ghost">Consultar por un proyecto similar</a>`;
 
+        const tocHtml = project.content ? window.renderToc(project.content) : '';
         const caseStudyHtml = project.content
-          ? `<article class="detail-case-study prose">${window.renderMarkdown(project.content)}</article>`
+          ? `<div class="detail-case-study">${tocHtml}<article class="prose">${window.renderMarkdown(project.content)}</article></div>`
           : '';
 
         root.className = '';
@@ -257,6 +259,14 @@
     }
 
     document.addEventListener('DOMContentLoaded', loadProjectDetail);
+
+    window.addEventListener('scroll', () => {
+      const bar = document.getElementById('reading-progress');
+      if (!bar) return;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      bar.style.width = max > 0 ? `${Math.min(100, (window.scrollY / max) * 100)}%` : '0%';
+    }, { passive: true });
   </script>
 </body>
 </html>

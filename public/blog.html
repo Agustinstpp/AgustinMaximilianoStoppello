@@ -138,7 +138,8 @@
 
   <!-- Reader Modal -->
   <div id="reader-modal" class="reader-backdrop" onclick="if(event.target===this)closeReader()">
-    <article class="reader-sheet">
+    <article class="reader-sheet" id="reader-sheet">
+      <div class="reader-progress-track" aria-hidden="true"><div class="reader-progress-fill" id="reader-progress-fill"></div></div>
       <div class="reader-head">
         <div>
           <div id="reader-meta" class="blog-meta" style="margin-bottom: 10px;"></div>
@@ -147,6 +148,8 @@
         <button type="button" class="brand-works-close" onclick="closeReader()" aria-label="Cerrar">&times;</button>
       </div>
       <div id="reader-cover" style="margin-bottom: 22px; display:none;"></div>
+      <div id="reader-tldr"></div>
+      <div id="reader-toc"></div>
       <div id="reader-body" class="prose"></div>
     </article>
   </div>
@@ -200,9 +203,27 @@
       } else {
         coverEl.style.display = 'none';
       }
+      document.getElementById('reader-tldr').innerHTML = post.summary
+        ? `<div class="prose-tldr"><span class="prose-tldr-label">RESUMEN RÁPIDO</span><p>${esc(post.summary)}</p></div>`
+        : '';
+      document.getElementById('reader-toc').innerHTML = window.renderToc(post.content);
       document.getElementById('reader-body').innerHTML = window.renderMarkdown(post.content);
+      const sheet = document.getElementById('reader-sheet');
+      const fill = document.getElementById('reader-progress-fill');
+      if (sheet) sheet.scrollTop = 0;
+      if (fill) fill.style.width = '0%';
       document.getElementById('reader-modal').classList.add('open');
       document.body.style.overflow = 'hidden';
+    }
+
+    const readerSheet = document.getElementById('reader-sheet');
+    if (readerSheet) {
+      readerSheet.addEventListener('scroll', () => {
+        const fill = document.getElementById('reader-progress-fill');
+        if (!fill) return;
+        const max = readerSheet.scrollHeight - readerSheet.clientHeight;
+        fill.style.width = max > 0 ? `${Math.min(100, (readerSheet.scrollTop / max) * 100)}%` : '0%';
+      }, { passive: true });
     }
 
     function closeReader() {

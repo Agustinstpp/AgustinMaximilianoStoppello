@@ -62,6 +62,18 @@
     });
   }
 
+  function slugifyHeading(text) {
+    return (
+      'sec-' +
+      String(text || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'sec-item'
+    );
+  }
+
   function renderMarkdown(md) {
     if (!md || !String(md).trim()) return '';
 
@@ -178,13 +190,17 @@
       if (line.startsWith('## ')) {
         flushPara();
         flushList();
-        html.push(`<h2>${renderInline(line.slice(3))}</h2>`);
+        const headingText = line.slice(3);
+        const slug = slugifyHeading(headingText);
+        html.push(`<h2 id="${slug}">${renderInline(headingText)}</h2>`);
         continue;
       }
       if (line.startsWith('# ')) {
         flushPara();
         flushList();
-        html.push(`<h2>${renderInline(line.slice(2))}</h2>`);
+        const headingText = line.slice(2);
+        const slug = slugifyHeading(headingText);
+        html.push(`<h2 id="${slug}">${renderInline(headingText)}</h2>`);
         continue;
       }
       if (line.startsWith('> ')) {
@@ -227,6 +243,44 @@
     return html.join('\n');
   }
 
+  function renderToc(md) {
+    if (!md) return '';
+    const lines = String(md).replace(/\r\n/g, '\n').split('\n');
+    let inCode = false;
+    const headings = [];
+
+    for (const raw of lines) {
+      const line = raw.trim();
+      if (line.startsWith('```')) {
+        inCode = !inCode;
+        continue;
+      }
+      if (inCode) continue;
+      if (line.startsWith('## ')) {
+        const text = line.slice(3).trim();
+        if (text) headings.push({ text, id: slugifyHeading(text) });
+      } else if (line.startsWith('# ')) {
+        const text = line.slice(2).trim();
+        if (text) headings.push({ text, id: slugifyHeading(text) });
+      }
+    }
+
+    if (headings.length < 2) return '';
+
+    const items = headings
+      .map(
+        (h, idx) =>
+          `<a class="prose-toc-link" href="#${h.id}"><span>0${idx + 1}</span>${escapeHtml(h.text)}</a>`
+      )
+      .join('');
+
+    return `
+      <nav class="prose-toc" aria-label="Contenido">
+        <span class="prose-toc-title">EN ESTE CONTENIDO</span>
+        <div class="prose-toc-links">${items}</div>
+      </nav>`;
+  }
+
   function readingTime(md) {
     const words = String(md || '').trim().split(/\s+/).filter(Boolean).length;
     const mins = Math.max(1, Math.round(words / 200));
@@ -234,5 +288,6 @@
   }
 
   global.renderMarkdown = renderMarkdown;
+  global.renderToc = renderToc;
   global.readingTime = readingTime;
 })(window);
