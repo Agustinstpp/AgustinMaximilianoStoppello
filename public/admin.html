@@ -11,6 +11,28 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <style>
+    html, body {
+      overflow-x: clip;
+      max-width: 100%;
+      width: 100%;
+    }
+    #admin-app,
+    .admin-main,
+    .admin-panel,
+    .admin-list,
+    .admin-item,
+    .admin-item-left,
+    .admin-item-info,
+    .stats-box,
+    .stats-grid-2 > *,
+    .stats-kpi-grid > *,
+    .stat-card,
+    .field,
+    .md-editor,
+    .md-body {
+      min-width: 0;
+      max-width: 100%;
+    }
     .admin-main { padding: 40px 0 80px; }
     .login-screen {
       min-height: 100vh;
@@ -128,6 +150,8 @@
       color: var(--text-secondary);
       margin-top: 4px;
       max-width: 620px;
+      overflow-wrap: anywhere;
+      word-break: break-word;
     }
     .badge-lime {
       font-size: 0.68rem;
@@ -384,7 +408,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      flex-wrap: wrap;
+      gap: 6px 10px;
       margin-bottom: 16px;
     }
     .stats-box-head h3 {
@@ -541,8 +566,9 @@
       color: var(--text-muted);
     }
     .stats-chart-wrap {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
     }
 
     @media (max-width: 900px) {
@@ -550,30 +576,34 @@
       .stats-grid-2 { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
-      .admin-main { padding: 20px 0 64px; overflow-x: hidden; }
-      .admin-header-actions { gap: 8px; }
-      .admin-header-actions .nav-link { font-size: 0.8rem; }
+      .container { padding: 0 14px; }
+      .site-header .nav-inner { height: 62px; gap: 8px; }
+      .brand { gap: 8px; font-size: 0.9rem; min-width: 0; }
+      .brand-avatar { width: 30px; height: 30px; flex-shrink: 0; }
+      .admin-main { padding: 18px 0 64px; }
+      .admin-header-actions { gap: 6px; }
+      .admin-header-actions .nav-link { font-size: 0.78rem; padding: 4px 4px; }
+      .admin-header-actions .btn-sm { padding: 6px 10px; font-size: 0.76rem; }
       .admin-bar {
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
       }
       .admin-tabs {
-        display: flex;
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-        padding-bottom: 4px;
-        gap: 6px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        width: 100%;
       }
-      .admin-tabs::-webkit-scrollbar { display: none; }
       .admin-tab {
-        flex: 0 0 auto;
+        width: 100%;
+        text-align: center;
         white-space: nowrap;
-        font-size: 0.82rem;
-        padding: 8px 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: 0.8rem;
+        padding: 9px 10px;
       }
       .admin-bar-meta { display: none; }
       .admin-panel-head {
@@ -593,13 +623,14 @@
       .admin-item-left {
         align-items: flex-start;
         gap: 12px;
+        width: 100%;
       }
       .admin-thumb {
         width: 56px;
         height: 44px;
       }
-      .admin-item-title { font-size: 0.94rem; }
-      .admin-item-sub { font-size: 0.82rem; }
+      .admin-item-title { font-size: 0.94rem; overflow-wrap: anywhere; }
+      .admin-item-sub { font-size: 0.82rem; max-width: 100%; }
       .admin-item-actions {
         width: 100%;
         flex-wrap: wrap;
@@ -609,8 +640,9 @@
       }
       .admin-item-actions .btn {
         flex: 1 1 calc(50% - 6px);
+        min-width: 0;
         justify-content: center;
-        padding: 8px 10px;
+        padding: 8px 8px;
         font-size: 0.78rem;
       }
 
@@ -618,6 +650,7 @@
       .modal-backdrop { padding: 8px; align-items: flex-end; }
       .modal-card,
       .modal-card--wide {
+        width: 100%;
         max-width: 100%;
         max-height: 92dvh;
         padding: 18px 14px;
@@ -629,7 +662,7 @@
       .field input,
       .field textarea,
       .field select,
-      .md-body textarea { font-size: 16px; }
+      .md-body textarea { font-size: 16px; min-width: 0; }
       .md-toolbar { padding: 8px; gap: 6px; }
       .md-tools { gap: 3px; }
       .md-btn { padding: 6px 8px; font-size: 0.76rem; }
@@ -643,21 +676,34 @@
 
       /* Stats */
       .stats-period-bar {
-        display: flex;
-        flex-wrap: wrap;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 6px;
+        width: 100%;
       }
-      .stats-period-bar .btn { flex: 1 1 auto; justify-content: center; }
+      .stats-period-bar .md-btn { text-align: center; padding: 7px 4px; font-size: 0.74rem; }
+      .stats-period-bar .btn { grid-column: span 2; justify-content: center; padding: 8px 8px; font-size: 0.78rem; }
       .stats-kpi-grid { gap: 10px; margin-bottom: 16px; }
-      .stat-card { padding: 14px; }
-      .stats-box { padding: 14px; }
-      .stats-chart { min-width: 420px; }
+      .stat-card { padding: 13px; }
+      .stat-card-val { font-size: 1.4rem; overflow-wrap: anywhere; }
+      .stats-box { padding: 14px; overflow: hidden; }
+      .stats-chart {
+        width: 100%;
+        min-width: 0;
+        gap: 3px;
+        height: 140px;
+      }
+      .stats-bar-col { min-width: 0; }
+      .stats-bar-pair { height: 112px; max-width: 100%; }
+      .stats-bar-lbl { font-size: 0.56rem; overflow: hidden; text-overflow: clip; max-width: 100%; }
+      .stats-rank-row { gap: 8px; }
+      .stats-rank-name { font-size: 0.8rem; }
       .stats-feed-row {
         flex-direction: column;
         align-items: flex-start;
         gap: 4px;
       }
-      .stats-feed-left { width: 100%; }
+      .stats-feed-left { width: 100%; max-width: 100%; }
       #admin-ignore-bar {
         flex-direction: column;
         align-items: flex-start !important;
