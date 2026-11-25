@@ -109,7 +109,7 @@
       color: var(--text-secondary);
     }
     .detail-case-study {
-      max-width: 780px;
+      max-width: 1020px;
       margin-bottom: 64px;
     }
   </style>
@@ -211,8 +211,12 @@
         actionsHtml += `<a href="/#contacto" class="btn btn-ghost">Consultar por un proyecto similar</a>`;
 
         const tocHtml = project.content ? window.renderToc(project.content) : '';
+        const hasToc = Boolean(tocHtml);
         const caseStudyHtml = project.content
-          ? `<div class="detail-case-study">${tocHtml}<article class="prose">${window.renderMarkdown(project.content)}</article></div>`
+          ? `<div class="detail-case-study prose-layout${hasToc ? ' has-toc' : ''}">
+              <div class="prose-main"><article class="prose" id="project-prose">${window.renderMarkdown(project.content)}</article></div>
+              ${hasToc ? `<aside class="prose-aside" id="project-toc">${tocHtml}</aside>` : ''}
+            </div>`
           : '';
 
         root.className = '';
@@ -229,6 +233,14 @@
           </div>
           ${caseStudyHtml}
         `;
+
+        if (hasToc && window.initTocScrollSpy) {
+          window.initTocScrollSpy(
+            document.getElementById('project-toc'),
+            document.getElementById('project-prose'),
+            window
+          );
+        }
 
         // Load related projects
         const allRes = await fetch('/api/get-projects');

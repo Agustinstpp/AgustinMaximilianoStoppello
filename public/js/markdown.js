@@ -287,7 +287,106 @@
     return { words, mins };
   }
 
+  function initTocScrollSpy(tocRoot, contentRoot, scrollContainer) {
+    if (!tocRoot || !contentRoot) return function () {};
+    const links = Array.from(tocRoot.querySelectorAll('.prose-toc-link'));
+    if (!links.length) return function () {};
+
+    const items = links
+      .map((link) => {
+        const id = (link.getAttribute('href') || '').replace(/^#/, '');
+        const heading = id ? contentRoot.querySelector('#' + CSS.escape(id)) : null;
+        return heading ? { id, link, heading } : null;
+      })
+      .filter(Boolean);
+
+    if (!items.length) return function () {};
+
+    const isWindow = !scrollContainer || scrollContainer === window;
+    const target = isWindow ? window : scrollContainer;
+    const offset = isWindow ? 140 : 96;
+
+    function setActive(activeId) {
+      for (const item of items) {
+        const active = item.id === activeId;
+        item.link.classList.toggle('is-active', active);
+        if (active) {
+          item.link.setAttribute('aria-current', 'true');
+        } else {
+          item.link.removeAttribute('aria-current');
+        }
+      }
+    }
+
+    function update() {
+      const containerTop = isWindow ? 0 : scrollContainer.getBoundingClientRect().top;
+      let activeId = items[0].id;
+
+      // If scrolled near the bottom, highlight the last section
+      const nearBottom = isWindow
+        ? window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 24
+        : scrollContainer.scrollTop + scrollContainer.clientHeight >= scrollContainer.scrollHeight - 24;
+
+      if (nearBottom) {
+        activeId = items[items.length - 1].id;
+      } else {
+        for (const item of items) {
+          const relTop = item.heading.getBoundingClientRect().top - containerTop;
+          if (relTop <= offset) {
+            activeId = item.id;
+          } else {
+            break;
+          }
+        }
+      }
+      setActive(activeId);
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        update();
+      });
+    }
+
+    function onClick(e) {
+      const link = e.target.closest('.prose-toc-link');
+      if (!link) return;
+      const id = (link.getAttribute('href') || '').replace(/^#/, '');
+      const match = items.find((it) => it.id === id);
+      if (!match) return;
+      e.preventDefault();
+      if (isWindow) {
+        const y = match.heading.getBoundingClientRect().top + window.scrollY - 96;
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+      } else {
+        const containerTop = scrollContainer.getBoundingClientRect().top;
+        const delta = match.heading.getBoundingClientRect().top - containerTop;
+        scrollContainer.scrollTo({
+          top: Math.max(0, scrollContainer.scrollTop + delta - 28),
+          behavior: 'smooth',
+        });
+      }
+      setActive(id);
+    }
+
+    target.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    tocRoot.addEventListener('click', onClick);
+    update();
+
+    return function cleanup() {
+      target.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      tocRoot.removeEventListener('click', onClick);
+    };
+  }
+
   global.renderMarkdown = renderMarkdown;
   global.renderToc = renderToc;
   global.readingTime = readingTime;
+  global.initTocScrollSpy = initTocScrollSpy;
 })(window);

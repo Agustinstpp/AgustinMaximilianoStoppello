@@ -1,4 +1,4 @@
-const APP_VERSION = '2.7.0';
+const APP_VERSION = '2.8.0';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

@@ -82,6 +82,15 @@
       border: 1px solid var(--border-hover);
       border-radius: var(--radius-lg);
       padding: clamp(24px, 4vw, 44px);
+      transition: max-width 0.2s ease;
+    }
+    @media (min-width: 900px) {
+      .reader-sheet.has-toc {
+        max-width: 1040px;
+      }
+      .reader-sheet .prose-layout.has-toc .prose-aside {
+        top: 16px;
+      }
     }
     .reader-head {
       display: flex;
@@ -148,9 +157,13 @@
         <button type="button" class="brand-works-close" onclick="closeReader()" aria-label="Cerrar">&times;</button>
       </div>
       <div id="reader-cover" style="margin-bottom: 22px; display:none;"></div>
-      <div id="reader-tldr"></div>
-      <div id="reader-toc"></div>
-      <div id="reader-body" class="prose"></div>
+      <div id="reader-layout" class="prose-layout">
+        <div class="prose-main">
+          <div id="reader-tldr"></div>
+          <div id="reader-body" class="prose"></div>
+        </div>
+        <aside id="reader-toc" class="prose-aside"></aside>
+      </div>
     </article>
   </div>
 
@@ -182,6 +195,7 @@
     }
 
     let postsCache = [];
+    let cleanupReaderSpy = null;
 
     function esc(t) {
       const d = document.createElement('div');
@@ -192,6 +206,10 @@
     function openReader(id) {
       const post = postsCache.find((p) => p.id === id);
       if (!post) return;
+      if (cleanupReaderSpy) {
+        cleanupReaderSpy();
+        cleanupReaderSpy = null;
+      }
       const rt = window.readingTime(post.content);
       const dateStr = new Date(post.created_at).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' });
       document.getElementById('reader-meta').textContent = `${post.author || 'Agustín Stoppello'} · ${dateStr} · ${rt.mins} min de lectura`;
@@ -206,14 +224,26 @@
       document.getElementById('reader-tldr').innerHTML = post.summary
         ? `<div class="prose-tldr"><span class="prose-tldr-label">RESUMEN RÁPIDO</span><p>${esc(post.summary)}</p></div>`
         : '';
-      document.getElementById('reader-toc').innerHTML = window.renderToc(post.content);
-      document.getElementById('reader-body').innerHTML = window.renderMarkdown(post.content);
+      const tocHtml = window.renderToc(post.content);
+      const hasToc = Boolean(tocHtml);
       const sheet = document.getElementById('reader-sheet');
+      const layout = document.getElementById('reader-layout');
+      const tocEl = document.getElementById('reader-toc');
+      const bodyEl = document.getElementById('reader-body');
+      tocEl.innerHTML = tocHtml;
+      bodyEl.innerHTML = window.renderMarkdown(post.content);
+      if (sheet) sheet.classList.toggle('has-toc', hasToc);
+      if (layout) layout.classList.toggle('has-toc', hasToc);
       const fill = document.getElementById('reader-progress-fill');
       if (sheet) sheet.scrollTop = 0;
       if (fill) fill.style.width = '0%';
       document.getElementById('reader-modal').classList.add('open');
       document.body.style.overflow = 'hidden';
+      if (hasToc && window.initTocScrollSpy) {
+        requestAnimationFrame(() => {
+          cleanupReaderSpy = window.initTocScrollSpy(tocEl, bodyEl, sheet);
+        });
+      }
     }
 
     const readerSheet = document.getElementById('reader-sheet');
@@ -227,6 +257,10 @@
     }
 
     function closeReader() {
+      if (cleanupReaderSpy) {
+        cleanupReaderSpy();
+        cleanupReaderSpy = null;
+      }
       document.getElementById('reader-modal').classList.remove('open');
       document.body.style.overflow = '';
     }
