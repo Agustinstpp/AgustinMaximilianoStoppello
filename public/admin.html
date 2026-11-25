@@ -530,15 +530,144 @@
       gap: 8px;
     }
 
+    .admin-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-shrink: 0;
+    }
+    .admin-bar-meta {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .stats-chart-wrap {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     @media (max-width: 900px) {
       .stats-kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .stats-grid-2 { grid-template-columns: 1fr; }
     }
     @media (max-width: 720px) {
+      .admin-main { padding: 20px 0 64px; overflow-x: hidden; }
+      .admin-header-actions { gap: 8px; }
+      .admin-header-actions .nav-link { font-size: 0.8rem; }
+      .admin-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .admin-tabs {
+        display: flex;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 4px;
+        gap: 6px;
+      }
+      .admin-tabs::-webkit-scrollbar { display: none; }
+      .admin-tab {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 0.82rem;
+        padding: 8px 14px;
+      }
+      .admin-bar-meta { display: none; }
+      .admin-panel-head {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+      }
+      .admin-panel-head h2 { font-size: 1.2rem; }
+      .admin-panel-head > .btn { width: 100%; justify-content: center; }
+
+      .admin-item {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 14px;
+        gap: 12px;
+      }
+      .admin-item-left {
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .admin-thumb {
+        width: 56px;
+        height: 44px;
+      }
+      .admin-item-title { font-size: 0.94rem; }
+      .admin-item-sub { font-size: 0.82rem; }
+      .admin-item-actions {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border);
+      }
+      .admin-item-actions .btn {
+        flex: 1 1 calc(50% - 6px);
+        justify-content: center;
+        padding: 8px 10px;
+        font-size: 0.78rem;
+      }
+
+      /* Modals & Forms */
+      .modal-backdrop { padding: 8px; align-items: flex-end; }
+      .modal-card,
+      .modal-card--wide {
+        max-width: 100%;
+        max-height: 92dvh;
+        padding: 18px 14px;
+        border-radius: 16px 16px 12px 12px;
+      }
       .field-row,
       .field-row-3,
       .md-body.mode-split { grid-template-columns: 1fr; }
+      .field input,
+      .field textarea,
+      .field select,
+      .md-body textarea { font-size: 16px; }
+      .md-toolbar { padding: 8px; gap: 6px; }
+      .md-tools { gap: 3px; }
+      .md-btn { padding: 6px 8px; font-size: 0.76rem; }
       .md-body.mode-split .md-preview { border-left: 0; border-top: 1px solid var(--border); }
+      .md-statusbar { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .modal-actions {
+        flex-direction: column-reverse;
+        gap: 8px;
+      }
+      .modal-actions .btn { width: 100%; justify-content: center; }
+
+      /* Stats */
+      .stats-period-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+      .stats-period-bar .btn { flex: 1 1 auto; justify-content: center; }
+      .stats-kpi-grid { gap: 10px; margin-bottom: 16px; }
+      .stat-card { padding: 14px; }
+      .stats-box { padding: 14px; }
+      .stats-chart { min-width: 420px; }
+      .stats-feed-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+      .stats-feed-left { width: 100%; }
+      #admin-ignore-bar {
+        flex-direction: column;
+        align-items: flex-start !important;
+      }
+      #admin-ignore-toggle { width: 100%; text-align: center; }
+      .login-box { padding: 26px 20px; }
+    }
+    @media (max-width: 390px) {
+      .stats-kpi-grid { grid-template-columns: 1fr; }
+      .admin-header-actions .nav-link[href="/blog.html"] { display: none; }
     }
   </style>
 </head>
@@ -569,7 +698,7 @@
           <span class="brand-avatar"><img src="imag/IMG_0259.PNG" alt="agustinst.code"></span>
           <span><span class="brand-name">agustinst</span><span class="brand-accent">.code</span></span>
         </a>
-        <div style="display:flex;align-items:center;gap:14px;">
+        <div class="admin-header-actions">
           <a href="/blog.html" target="_blank" class="nav-link">Blog &nearr;</a>
           <a href="/" target="_blank" class="nav-link">Sitio &nearr;</a>
           <button type="button" class="btn btn-ghost btn-sm" onclick="adminLogout()">Salir</button>
@@ -586,7 +715,7 @@
             <button type="button" class="admin-tab" data-tab="posts">Blog</button>
             <button type="button" class="admin-tab" data-tab="stats">Estadísticas</button>
           </div>
-          <span style="font-size:0.8rem;color:var(--text-muted);">Cloudflare D1 &middot; Editor Markdown</span>
+          <span class="admin-bar-meta">Cloudflare D1 &middot; Editor Markdown</span>
         </div>
 
         <div id="global-alert" class="admin-alert"></div>
@@ -1258,7 +1387,7 @@
               <h3>Actividad diaria (últimos 14 días con tráfico)</h3>
               <span>Verde: Visitas &middot; Gris: Clicks</span>
             </div>
-            ${chartHtml}
+            <div class="stats-chart-wrap">${chartHtml}</div>
           </div>
 
           <div class="stats-grid-2">
