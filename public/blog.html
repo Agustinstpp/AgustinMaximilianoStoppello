@@ -213,6 +213,7 @@
 
         <div id="reader-layout" class="prose-layout reader-article-wrap">
           <div class="prose-main">
+            <div class="quote-hint-chip"><span>&#10022;</span> Seleccioná cualquier frase para compartirla como tarjeta</div>
             <div id="reader-tldr"></div>
             <div id="reader-body" class="prose"></div>
             <div class="reader-footer-bar">
@@ -243,6 +244,7 @@
 
   <script src="js/hacker-loader.js"></script>
   <script src="js/markdown.js"></script>
+  <script src="js/quote-share.js"></script>
   <script>
     const navToggle = document.getElementById('nav-toggle');
     const navLinks = document.getElementById('nav-links');
@@ -322,6 +324,19 @@
       if (hasToc && window.initTocScrollSpy) {
         requestAnimationFrame(() => {
           cleanupReaderSpy = window.initTocScrollSpy(tocEl, bodyEl, window);
+        });
+      }
+
+      if (window.initQuoteShare) {
+        window.initQuoteShare({
+          container: bodyEl,
+          getMeta: () => ({
+            title: post.title,
+            subtitle: `Blog · ${post.author || 'Agustín Stoppello'}`,
+            coverUrl: post.cover_url || '',
+            url: window.location.href,
+            type: 'blog',
+          }),
         });
       }
     }

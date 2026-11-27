@@ -2187,6 +2187,222 @@ img {
   margin: 0;
 }
 
+/* ─── Spotify-style Highlight & Quote Card Sharer ────────────────────────── */
+.prose ::selection {
+  background-color: rgba(200, 243, 29, 0.32);
+  color: #ffffff;
+}
+
+.quote-hint-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  background-color: #111111;
+  border: 1px solid var(--border);
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  margin-bottom: 20px;
+}
+
+.quote-hint-chip span {
+  color: var(--accent);
+}
+
+.quote-share-pill {
+  position: fixed;
+  z-index: 950;
+  appearance: none;
+  border: 0;
+  background-color: var(--accent);
+  color: #0a0a0a;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 9px 15px;
+  border-radius: var(--radius-pill);
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 18px rgba(200, 243, 29, 0.45);
+  opacity: 0;
+  transform: translateY(6px) scale(0.95);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.15s ease;
+}
+
+.quote-share-pill.show {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.quote-share-pill:hover {
+  background-color: var(--accent-hover);
+}
+
+.quote-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(0, 0, 0, 0.84);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.quote-modal-backdrop.open {
+  display: flex;
+}
+
+.quote-modal {
+  width: 100%;
+  max-width: 500px;
+  max-height: 92dvh;
+  overflow-y: auto;
+  background-color: var(--surface);
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius-lg);
+  padding: 20px 22px 22px;
+  box-shadow: 0 28px 64px rgba(0, 0, 0, 0.85);
+}
+
+.quote-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.quote-modal-eyebrow {
+  display: block;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin-bottom: 2px;
+}
+
+.quote-modal-head h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.quote-preview-stage {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #090909;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.quote-preview-stage canvas {
+  max-width: 100%;
+  max-height: 44vh;
+  width: auto;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+.quote-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.quote-swatches {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.quote-swatch {
+  appearance: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.quote-swatch:hover {
+  transform: scale(1.1);
+}
+
+.quote-swatch.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200, 243, 29, 0.28);
+  transform: scale(1.12);
+}
+
+.quote-format-toggle {
+  display: inline-flex;
+  background-color: #0b0b0b;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 3px;
+  gap: 3px;
+}
+
+.quote-fmt-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quote-fmt-btn.active {
+  background-color: var(--accent);
+  color: #0a0a0a;
+}
+
+.quote-modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quote-modal-actions .btn {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+
+@media (max-width: 560px) {
+  .quote-modal {
+    padding: 16px;
+  }
+  .quote-modal-actions {
+    flex-direction: column;
+  }
+  .quote-modal-actions .btn {
+    width: 100%;
+  }
+}
+
 /* Reading Progress Bar */
 .reading-progress {
   position: fixed;

@@ -164,6 +164,7 @@
 
   <script src="js/hacker-loader.js"></script>
   <script src="js/markdown.js"></script>
+  <script src="js/quote-share.js"></script>
   <script>
     function esc(t) {
       const d = document.createElement('div');
@@ -216,7 +217,10 @@
         const hasToc = Boolean(tocHtml);
         const caseStudyHtml = project.content
           ? `<div class="detail-case-study prose-layout${hasToc ? ' has-toc' : ''}">
-              <div class="prose-main"><article class="prose" id="project-prose">${window.renderMarkdown(project.content)}</article></div>
+              <div class="prose-main">
+                <div class="quote-hint-chip"><span>&#10022;</span> Seleccioná cualquier frase para compartirla como tarjeta</div>
+                <article class="prose" id="project-prose">${window.renderMarkdown(project.content)}</article>
+              </div>
               ${hasToc ? `<aside class="prose-aside" id="project-toc">${tocHtml}</aside>` : ''}
             </div>`
           : '';
@@ -242,6 +246,20 @@
             document.getElementById('project-prose'),
             window
           );
+        }
+
+        const proseEl = document.getElementById('project-prose');
+        if (proseEl && window.initQuoteShare) {
+          window.initQuoteShare({
+            container: proseEl,
+            getMeta: () => ({
+              title: project.title,
+              subtitle: project.category ? `${project.category} · Agustín Stoppello` : 'Proyecto · Agustín Stoppello',
+              coverUrl: project.image_url || '',
+              url: window.location.href,
+              type: 'project',
+            }),
+          });
         }
 
         // Load related projects
