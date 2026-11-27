@@ -139,31 +139,42 @@
       ctx.fillRect(0, 0, W, H);
     }
 
-    // 2. Measure quote to dynamically size the inner Spotify-style card
-    const cardMarginX = 96;
+    // 2. Measure quote and auto-scale font size so even long blog paragraphs fit cleanly
+    const cardMarginX = 88;
     const cardW = W - cardMarginX * 2;
-    const padX = 72;
-    const padTop = 68;
-    const padBottom = 64;
+    const padX = 68;
+    const padTop = 64;
+    const padBottom = 60;
     const innerW = cardW - padX * 2;
 
-    const quoteLen = currentQuote.length;
-    let fontSize = 56;
-    if (quoteLen > 240) fontSize = 38;
-    else if (quoteLen > 170) fontSize = 44;
-    else if (quoteLen > 110) fontSize = 49;
-    const lineHeight = Math.round(fontSize * 1.24);
-
-    ctx.font = `800 ${fontSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
-    const quoteLines = wrapLines(ctx, currentQuote, innerW).slice(0, isStory ? 14 : 9);
-
     const headerH = 112;
-    const gapHeaderToQuote = 58;
-    const quoteBlockH = quoteLines.length * lineHeight;
-    const gapQuoteToFooter = 68;
+    const gapHeaderToQuote = 44;
+    const gapQuoteToFooter = 52;
     const footerH = 56;
     const minCardH = isStory ? 760 : 620;
-    const maxCardH = isStory ? 1440 : 880;
+    const maxCardH = isStory ? 1680 : 940;
+    const maxQuoteH = maxCardH - padTop - headerH - gapHeaderToQuote - gapQuoteToFooter - footerH - padBottom;
+
+    let fontSize = 54;
+    let lineHeight = Math.round(fontSize * 1.24);
+    let quoteLines = [];
+
+    // Step down font size until all lines fit inside maxQuoteH (down to 26px)
+    for (let size = 54; size >= 26; size -= 2) {
+      fontSize = size;
+      lineHeight = Math.round(fontSize * 1.26);
+      ctx.font = `800 ${fontSize}px Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+      quoteLines = wrapLines(ctx, currentQuote, innerW);
+      if (quoteLines.length * lineHeight <= maxQuoteH) break;
+    }
+
+    const maxFitLines = Math.max(1, Math.floor(maxQuoteH / lineHeight));
+    if (quoteLines.length > maxFitLines) {
+      quoteLines = quoteLines.slice(0, maxFitLines);
+      quoteLines[quoteLines.length - 1] = quoteLines[quoteLines.length - 1].replace(/\s+\S*$/, '') + '…';
+    }
+
+    const quoteBlockH = quoteLines.length * lineHeight;
     const cardH = Math.max(
       minCardH,
       Math.min(maxCardH, padTop + headerH + gapHeaderToQuote + quoteBlockH + gapQuoteToFooter + footerH + padBottom)
@@ -451,6 +462,7 @@
 
   function checkSelection() {
     if (!activeContainer || !pillEl) return;
+    if (modalEl && modalEl.classList.contains('open')) return;
     const sel = global.getSelection ? global.getSelection() : null;
     if (!sel || sel.isCollapsed || !sel.rangeCount) {
       hidePill();
@@ -464,25 +476,21 @@
     }
 
     const text = sel.toString().replace(/\s+/g, ' ').trim();
-    if (text.length < 8 || text.length > 360) {
+    if (text.length < 4) {
       hidePill();
       return;
     }
 
-    const rect = range.getBoundingClientRect();
-    if (!rect || (rect.width === 0 && rect.height === 0)) {
-      hidePill();
-      return;
+    currentQuote = text.slice(0, 1200);
+    // Auto-pick Story 9:16 for very long paragraphs so more text fits cleanly
+    if (currentQuote.length > 340 && currentFormat === 'square') {
+      currentFormat = 'story';
+      if (modalEl) {
+        modalEl.querySelectorAll('.quote-fmt-btn').forEach((b) => {
+          b.classList.toggle('active', b.dataset.fmt === 'story');
+        });
+      }
     }
-
-    currentQuote = text;
-    const pillW = 166;
-    const left = Math.max(12, Math.min(global.innerWidth - pillW - 12, rect.left + rect.width / 2 - pillW / 2));
-    const preferTop = rect.top > 72;
-    const top = preferTop ? rect.top - 48 : rect.bottom + 12;
-
-    pillEl.style.left = `${Math.round(left)}px`;
-    pillEl.style.top = `${Math.round(Math.max(12, Math.min(global.innerHeight - 52, top)))}px`;
     pillEl.classList.add('show');
   }
 
@@ -496,12 +504,11 @@
       let selTimer = null;
       const scheduleCheck = () => {
         clearTimeout(selTimer);
-        selTimer = setTimeout(checkSelection, 90);
+        selTimer = setTimeout(checkSelection, 100);
       };
       document.addEventListener('mouseup', scheduleCheck);
       document.addEventListener('touchend', scheduleCheck, { passive: true });
       document.addEventListener('selectionchange', scheduleCheck);
-      global.addEventListener('scroll', hidePill, { passive: true });
     }
   }
 

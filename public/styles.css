@@ -2212,30 +2212,33 @@ img {
 
 .quote-share-pill {
   position: fixed;
+  left: 50%;
+  bottom: max(22px, env(safe-area-inset-bottom, 22px));
   z-index: 950;
   appearance: none;
-  border: 0;
+  border: 1px solid rgba(10, 10, 10, 0.2);
   background-color: var(--accent);
   color: #0a0a0a;
   font-family: inherit;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  padding: 9px 15px;
+  padding: 12px 22px;
   border-radius: var(--radius-pill);
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   cursor: pointer;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.65), 0 0 18px rgba(200, 243, 29, 0.45);
+  white-space: nowrap;
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.78), 0 0 24px rgba(200, 243, 29, 0.45);
   opacity: 0;
-  transform: translateY(6px) scale(0.95);
+  transform: translate(-50%, 20px) scale(0.95);
   pointer-events: none;
-  transition: opacity 0.16s ease, transform 0.18s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.15s ease;
+  transition: opacity 0.18s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.15s ease;
 }
 
 .quote-share-pill.show {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translate(-50%, 0) scale(1);
   pointer-events: auto;
 }
 
