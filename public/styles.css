@@ -1999,9 +1999,9 @@ img {
 /* ─── Rich Prose Typography (Markdown articles & project case studies) ───── */
 .prose {
   color: var(--text-secondary);
-  font-size: 1.02rem;
-  line-height: 1.8;
-  max-width: 68ch;
+  font-size: 1.03rem;
+  line-height: 1.82;
+  max-width: 74ch;
 }
 
 .prose h2 {
@@ -2105,7 +2105,7 @@ img {
 
 @media (min-width: 900px) {
   .prose-layout.has-toc {
-    grid-template-columns: minmax(0, 68ch) minmax(220px, 260px);
+    grid-template-columns: minmax(0, 74ch) minmax(220px, 260px);
     gap: 44px;
     align-items: start;
     justify-content: space-between;
@@ -2167,7 +2167,7 @@ img {
   border-radius: var(--radius-md);
   padding: 16px 20px;
   margin-bottom: 24px;
-  max-width: 68ch;
+  max-width: 74ch;
 }
 
 .prose-tldr-label {

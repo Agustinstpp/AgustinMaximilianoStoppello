@@ -42,7 +42,7 @@
     }
     .blog-cover img { width: 100%; height: 100%; object-fit: cover; }
     .blog-meta {
-      font-size: 0.78rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
       display: flex;
       align-items: center;
@@ -61,52 +61,98 @@
       line-height: 1.6;
       flex-grow: 1;
     }
-    .reader-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 200;
-      background: rgba(0, 0, 0, 0.82);
-      backdrop-filter: blur(8px);
+
+    /* ─── Full-Page Editorial Blog Reader ───────────────────────────── */
+    .reader-view {
       display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+      padding: clamp(32px, 5vw, 60px) 0 88px;
     }
-    .reader-backdrop.open { display: flex; }
-    .reader-sheet {
-      width: 100%;
-      max-width: 780px;
-      max-height: 90vh;
-      overflow-y: auto;
-      background-color: var(--surface);
-      border: 1px solid var(--border-hover);
-      border-radius: var(--radius-lg);
-      padding: clamp(24px, 4vw, 44px);
-      transition: max-width 0.2s ease;
+    .reader-view.open {
+      display: block;
     }
-    @media (min-width: 900px) {
-      .reader-sheet.has-toc {
-        max-width: 1040px;
-      }
-      .reader-sheet .prose-layout.has-toc .prose-aside {
-        top: 16px;
-      }
-    }
-    .reader-head {
+    .reader-topbar {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 28px;
     }
-    .reader-head h2 {
-      font-size: clamp(1.5rem, 3vw, 2.1rem);
+    .reader-back-btn {
+      appearance: none;
+      background: transparent;
+      border: 0;
+      padding: 0;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s ease;
+    }
+    .reader-back-btn:hover {
+      color: var(--accent);
+    }
+    .reader-header {
+      max-width: 820px;
+      margin-bottom: 28px;
+    }
+    .reader-header h1 {
+      font-size: clamp(1.85rem, 4.4vw, 3rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+      margin: 12px 0 16px;
     }
+    .reader-cover-wrap {
+      max-width: 880px;
+      margin-bottom: 32px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background-color: var(--surface);
+    }
+    .reader-cover-wrap img {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      display: block;
+    }
+    .reader-article-wrap {
+      max-width: 1060px;
+    }
+    .reader-article-wrap .prose {
+      max-width: 74ch;
+      font-size: 1.05rem;
+      line-height: 1.82;
+    }
+    .reader-footer-bar {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      max-width: 74ch;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
     @media (max-width: 760px) {
       .blog-grid { grid-template-columns: 1fr; }
+      .reader-view { padding: 24px 0 68px; }
+      .reader-article-wrap .prose {
+        max-width: 100%;
+        font-size: 1rem;
+        line-height: 1.76;
+      }
+      .reader-cover-wrap {
+        border-radius: var(--radius-md);
+        margin-bottom: 24px;
+      }
     }
   </style>
 </head>
@@ -127,45 +173,58 @@
     </div>
   </header>
 
+  <div class="reading-progress" id="reading-progress" aria-hidden="true" style="display:none;"></div>
+
   <main>
-    <section class="hero" style="padding-bottom: 32px;">
-      <div class="container">
-        <span class="eyebrow">NOTAS &amp; ARTÍCULOS</span>
-        <h1 class="hero-title" style="font-size: clamp(2.1rem, 5vw, 3.6rem);">Blog<span class="accent">.</span></h1>
-        <p class="hero-subtitle" style="margin-bottom: 0;">Ideas sobre desarrollo de software, diseño UX/UI y automatización de procesos.</p>
-      </div>
-    </section>
+    <!-- ─── Blog Grid View ────────────────────────────────────────────── -->
+    <div id="blog-list-view">
+      <section class="hero" style="padding-bottom: 32px;">
+        <div class="container">
+          <span class="eyebrow">NOTAS &amp; ARTÍCULOS</span>
+          <h1 class="hero-title" style="font-size: clamp(2.1rem, 5vw, 3.6rem);">Blog<span class="accent">.</span></h1>
+          <p class="hero-subtitle" style="margin-bottom: 0;">Ideas sobre desarrollo de software, diseño UX/UI y automatización de procesos.</p>
+        </div>
+      </section>
 
-    <section class="section" style="padding-top: 24px;">
-      <div class="container">
-        <div id="blog-grid" class="blog-grid">
-          <p style="color: var(--text-secondary);">Cargando artículos…</p>
+      <section class="section" style="padding-top: 24px;">
+        <div class="container">
+          <div id="blog-grid" class="blog-grid">
+            <p style="color: var(--text-secondary);">Cargando artículos…</p>
+          </div>
         </div>
-      </div>
-    </section>
-  </main>
+      </section>
+    </div>
 
-  <!-- Reader Modal -->
-  <div id="reader-modal" class="reader-backdrop" onclick="if(event.target===this)closeReader()">
-    <article class="reader-sheet" id="reader-sheet">
-      <div class="reader-progress-track" aria-hidden="true"><div class="reader-progress-fill" id="reader-progress-fill"></div></div>
-      <div class="reader-head">
-        <div>
-          <div id="reader-meta" class="blog-meta" style="margin-bottom: 10px;"></div>
-          <h2 id="reader-title"></h2>
+    <!-- ─── Full-Page Editorial Reader View ───────────────────────────── -->
+    <article id="blog-reader-view" class="reader-view">
+      <div class="container">
+        <div class="reader-topbar">
+          <button type="button" class="reader-back-btn" onclick="closeReader()">&larr; Volver al blog</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="reader-share-btn" onclick="copyPostLink()">Copiar link</button>
         </div>
-        <button type="button" class="brand-works-close" onclick="closeReader()" aria-label="Cerrar">&times;</button>
-      </div>
-      <div id="reader-cover" style="margin-bottom: 22px; display:none;"></div>
-      <div id="reader-layout" class="prose-layout">
-        <div class="prose-main">
-          <div id="reader-tldr"></div>
-          <div id="reader-body" class="prose"></div>
+
+        <header class="reader-header">
+          <div id="reader-meta" class="blog-meta"></div>
+          <h1 id="reader-title"></h1>
+          <div id="reader-tags" class="cert-tags"></div>
+        </header>
+
+        <div id="reader-cover" class="reader-cover-wrap" style="display:none;"></div>
+
+        <div id="reader-layout" class="prose-layout reader-article-wrap">
+          <div class="prose-main">
+            <div id="reader-tldr"></div>
+            <div id="reader-body" class="prose"></div>
+            <div class="reader-footer-bar">
+              <button type="button" class="reader-back-btn" onclick="closeReader()">&larr; Volver a todos los artículos</button>
+              <button type="button" class="btn btn-ghost btn-sm" onclick="copyPostLink()">Compartir artículo</button>
+            </div>
+          </div>
+          <aside id="reader-toc" class="prose-aside"></aside>
         </div>
-        <aside id="reader-toc" class="prose-aside"></aside>
       </div>
     </article>
-  </div>
+  </main>
 
   <footer class="site-footer">
     <div class="container footer-inner">
@@ -191,11 +250,13 @@
       navToggle.addEventListener('click', () => {
         const isOpen = navLinks.classList.toggle('open');
         navToggle.setAttribute('aria-expanded', String(isOpen));
+        navToggle.innerHTML = isOpen ? '&times;' : '&#9776;';
       });
     }
 
     let postsCache = [];
     let cleanupReaderSpy = null;
+    let activePostId = null;
 
     function esc(t) {
       const d = document.createElement('div');
@@ -203,69 +264,123 @@
       return d.innerHTML;
     }
 
-    function openReader(id) {
-      const post = postsCache.find((p) => p.id === id);
+    function openReader(id, pushUrl = true) {
+      const post = postsCache.find((p) => String(p.id) === String(id));
       if (!post) return;
       if (cleanupReaderSpy) {
         cleanupReaderSpy();
         cleanupReaderSpy = null;
       }
+      activePostId = post.id;
+
       const rt = window.readingTime(post.content);
       const dateStr = new Date(post.created_at).toLocaleDateString('es-AR', { year: 'numeric', month: 'long', day: 'numeric' });
+      document.title = `${post.title} — Blog · agustinst.code`;
       document.getElementById('reader-meta').textContent = `${post.author || 'Agustín Stoppello'} · ${dateStr} · ${rt.mins} min de lectura`;
       document.getElementById('reader-title').textContent = post.title;
+      document.getElementById('reader-tags').innerHTML = (post.tags || []).map((t) => `<span class="cert-tag">${esc(t)}</span>`).join('');
+
       const coverEl = document.getElementById('reader-cover');
       if (post.cover_url) {
         coverEl.style.display = '';
-        coverEl.innerHTML = `<div class="blog-cover"><img src="${esc(post.cover_url)}" alt=""></div>`;
+        coverEl.innerHTML = `<img src="${esc(post.cover_url)}" alt="${esc(post.title)}">`;
       } else {
         coverEl.style.display = 'none';
+        coverEl.innerHTML = '';
       }
+
       document.getElementById('reader-tldr').innerHTML = post.summary
         ? `<div class="prose-tldr"><span class="prose-tldr-label">RESUMEN RÁPIDO</span><p>${esc(post.summary)}</p></div>`
         : '';
+
       const tocHtml = window.renderToc(post.content);
       const hasToc = Boolean(tocHtml);
-      const sheet = document.getElementById('reader-sheet');
       const layout = document.getElementById('reader-layout');
       const tocEl = document.getElementById('reader-toc');
       const bodyEl = document.getElementById('reader-body');
       tocEl.innerHTML = tocHtml;
       bodyEl.innerHTML = window.renderMarkdown(post.content);
-      if (sheet) sheet.classList.toggle('has-toc', hasToc);
       if (layout) layout.classList.toggle('has-toc', hasToc);
-      const fill = document.getElementById('reader-progress-fill');
-      if (sheet) sheet.scrollTop = 0;
-      if (fill) fill.style.width = '0%';
-      document.getElementById('reader-modal').classList.add('open');
-      document.body.style.overflow = 'hidden';
+
+      document.getElementById('blog-list-view').style.display = 'none';
+      document.getElementById('blog-reader-view').classList.add('open');
+      const bar = document.getElementById('reading-progress');
+      if (bar) {
+        bar.style.display = '';
+        bar.style.width = '0%';
+      }
+
+      if (pushUrl) {
+        const nextUrl = `/blog.html?id=${encodeURIComponent(post.id)}`;
+        if (window.location.pathname + window.location.search !== nextUrl) {
+          history.pushState({ postId: post.id }, '', nextUrl);
+        }
+      }
+
+      window.scrollTo({ top: 0, behavior: 'instant' });
+
       if (hasToc && window.initTocScrollSpy) {
         requestAnimationFrame(() => {
-          cleanupReaderSpy = window.initTocScrollSpy(tocEl, bodyEl, sheet);
+          cleanupReaderSpy = window.initTocScrollSpy(tocEl, bodyEl, window);
         });
       }
     }
 
-    const readerSheet = document.getElementById('reader-sheet');
-    if (readerSheet) {
-      readerSheet.addEventListener('scroll', () => {
-        const fill = document.getElementById('reader-progress-fill');
-        if (!fill) return;
-        const max = readerSheet.scrollHeight - readerSheet.clientHeight;
-        fill.style.width = max > 0 ? `${Math.min(100, (readerSheet.scrollTop / max) * 100)}%` : '0%';
-      }, { passive: true });
-    }
-
-    function closeReader() {
+    function closeReader(pushUrl = true) {
       if (cleanupReaderSpy) {
         cleanupReaderSpy();
         cleanupReaderSpy = null;
       }
-      document.getElementById('reader-modal').classList.remove('open');
-      document.body.style.overflow = '';
+      activePostId = null;
+      document.title = 'Blog — agustinst.code';
+      document.getElementById('blog-reader-view').classList.remove('open');
+      document.getElementById('blog-list-view').style.display = '';
+      const bar = document.getElementById('reading-progress');
+      if (bar) {
+        bar.style.display = 'none';
+        bar.style.width = '0%';
+      }
+      if (pushUrl && window.location.search) {
+        history.pushState({}, '', '/blog.html');
+      }
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
 
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeReader(); });
+    function copyPostLink() {
+      const url = window.location.href;
+      const btn = document.getElementById('reader-share-btn');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          if (btn) {
+            const orig = btn.textContent;
+            btn.textContent = '✓ Link copiado';
+            setTimeout(() => { btn.textContent = orig; }, 2000);
+          }
+        }).catch(() => {});
+      }
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!activePostId) return;
+      const bar = document.getElementById('reading-progress');
+      if (!bar) return;
+      const doc = document.documentElement;
+      const max = doc.scrollHeight - doc.clientHeight;
+      bar.style.width = max > 0 ? `${Math.min(100, (window.scrollY / max) * 100)}%` : '0%';
+    }, { passive: true });
+
+    window.addEventListener('popstate', () => {
+      const id = new URLSearchParams(window.location.search).get('id');
+      if (id) {
+        openReader(id, false);
+      } else if (activePostId) {
+        closeReader(false);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && activePostId) closeReader();
+    });
 
     async function loadBlog() {
       const grid = document.getElementById('blog-grid');
@@ -304,6 +419,12 @@
             </article>
           `;
         }).join('');
+
+        // Open directly if URL has ?id=...
+        const initialId = new URLSearchParams(window.location.search).get('id');
+        if (initialId) {
+          openReader(initialId, false);
+        }
       } catch {
         grid.innerHTML = '<p style="color:var(--text-secondary);">No se pudieron cargar los artículos.</p>';
       }
